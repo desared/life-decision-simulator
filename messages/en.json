@@ -1,0 +1,304 @@
+{
+  "common": {
+    "signIn": "Sign in",
+    "logIn": "Log In",
+    "learnMore": "Learn more",
+    "tryFree": "Try for free",
+    "viewPricing": "View pricing",
+    "startSimulating": "Start simulating"
+  },
+  "nav": {
+    "howItWorks": "How it works",
+    "pricing": "Pricing",
+    "features": "Features",
+    "faq": "FAQ"
+  },
+  "hero": {
+    "title": "See Your Future",
+    "titleHighlight": "Before You Decide",
+    "subtitle": "Life's biggest decisions shouldn't feel like guesswork. Our AI-powered simulator models real outcomes so you can choose with clarity.",
+    "inputPlaceholder": "What if I...",
+    "simulate": "Simulate",
+    "tryExample": "Try: \"What if I change jobs?\" or \"What if I move to a new city?\""
+  },
+  "scenarios": {
+    "title": "Popular Scenarios",
+    "subtitle": "Start with one of our most simulated life decisions",
+    "suggestions": "Suggested scenarios",
+    "noResults": "No matching scenarios found",
+    "tryScenario": "Try this scenario",
+    "unlockPremium": "Unlock with Premium",
+    "jobChange": {
+      "title": "Change Jobs",
+      "description": "Explore the financial and career impact of switching positions or industries"
+    },
+    "buyRent": {
+      "title": "Buy vs Rent",
+      "description": "Compare long-term financial outcomes of buying a home versus renting"
+    },
+    "relocate": {
+      "title": "Move to a New City",
+      "description": "Analyze the impact of relocating to a new city on your lifestyle and finances"
+    },
+    "workHours": {
+      "title": "Reduce Work Hours",
+      "description": "Understand the tradeoffs of working less for more personal time"
+    },
+    "free": "Free",
+    "premium": "Premium"
+  },
+  "factors": {
+    "salaryChange": "Salary Change",
+    "commuteTime": "Commute Time",
+    "jobSatisfaction": "Expected Job Satisfaction",
+    "careerGrowth": "Career Growth Potential",
+    "homePrice": "Home Price",
+    "downPayment": "Down Payment",
+    "monthlyRent": "Monthly Rent",
+    "timeHorizon": "Time Horizon",
+    "costOfLiving": "Cost of Living Change",
+    "incomeChange": "Expected Income Change",
+    "socialNetwork": "Social Network Strength",
+    "qualityOfLife": "Quality of Life Rating",
+    "hoursReduced": "Hours Reduced Per Week",
+    "incomeReduction": "Income Reduction",
+    "sideProjects": "Time for Side Projects",
+    "healthFocus": "Health & Wellness Focus"
+  },
+  "outcomes": {
+    "financialStability": "Financial Stability (5 years)",
+    "workLifeBalance": "Work-Life Balance",
+    "stressLevel": "Stress Level",
+    "careerAdvancement": "Career Advancement",
+    "equityBuilt": "Equity Built",
+    "financialFlexibility": "Financial Flexibility",
+    "netWorthImpact": "Net Worth Impact",
+    "riskExposure": "Risk Exposure",
+    "savingsRate": "Savings Rate",
+    "socialWellbeing": "Social Wellbeing",
+    "careerOpportunities": "Career Opportunities",
+    "overallHappiness": "Overall Happiness",
+    "monthlyIncome": "Monthly Income",
+    "healthEnergy": "Health & Energy",
+    "relationshipQuality": "Relationship Quality",
+    "productivityPerHour": "Productivity Per Hour",
+    "decisionScore": "Decision Score"
+  },
+  "simulation": {
+    "adjustFactors": "Adjust Factors",
+    "predictedOutcomes": "Predicted Outcomes",
+    "runSimulation": "Run Simulation",
+    "running": "Simulating...",
+    "reset": "Reset",
+    "back": "Back to scenarios",
+    "confidenceRange": "Confidence interval"
+  },
+  "decisionScore": {
+    "completed": "Scenario Completed!",
+    "finalScore": "Final Score",
+    "timeTaken": "Time Taken",
+    "title": "Decision Score",
+    "subtitle": "Based on your choices",
+    "financialImpact": "Financial Impact",
+    "riskAssessment": "Risk Assessment",
+    "lifeQuality": "Life Quality",
+    "longTermGrowth": "Long-term Growth"
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "subtitle": "Make confident decisions in three simple steps",
+    "step1": {
+      "title": "Choose Your Scenario",
+      "description": "Select from popular life decisions or describe your unique situation in natural language."
+    },
+    "step2": {
+      "title": "Adjust Your Variables",
+      "description": "Fine-tune the factors that matter most to you—salary, location, time horizon, and more."
+    },
+    "step3": {
+      "title": "See Your Outcomes",
+      "description": "Get probabilistic predictions with confidence ranges, not just single-point estimates."
+    }
+  },
+  "features": {
+    "title": "Why LifePath?",
+    "subtitle": "Built for real decisions, not academic exercises",
+    "probabilistic": {
+      "title": "Probabilistic Modeling",
+      "description": "See ranges of possible outcomes, not just single predictions. Understand the uncertainty in every decision."
+    },
+    "instant": {
+      "title": "Instant Analysis",
+      "description": "Get results in seconds, not hours. Iterate quickly through different scenarios and assumptions."
+    },
+    "private": {
+      "title": "Private & Secure",
+      "description": "Your life decisions stay private. We never share or sell your personal scenario data."
+    },
+    "datadriven": {
+      "title": "Data-Driven Insights",
+      "description": "Our models are trained on real-world data and economic research, not guesswork."
+    },
+    "scenarios": {
+      "title": "Unlimited Scenarios",
+      "description": "Run as many simulations as you need. Compare different paths side by side."
+    },
+    "export": {
+      "title": "Export & Share",
+      "description": "Download your analysis as PDF or share scenarios with advisors and family."
+    }
+  },
+  "testimonials": {
+    "title": "Trusted by Decision Makers",
+    "subtitle": "Join thousands who've gained clarity on their biggest life choices",
+    "quote1": {
+      "text": "I was paralyzed about whether to leave my corporate job. LifePath showed me the realistic range of outcomes, and I finally had the confidence to make the leap.",
+      "author": "Sarah M.",
+      "role": "Former VP, now Founder"
+    },
+    "quote2": {
+      "text": "The buy vs rent simulation saved me from making a huge financial mistake. The numbers were eye-opening.",
+      "author": "Michael K.",
+      "role": "Software Engineer"
+    },
+    "quote3": {
+      "text": "As a financial advisor, I recommend LifePath to all my clients. It helps them visualize outcomes in a way spreadsheets never could.",
+      "author": "Jennifer L.",
+      "role": "Certified Financial Planner"
+    }
+  },
+  "pricing": {
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "Start free, upgrade when you need more",
+    "perScenario": {
+      "title": "Pay Per Scenario",
+      "price": "$4.99",
+      "period": "per simulation",
+      "description": "Perfect for one-time decisions",
+      "features": [
+        "Single detailed simulation",
+        "Full outcome analysis",
+        "PDF export",
+        "24-hour access to results"
+      ],
+      "cta": "Buy Simulation"
+    },
+    "monthly": {
+      "title": "Monthly Plan",
+      "price": "$19",
+      "period": "per month",
+      "description": "For ongoing life planning",
+      "features": [
+        "Unlimited simulations",
+        "All premium scenarios",
+        "Save & compare results",
+        "Priority support",
+        "Early access to new features"
+      ],
+      "cta": "Start Free Trial",
+      "popular": "Most Popular"
+    },
+    "annual": {
+      "title": "Annual Plan",
+      "price": "$149",
+      "period": "per year",
+      "description": "Best value for serious planners",
+      "features": [
+        "Everything in Monthly",
+        "35% savings",
+        "Exclusive scenarios",
+        "1-on-1 onboarding call",
+        "API access"
+      ],
+      "cta": "Get Annual Plan",
+      "savings": "Save $79"
+    },
+    "freeTrial": "Try free for 7 days",
+    "noCardRequired": "No credit card required"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about LifePath",
+    "q1": {
+      "question": "How accurate are the simulations?",
+      "answer": "Our models are based on real-world economic data, actuarial tables, and peer-reviewed research. While no prediction is perfect, we provide confidence ranges to help you understand the uncertainty. Most users find our predictions align closely with their actual outcomes."
+    },
+    "q2": {
+      "question": "Can I simulate any life decision?",
+      "answer": "Yes! While we offer pre-built scenarios for common decisions, you can describe any situation in natural language. Our AI will build a custom model for your unique circumstances."
+    },
+    "q3": {
+      "question": "Is my data private?",
+      "answer": "Absolutely. We never sell or share your personal data. Your scenarios are encrypted and only accessible to you. You can delete your data at any time."
+    },
+    "q4": {
+      "question": "What's the difference between free and premium scenarios?",
+      "answer": "Free scenarios give you a taste of our simulation engine. Premium scenarios include more detailed models, additional factors, longer time horizons, and advanced outcome metrics."
+    },
+    "q5": {
+      "question": "Can I cancel my subscription anytime?",
+      "answer": "Yes, you can cancel at any time. If you cancel, you'll retain access until the end of your billing period. No questions asked."
+    },
+    "q6": {
+      "question": "Do you offer refunds?",
+      "answer": "We offer a 30-day money-back guarantee for all subscription plans. If you're not satisfied, contact us for a full refund."
+    }
+  },
+  "cta": {
+    "title": "Ready to Make Better Decisions?",
+    "subtitle": "Join over 50,000 people who've gained clarity on their biggest life choices.",
+    "button": "Start Your Free Simulation"
+  },
+  "moreSimulations": {
+    "title": "Want More Simulations?",
+    "description": "Unlock unlimited scenarios, detailed analysis, and premium features with a LifePath account.",
+    "cta": "Get Started Free"
+  },
+  "footer": {
+    "tagline": "Make decisions with confidence",
+    "product": {
+      "title": "Product",
+      "scenarios": "Scenarios",
+      "pricing": "Pricing",
+      "demo": "Live Demo",
+      "api": "API"
+    },
+    "company": {
+      "title": "Company",
+      "about": "About Us",
+      "blog": "Blog",
+      "careers": "Careers",
+      "press": "Press"
+    },
+    "resources": {
+      "title": "Resources",
+      "help": "Help Center",
+      "guides": "Decision Guides",
+      "research": "Research",
+      "community": "Community"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookies": "Cookie Policy"
+    },
+    "copyright": "© 2025 LifePath. All rights reserved."
+  },
+  "auth": {
+    "signInTitle": "Welcome back",
+    "signInSubtitle": "Sign in to access your simulations",
+    "signUpTitle": "Create your account",
+    "signUpSubtitle": "Start making better decisions today",
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "signUp": "Sign up",
+    "continueWith": "Or continue with",
+    "google": "Google",
+    "apple": "Apple"
+  }
+}

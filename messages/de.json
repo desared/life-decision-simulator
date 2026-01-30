@@ -1,0 +1,304 @@
+{
+  "common": {
+    "signIn": "Anmelden",
+    "logIn": "Anmelden",
+    "learnMore": "Mehr erfahren",
+    "tryFree": "Kostenlos testen",
+    "viewPricing": "Preise ansehen",
+    "startSimulating": "Simulation starten"
+  },
+  "nav": {
+    "howItWorks": "So funktioniert's",
+    "pricing": "Preise",
+    "features": "Funktionen",
+    "faq": "FAQ"
+  },
+  "hero": {
+    "title": "Sehen Sie Ihre Zukunft",
+    "titleHighlight": "Bevor Sie entscheiden",
+    "subtitle": "Ihre wichtigsten Lebensentscheidungen sollten kein Ratespiel sein. Unser KI-Simulator modelliert echte Ergebnisse, damit Sie mit Klarheit wählen können.",
+    "inputPlaceholder": "Was wäre wenn ich...",
+    "simulate": "Simulieren",
+    "tryExample": "Beispiel: \"Was wäre wenn ich den Job wechsle?\" oder \"Was wäre wenn ich umziehe?\""
+  },
+  "scenarios": {
+    "title": "Beliebte Szenarien",
+    "subtitle": "Beginnen Sie mit einer der meistsimulierten Lebensentscheidungen",
+    "suggestions": "Vorgeschlagene Szenarien",
+    "noResults": "Keine passenden Szenarien gefunden",
+    "tryScenario": "Szenario ausprobieren",
+    "unlockPremium": "Mit Premium freischalten",
+    "jobChange": {
+      "title": "Job wechseln",
+      "description": "Erkunden Sie die finanziellen und beruflichen Auswirkungen eines Positionswechsels"
+    },
+    "buyRent": {
+      "title": "Kaufen vs. Mieten",
+      "description": "Vergleichen Sie langfristige finanzielle Ergebnisse zwischen Hauskauf und Miete"
+    },
+    "relocate": {
+      "title": "In eine neue Stadt ziehen",
+      "description": "Analysieren Sie die Auswirkungen eines Umzugs auf Ihren Lebensstil und Ihre Finanzen"
+    },
+    "workHours": {
+      "title": "Arbeitszeit reduzieren",
+      "description": "Verstehen Sie die Kompromisse zwischen weniger Arbeit und mehr Freizeit"
+    },
+    "free": "Kostenlos",
+    "premium": "Premium"
+  },
+  "factors": {
+    "salaryChange": "Gehaltsänderung",
+    "commuteTime": "Pendelzeit",
+    "jobSatisfaction": "Erwartete Arbeitszufriedenheit",
+    "careerGrowth": "Karrierewachstumspotenzial",
+    "homePrice": "Immobilienpreis",
+    "downPayment": "Anzahlung",
+    "monthlyRent": "Monatliche Miete",
+    "timeHorizon": "Zeithorizont",
+    "costOfLiving": "Lebenshaltungskostenänderung",
+    "incomeChange": "Erwartete Einkommensänderung",
+    "socialNetwork": "Stärke des sozialen Netzwerks",
+    "qualityOfLife": "Lebensqualitätsbewertung",
+    "hoursReduced": "Reduzierte Stunden pro Woche",
+    "incomeReduction": "Einkommensreduzierung",
+    "sideProjects": "Zeit für Nebenprojekte",
+    "healthFocus": "Gesundheits- & Wellness-Fokus"
+  },
+  "outcomes": {
+    "financialStability": "Finanzielle Stabilität (5 Jahre)",
+    "workLifeBalance": "Work-Life-Balance",
+    "stressLevel": "Stresslevel",
+    "careerAdvancement": "Karrierefortschritt",
+    "equityBuilt": "Aufgebautes Eigenkapital",
+    "financialFlexibility": "Finanzielle Flexibilität",
+    "netWorthImpact": "Auswirkung auf Nettovermögen",
+    "riskExposure": "Risikoexposition",
+    "savingsRate": "Sparquote",
+    "socialWellbeing": "Soziales Wohlbefinden",
+    "careerOpportunities": "Karrieremöglichkeiten",
+    "overallHappiness": "Allgemeine Zufriedenheit",
+    "monthlyIncome": "Monatliches Einkommen",
+    "healthEnergy": "Gesundheit & Energie",
+    "relationshipQuality": "Beziehungsqualität",
+    "productivityPerHour": "Produktivität pro Stunde",
+    "decisionScore": "Entscheidungs-Score"
+  },
+  "simulation": {
+    "adjustFactors": "Faktoren anpassen",
+    "predictedOutcomes": "Vorhergesagte Ergebnisse",
+    "runSimulation": "Simulation starten",
+    "running": "Simuliere...",
+    "reset": "Zurücksetzen",
+    "back": "Zurück zu Szenarien",
+    "confidenceRange": "Konfidenzintervall"
+  },
+  "decisionScore": {
+    "completed": "Szenario abgeschlossen!",
+    "finalScore": "Endergebnis",
+    "timeTaken": "Benötigte Zeit",
+    "title": "Entscheidungs-Score",
+    "subtitle": "Basierend auf Ihren Entscheidungen",
+    "financialImpact": "Finanzielle Auswirkung",
+    "riskAssessment": "Risikobewertung",
+    "lifeQuality": "Lebensqualität",
+    "longTermGrowth": "Langfristiges Wachstum"
+  },
+  "howItWorks": {
+    "title": "So funktioniert's",
+    "subtitle": "Treffen Sie sichere Entscheidungen in drei einfachen Schritten",
+    "step1": {
+      "title": "Wählen Sie Ihr Szenario",
+      "description": "Wählen Sie aus beliebten Lebensentscheidungen oder beschreiben Sie Ihre einzigartige Situation in natürlicher Sprache."
+    },
+    "step2": {
+      "title": "Passen Sie Ihre Variablen an",
+      "description": "Optimieren Sie die Faktoren, die Ihnen am wichtigsten sind—Gehalt, Standort, Zeithorizont und mehr."
+    },
+    "step3": {
+      "title": "Sehen Sie Ihre Ergebnisse",
+      "description": "Erhalten Sie probabilistische Vorhersagen mit Konfidenzintervallen, nicht nur Einzelpunktschätzungen."
+    }
+  },
+  "features": {
+    "title": "Warum LifePath?",
+    "subtitle": "Entwickelt für echte Entscheidungen, nicht für akademische Übungen",
+    "probabilistic": {
+      "title": "Probabilistische Modellierung",
+      "description": "Sehen Sie Bereiche möglicher Ergebnisse, nicht nur einzelne Vorhersagen. Verstehen Sie die Unsicherheit bei jeder Entscheidung."
+    },
+    "instant": {
+      "title": "Sofortige Analyse",
+      "description": "Erhalten Sie Ergebnisse in Sekunden, nicht Stunden. Iterieren Sie schnell durch verschiedene Szenarien und Annahmen."
+    },
+    "private": {
+      "title": "Privat & Sicher",
+      "description": "Ihre Lebensentscheidungen bleiben privat. Wir teilen oder verkaufen niemals Ihre persönlichen Szenariodaten."
+    },
+    "datadriven": {
+      "title": "Datengetriebene Erkenntnisse",
+      "description": "Unsere Modelle basieren auf realen Wirtschaftsdaten und peer-reviewed Forschung, nicht auf Vermutungen."
+    },
+    "scenarios": {
+      "title": "Unbegrenzte Szenarien",
+      "description": "Führen Sie so viele Simulationen durch, wie Sie benötigen. Vergleichen Sie verschiedene Wege nebeneinander."
+    },
+    "export": {
+      "title": "Exportieren & Teilen",
+      "description": "Laden Sie Ihre Analyse als PDF herunter oder teilen Sie Szenarien mit Beratern und Familie."
+    }
+  },
+  "testimonials": {
+    "title": "Vertraut von Entscheidungsträgern",
+    "subtitle": "Schließen Sie sich Tausenden an, die Klarheit über ihre wichtigsten Lebensentscheidungen gewonnen haben",
+    "quote1": {
+      "text": "Ich war gelähmt, ob ich meinen Firmenjob verlassen sollte. LifePath zeigte mir die realistische Bandbreite der Ergebnisse, und ich hatte endlich das Vertrauen, den Sprung zu wagen.",
+      "author": "Sarah M.",
+      "role": "Ehem. VP, jetzt Gründerin"
+    },
+    "quote2": {
+      "text": "Die Kauf-vs-Miete-Simulation hat mich vor einem großen finanziellen Fehler bewahrt. Die Zahlen waren augenöffnend.",
+      "author": "Michael K.",
+      "role": "Software-Entwickler"
+    },
+    "quote3": {
+      "text": "Als Finanzberater empfehle ich LifePath all meinen Kunden. Es hilft ihnen, Ergebnisse zu visualisieren, wie Tabellen es nie könnten.",
+      "author": "Jennifer L.",
+      "role": "Zertifizierte Finanzplanerin"
+    }
+  },
+  "pricing": {
+    "title": "Einfache, transparente Preise",
+    "subtitle": "Starten Sie kostenlos, upgraden Sie bei Bedarf",
+    "perScenario": {
+      "title": "Pro Szenario bezahlen",
+      "price": "4,99 €",
+      "period": "pro Simulation",
+      "description": "Perfekt für einmalige Entscheidungen",
+      "features": [
+        "Einzelne detaillierte Simulation",
+        "Vollständige Ergebnisanalyse",
+        "PDF-Export",
+        "24 Stunden Zugriff auf Ergebnisse"
+      ],
+      "cta": "Simulation kaufen"
+    },
+    "monthly": {
+      "title": "Monatsplan",
+      "price": "19 €",
+      "period": "pro Monat",
+      "description": "Für laufende Lebensplanung",
+      "features": [
+        "Unbegrenzte Simulationen",
+        "Alle Premium-Szenarien",
+        "Ergebnisse speichern & vergleichen",
+        "Prioritäts-Support",
+        "Früher Zugang zu neuen Funktionen"
+      ],
+      "cta": "Kostenlos testen",
+      "popular": "Am beliebtesten"
+    },
+    "annual": {
+      "title": "Jahresplan",
+      "price": "149 €",
+      "period": "pro Jahr",
+      "description": "Bester Wert für ernsthafte Planer",
+      "features": [
+        "Alles im Monatsplan",
+        "35% Ersparnis",
+        "Exklusive Szenarien",
+        "1-zu-1 Onboarding-Gespräch",
+        "API-Zugang"
+      ],
+      "cta": "Jahresplan wählen",
+      "savings": "Spare 79 €"
+    },
+    "freeTrial": "7 Tage kostenlos testen",
+    "noCardRequired": "Keine Kreditkarte erforderlich"
+  },
+  "faq": {
+    "title": "Häufig gestellte Fragen",
+    "subtitle": "Alles, was Sie über LifePath wissen müssen",
+    "q1": {
+      "question": "Wie genau sind die Simulationen?",
+      "answer": "Unsere Modelle basieren auf realen Wirtschaftsdaten, versicherungsmathematischen Tabellen und peer-reviewed Forschung. Obwohl keine Vorhersage perfekt ist, bieten wir Konfidenzintervalle, um Ihnen die Unsicherheit zu verstehen. Die meisten Nutzer finden, dass unsere Vorhersagen eng mit ihren tatsächlichen Ergebnissen übereinstimmen."
+    },
+    "q2": {
+      "question": "Kann ich jede Lebensentscheidung simulieren?",
+      "answer": "Ja! Während wir vorgefertigte Szenarien für häufige Entscheidungen anbieten, können Sie jede Situation in natürlicher Sprache beschreiben. Unsere KI erstellt ein maßgeschneidertes Modell für Ihre einzigartigen Umstände."
+    },
+    "q3": {
+      "question": "Sind meine Daten privat?",
+      "answer": "Absolut. Wir verkaufen oder teilen niemals Ihre persönlichen Daten. Ihre Szenarien sind verschlüsselt und nur für Sie zugänglich. Sie können Ihre Daten jederzeit löschen."
+    },
+    "q4": {
+      "question": "Was ist der Unterschied zwischen kostenlosen und Premium-Szenarien?",
+      "answer": "Kostenlose Szenarien geben Ihnen einen Einblick in unsere Simulationsengine. Premium-Szenarien umfassen detailliertere Modelle, zusätzliche Faktoren, längere Zeithorizonte und erweiterte Ergebnismetriken."
+    },
+    "q5": {
+      "question": "Kann ich mein Abonnement jederzeit kündigen?",
+      "answer": "Ja, Sie können jederzeit kündigen. Bei Kündigung behalten Sie den Zugang bis zum Ende Ihrer Abrechnungsperiode. Keine Fragen gestellt."
+    },
+    "q6": {
+      "question": "Bieten Sie Rückerstattungen an?",
+      "answer": "Wir bieten eine 30-tägige Geld-zurück-Garantie für alle Abonnementpläne. Wenn Sie nicht zufrieden sind, kontaktieren Sie uns für eine vollständige Rückerstattung."
+    }
+  },
+  "cta": {
+    "title": "Bereit für bessere Entscheidungen?",
+    "subtitle": "Schließen Sie sich über 50.000 Menschen an, die Klarheit über ihre wichtigsten Lebensentscheidungen gewonnen haben.",
+    "button": "Starten Sie Ihre kostenlose Simulation"
+  },
+  "moreSimulations": {
+    "title": "Mehr Simulationen gewünscht?",
+    "description": "Schalten Sie unbegrenzte Szenarien, detaillierte Analysen und Premium-Funktionen mit einem LifePath-Konto frei.",
+    "cta": "Kostenlos starten"
+  },
+  "footer": {
+    "tagline": "Entscheidungen mit Zuversicht treffen",
+    "product": {
+      "title": "Produkt",
+      "scenarios": "Szenarien",
+      "pricing": "Preise",
+      "demo": "Live-Demo",
+      "api": "API"
+    },
+    "company": {
+      "title": "Unternehmen",
+      "about": "Über uns",
+      "blog": "Blog",
+      "careers": "Karriere",
+      "press": "Presse"
+    },
+    "resources": {
+      "title": "Ressourcen",
+      "help": "Hilfe-Center",
+      "guides": "Entscheidungs-Guides",
+      "research": "Forschung",
+      "community": "Community"
+    },
+    "legal": {
+      "title": "Rechtliches",
+      "privacy": "Datenschutz",
+      "terms": "Nutzungsbedingungen",
+      "cookies": "Cookie-Richtlinie"
+    },
+    "copyright": "© 2025 LifePath. Alle Rechte vorbehalten."
+  },
+  "auth": {
+    "signInTitle": "Willkommen zurück",
+    "signInSubtitle": "Melden Sie sich an, um auf Ihre Simulationen zuzugreifen",
+    "signUpTitle": "Konto erstellen",
+    "signUpSubtitle": "Beginnen Sie heute, bessere Entscheidungen zu treffen",
+    "email": "E-Mail-Adresse",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "forgotPassword": "Passwort vergessen?",
+    "noAccount": "Noch kein Konto?",
+    "hasAccount": "Bereits ein Konto?",
+    "signUp": "Registrieren",
+    "continueWith": "Oder fortfahren mit",
+    "google": "Google",
+    "apple": "Apple"
+  }
+}
