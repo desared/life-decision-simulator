@@ -20,18 +20,18 @@ export function ScenariosSection({ onSelectScenario, onPremiumClick }: Scenarios
       premium: false
     },
     {
-      id: 'relocate',
-      icon: MapPin,
-      titleKey: 'relocate.title',
-      descriptionKey: 'relocate.description',
-      premium: false
-    },
-    {
       id: 'buy-rent',
       icon: Home,
       titleKey: 'buyRent.title',
       descriptionKey: 'buyRent.description',
       premium: false
+    },
+    {
+      id: 'relocate',
+      icon: MapPin,
+      titleKey: 'relocate.title',
+      descriptionKey: 'relocate.description',
+      premium: true
     },
     {
       id: 'work-hours',

@@ -17,9 +17,9 @@
     "title": "Sehen Sie Ihre Zukunft",
     "titleHighlight": "Bevor Sie entscheiden",
     "subtitle": "Ihre wichtigsten Lebensentscheidungen sollten kein Ratespiel sein. Unser KI-Simulator modelliert echte Ergebnisse, damit Sie mit Klarheit wählen können.",
-    "inputPlaceholder": "Was wäre wenn ich...",
+    "inputPlaceholder": "Sollte ich...",
     "simulate": "Simulieren",
-    "tryExample": "Beispiel: \"Was wäre wenn ich den Job wechsle?\" oder \"Was wäre wenn ich umziehe?\""
+    "tryExample": "Beispiel: \"Sollte ich den Job wechseln?\" oder \"Sollte ich ein Haus kaufen?\""
   },
   "scenarios": {
     "title": "Beliebte Szenarien",
@@ -127,7 +127,7 @@
     }
   },
   "features": {
-    "title": "Warum LifePath?",
+    "title": "Warum shouldI?",
     "subtitle": "Entwickelt für echte Entscheidungen, nicht für akademische Übungen",
     "probabilistic": {
       "title": "Probabilistische Modellierung",
@@ -158,7 +158,7 @@
     "title": "Vertraut von Entscheidungsträgern",
     "subtitle": "Schließen Sie sich Tausenden an, die Klarheit über ihre wichtigsten Lebensentscheidungen gewonnen haben",
     "quote1": {
-      "text": "Ich war gelähmt, ob ich meinen Firmenjob verlassen sollte. LifePath zeigte mir die realistische Bandbreite der Ergebnisse, und ich hatte endlich das Vertrauen, den Sprung zu wagen.",
+      "text": "Ich war gelähmt, ob ich meinen Firmenjob verlassen sollte. shouldI zeigte mir die realistische Bandbreite der Ergebnisse, und ich hatte endlich das Vertrauen, den Sprung zu wagen.",
       "author": "Sarah M.",
       "role": "Ehem. VP, jetzt Gründerin"
     },
@@ -168,7 +168,7 @@
       "role": "Software-Entwickler"
     },
     "quote3": {
-      "text": "Als Finanzberater empfehle ich LifePath all meinen Kunden. Es hilft ihnen, Ergebnisse zu visualisieren, wie Tabellen es nie könnten.",
+      "text": "Als Finanzberater empfehle ich shouldI all meinen Kunden. Es hilft ihnen, Ergebnisse zu visualisieren, wie Tabellen es nie könnten.",
       "author": "Jennifer L.",
       "role": "Zertifizierte Finanzplanerin"
     }
@@ -176,24 +176,37 @@
   "pricing": {
     "title": "Einfache, transparente Preise",
     "subtitle": "Starten Sie kostenlos, upgraden Sie bei Bedarf",
-    "perScenario": {
-      "title": "Pro Szenario bezahlen",
-      "price": "4,99 €",
-      "period": "pro Simulation",
-      "description": "Perfekt für einmalige Entscheidungen",
+    "free": {
+      "title": "Kostenlos",
+      "price": "€0",
+      "period": "für immer",
+      "description": "Testen Sie shouldI ohne Verpflichtung",
       "features": [
-        "Einzelne detaillierte Simulation",
-        "Vollständige Ergebnisanalyse",
-        "PDF-Export",
-        "24 Stunden Zugriff auf Ergebnisse"
+        "2 kostenlose Szenarien",
+        "Job wechseln & Kaufen vs. Mieten",
+        "Grundlegende Ergebnisanalyse",
+        "Community-Support"
+      ],
+      "cta": "Kostenlos starten"
+    },
+    "perScenario": {
+      "title": "Pro Szenario",
+      "price": "€3,99",
+      "period": "pro Simulation",
+      "description": "Jedes Premium-Szenario freischalten",
+      "features": [
+        "Zugang zu jedem Premium-Szenario",
+        "Vollständige detaillierte Simulation",
+        "Komplette Ergebnisanalyse",
+        "48 Stunden Zugriff auf Ergebnisse"
       ],
       "cta": "Simulation kaufen"
     },
     "monthly": {
-      "title": "Monatsplan",
-      "price": "19 €",
+      "title": "Pro",
+      "price": "€19",
       "period": "pro Monat",
-      "description": "Für laufende Lebensplanung",
+      "description": "Für ernsthafte Lebensplaner",
       "features": [
         "Unbegrenzte Simulationen",
         "Alle Premium-Szenarien",
@@ -204,27 +217,12 @@
       "cta": "Kostenlos testen",
       "popular": "Am beliebtesten"
     },
-    "annual": {
-      "title": "Jahresplan",
-      "price": "149 €",
-      "period": "pro Jahr",
-      "description": "Bester Wert für ernsthafte Planer",
-      "features": [
-        "Alles im Monatsplan",
-        "35% Ersparnis",
-        "Exklusive Szenarien",
-        "1-zu-1 Onboarding-Gespräch",
-        "API-Zugang"
-      ],
-      "cta": "Jahresplan wählen",
-      "savings": "Spare 79 €"
-    },
     "freeTrial": "7 Tage kostenlos testen",
     "noCardRequired": "Keine Kreditkarte erforderlich"
   },
   "faq": {
     "title": "Häufig gestellte Fragen",
-    "subtitle": "Alles, was Sie über LifePath wissen müssen",
+    "subtitle": "Alles, was Sie über shouldI wissen müssen",
     "q1": {
       "question": "Wie genau sind die Simulationen?",
       "answer": "Unsere Modelle basieren auf realen Wirtschaftsdaten, versicherungsmathematischen Tabellen und peer-reviewed Forschung. Obwohl keine Vorhersage perfekt ist, bieten wir Konfidenzintervalle, um Ihnen die Unsicherheit zu verstehen. Die meisten Nutzer finden, dass unsere Vorhersagen eng mit ihren tatsächlichen Ergebnissen übereinstimmen."
@@ -257,7 +255,7 @@
   },
   "moreSimulations": {
     "title": "Mehr Simulationen gewünscht?",
-    "description": "Schalten Sie unbegrenzte Szenarien, detaillierte Analysen und Premium-Funktionen mit einem LifePath-Konto frei.",
+    "description": "Schalten Sie unbegrenzte Szenarien, detaillierte Analysen und Premium-Funktionen mit einem shouldI-Konto frei.",
     "cta": "Kostenlos starten"
   },
   "footer": {
@@ -289,7 +287,7 @@
       "terms": "Nutzungsbedingungen",
       "cookies": "Cookie-Richtlinie"
     },
-    "copyright": "© 2025 LifePath. Alle Rechte vorbehalten."
+    "copyright": "© 2025 shouldI. Alle Rechte vorbehalten."
   },
   "auth": {
     "signInTitle": "Willkommen zurück",
@@ -310,5 +308,72 @@
     "verificationSentMessage": "Wir haben Ihnen eine Bestätigungs-E-Mail gesendet. Bitte bestätigen Sie diese und melden Sie sich an.",
     "loginButton": "Anmelden",
     "emailNotVerified": "Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden. Überprüfen Sie Ihren Posteingang auf den Bestätigungslink."
+  },
+  "dashboard": {
+    "logout": "Abmelden",
+    "noScenario": "Kein Szenario ausgewählt",
+    "noScenarioDescription": "Wählen Sie ein Szenario in der Seitenleiste aus, um Simulationen anzuzeigen.",
+    "newSimulation": "Neue Simulation",
+    "simulationDetails": "Simulationsdetails",
+    "home": "Start",
+    "deleteSimulation": "Simulation löschen?",
+    "deleteSimulationDescription": "Diese Simulation wird dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "continue": "Weiter",
+    "createSimulation": "Neue Simulation erstellen",
+    "createSimulationDescription": "Testen Sie verschiedene Annahmen, um zu sehen, wie sie Ihre Ergebnisse beeinflussen",
+    "nameSimulation": "Simulation benennen",
+    "nameSimulationDescription": "Geben Sie Ihrer Simulation einen einprägsamen Namen, um sie später leicht zu finden.",
+    "simulationName": "Simulationsname",
+    "simulationNamePlaceholder": "z.B. Optimistisches Szenario",
+    "results": {
+      "optimal": "Optimales Ergebnis",
+      "moderate": "Moderates Ergebnis",
+      "risk": "Risikobehaftet",
+      "back": "Zurück",
+      "downloadPdf": "Bericht herunterladen",
+      "inputFactors": "Eingabefaktoren",
+      "predictedOutcomes": "Vorhergesagte Ergebnisse"
+    },
+    "sidebar": {
+      "title": "Lebensszenarien",
+      "openMenu": "Menü öffnen",
+      "simulation": "Simulation",
+      "simulations": "Simulationen",
+      "addScenario": "Neues Szenario hinzufügen",
+      "createScenario": "Neues Szenario erstellen",
+      "customScenario": "Benutzerdefiniertes Szenario",
+      "creating": "Erstellen...",
+      "createSelected": "Ausgewähltes Szenario erstellen",
+      "proFeatures": "Pro-Funktionen",
+      "proDescription": "Unbegrenzte Simulationen und KI-Einblicke freischalten.",
+      "upgradePlan": "Plan upgraden",
+      "deleteScenarioTitle": "Szenario löschen?",
+      "deleteScenarioDescription": "Dieses Szenario und alle zugehörigen Simulationen werden dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "delete": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "description": "Verwalten Sie Ihre Konto- und Abonnementeinstellungen.",
+      "account": "Konto",
+      "subscription": "Abonnement",
+      "currentPlan": "Aktueller Plan",
+      "freePlan": "Kostenlos",
+      "pauseSubscription": "Abonnement pausieren",
+      "pausing": "Pausieren...",
+      "pauseSuccess": "Ihr Abonnement wurde pausiert.",
+      "dangerZone": "Gefahrenzone",
+      "deleteWarning": "Löschen Sie Ihr Konto und alle Daten dauerhaft. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "deleteAccount": "Konto löschen",
+      "deleteConfirmTitle": "Sind Sie absolut sicher?",
+      "deleteConfirmDescription": "Dadurch werden Ihr Konto, alle Szenarien und Simulationen dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "cancel": "Abbrechen",
+      "confirmDelete": "Ja, mein Konto löschen",
+      "deleting": "Löschen...",
+      "reAuthRequired": "Bitte melden Sie sich ab und wieder an, um Ihr Konto zu löschen.",
+      "deleteError": "Konto konnte nicht gelöscht werden. Bitte versuchen Sie es erneut."
+    }
   }
 }

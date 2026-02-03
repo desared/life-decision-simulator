@@ -35,20 +35,20 @@ export function SearchAutocomplete({
       keywords: ['job', 'career', 'work', 'salary', 'position', 'arbeit', 'beruf', 'gehalt', 'stelle', 'wechsel']
     },
     {
-      id: 'relocate',
-      icon: MapPin,
-      titleKey: 'relocate.title',
-      descriptionKey: 'relocate.description',
-      premium: false,
-      keywords: ['city', 'move', 'relocate', 'location', 'stadt', 'umzug', 'umziehen', 'ort', 'wohnort']
-    },
-    {
       id: 'buy-rent',
       icon: Home,
       titleKey: 'buyRent.title',
       descriptionKey: 'buyRent.description',
       premium: false,
       keywords: ['buy', 'rent', 'house', 'home', 'apartment', 'kaufen', 'mieten', 'haus', 'wohnung', 'immobilie']
+    },
+    {
+      id: 'relocate',
+      icon: MapPin,
+      titleKey: 'relocate.title',
+      descriptionKey: 'relocate.description',
+      premium: true,
+      keywords: ['city', 'move', 'relocate', 'location', 'stadt', 'umzug', 'umziehen', 'ort', 'wohnort']
     },
     {
       id: 'work-hours',
@@ -153,7 +153,7 @@ export function SearchAutocomplete({
               {t('suggestions')}
             </p>
             <div className="max-h-80 overflow-y-auto">
-              {filteredScenarios.map((scenario, index) => (
+              {filteredScenarios.slice(0, 2).map((scenario, index) => (
                 <button
                   key={scenario.id}
                   onClick={() => handleSelect(scenario)}
@@ -181,6 +181,11 @@ export function SearchAutocomplete({
                   )}
                 </button>
               ))}
+              {filteredScenarios.length > 2 && (
+                <div className="px-3 py-2 text-center text-muted-foreground text-sm">
+                  •••
+                </div>
+              )}
             </div>
             {filteredScenarios.length === 0 && (
               <p className="px-3 py-4 text-sm text-muted-foreground text-center">

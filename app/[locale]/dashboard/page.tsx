@@ -2,9 +2,12 @@
 
 import { useState, useMemo } from "react"
 import { Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { SimulationCard } from "@/components/dashboard/simulation-card"
 import { SimulationPanel, Factor, Outcome } from "@/components/simulation-panel"
+import { SimulationResults } from "@/components/dashboard/simulation-results"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -23,13 +26,25 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog"
 import { useFirestore } from "@/contexts/firestore-context"
+import { useTranslations } from "next-intl"
 import { Timestamp } from "firebase/firestore"
 
 export default function DashboardPage() {
-    const [viewMode, setViewMode] = useState<"list" | "detail" | "new">("list")
+    const t = useTranslations('dashboard')
+    const [viewMode, setViewMode] = useState<"list" | "view" | "edit" | "new">("list")
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [simulationToDelete, setSimulationToDelete] = useState<string | null>(null)
+    const [nameDialogOpen, setNameDialogOpen] = useState(false)
+    const [newSimulationName, setNewSimulationName] = useState("")
 
     const {
         selectedScenario,
@@ -96,13 +111,24 @@ export default function DashboardPage() {
     }, [selectedScenario?.title])
 
     const handleCreateNew = () => {
+        setNewSimulationName("")
+        setNameDialogOpen(true)
+    }
+
+    const handleStartNewSimulation = () => {
+        setNameDialogOpen(false)
         selectSimulation(null)
         setViewMode("new")
     }
 
     const handleViewSimulation = (id: string) => {
         selectSimulation(id)
-        setViewMode("detail")
+        setViewMode("view")
+    }
+
+    const handleEditSimulation = (id: string) => {
+        selectSimulation(id)
+        setViewMode("edit")
     }
 
     const handleBack = () => {
@@ -139,8 +165,8 @@ export default function DashboardPage() {
 
         try {
             if (viewMode === "new") {
-                // Create new simulation
-                const title = `Simulation ${new Date().toLocaleDateString()}`
+                // Create new simulation with custom name
+                const title = newSimulationName.trim() || `Simulation ${new Date().toLocaleDateString()}`
                 await createSimulation({
                     title,
                     status,
@@ -201,17 +227,54 @@ export default function DashboardPage() {
     if (!selectedScenario) {
         return (
             <div className="flex flex-col items-center justify-center py-20 text-center">
-                <h2 className="text-xl font-semibold text-foreground">No Scenario Selected</h2>
-                <p className="mt-2 text-muted-foreground">Select a scenario from the sidebar to view simulations.</p>
+                <h2 className="text-xl font-semibold text-foreground">{t('noScenario')}</h2>
+                <p className="mt-2 text-muted-foreground">{t('noScenarioDescription')}</p>
             </div>
         )
     }
 
-    // Detail/New view
-    if (viewMode === "new" || viewMode === "detail") {
+    // View mode (read-only results with PDF download)
+    if (viewMode === "view" && selectedSimulation) {
+        return (
+            <div className="space-y-6">
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink onClick={handleBack} className="cursor-pointer">
+                                {t('home')}
+                            </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbLink onClick={handleBack} className="cursor-pointer">
+                                {selectedScenario.title}
+                            </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbPage>{selectedSimulation.title}</BreadcrumbPage>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
+
+                <SimulationResults
+                    title={selectedSimulation.title}
+                    factors={selectedSimulation.factors}
+                    outcomes={selectedSimulation.outcomes}
+                    status={selectedSimulation.status}
+                    onBack={handleBack}
+                />
+            </div>
+        )
+    }
+
+    // Edit/New view
+    if (viewMode === "new" || viewMode === "edit") {
         const currentFactors = selectedSimulation?.factors || defaultFactors
         const currentOutcomes = selectedSimulation?.outcomes || defaultOutcomes
-        const title = viewMode === "new" ? "New Simulation" : selectedSimulation?.title || "Simulation Details"
+        const title = viewMode === "new"
+            ? (newSimulationName.trim() || t('newSimulation'))
+            : selectedSimulation?.title || t('simulationDetails')
 
         return (
             <div className="space-y-6">
@@ -219,7 +282,7 @@ export default function DashboardPage() {
                     <BreadcrumbList>
                         <BreadcrumbItem>
                             <BreadcrumbLink onClick={handleBack} className="cursor-pointer">
-                                Home
+                                {t('home')}
                             </BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
@@ -250,15 +313,9 @@ export default function DashboardPage() {
     // List view
     return (
         <div className="space-y-8">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-foreground">{selectedScenario.title}</h1>
-                    <p className="mt-2 text-muted-foreground">{selectedScenario.description}</p>
-                </div>
-                <Button onClick={handleCreateNew} className="gradient-primary text-white shadow-lg shadow-primary/20">
-                    <Plus className="mr-2 h-4 w-4" />
-                    New Simulation
-                </Button>
+            <div>
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">{selectedScenario.title}</h1>
+                <p className="mt-2 text-muted-foreground">{selectedScenario.description}</p>
             </div>
 
             {simulationsLoading ? (
@@ -276,7 +333,7 @@ export default function DashboardPage() {
                             inputs={sim.inputSummary}
                             outcome={sim.outcomeSummary}
                             onView={() => handleViewSimulation(sim.id)}
-                            onEdit={() => handleViewSimulation(sim.id)}
+                            onEdit={() => handleEditSimulation(sim.id)}
                             onDelete={() => {
                                 setSimulationToDelete(sim.id)
                                 setDeleteDialogOpen(true)
@@ -292,28 +349,56 @@ export default function DashboardPage() {
                         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted group-hover:bg-primary/10">
                             <Plus className="h-6 w-6 text-muted-foreground group-hover:text-primary" />
                         </div>
-                        <h3 className="font-semibold text-foreground group-hover:text-primary">Create New Simulation</h3>
-                        <p className="mt-1 text-sm text-muted-foreground">Start from scratch with default values</p>
+                        <h3 className="font-semibold text-foreground group-hover:text-primary">{t('createSimulation')}</h3>
+                        <p className="mt-1 text-sm text-muted-foreground">{t('createSimulationDescription')}</p>
                     </button>
                 </div>
             )}
+
+            {/* Name Dialog for New Simulation */}
+            <Dialog open={nameDialogOpen} onOpenChange={setNameDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{t('nameSimulation')}</DialogTitle>
+                        <DialogDescription>{t('nameSimulationDescription')}</DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <Label htmlFor="simulation-name">{t('simulationName')}</Label>
+                        <Input
+                            id="simulation-name"
+                            value={newSimulationName}
+                            onChange={(e) => setNewSimulationName(e.target.value)}
+                            placeholder={t('simulationNamePlaceholder')}
+                            className="mt-2"
+                        />
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setNameDialogOpen(false)}>
+                            {t('cancel')}
+                        </Button>
+                        <Button onClick={handleStartNewSimulation} className="gradient-primary text-white">
+                            {t('continue')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             {/* Delete Confirmation Dialog */}
             <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Simulation?</AlertDialogTitle>
+                        <AlertDialogTitle>{t('deleteSimulation')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This will permanently delete this simulation. This action cannot be undone.
+                            {t('deleteSimulationDescription')}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleDeleteConfirm}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         >
-                            Delete
+                            {t('delete')}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

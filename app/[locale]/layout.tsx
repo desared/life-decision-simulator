@@ -13,7 +13,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'LifePath - Life Decision Simulator',
+  title: 'shouldI - Life Decision Simulator',
   description: 'Simulate your life decisions and explore possible futures with AI-powered scenario analysis',
   generator: 'v0.app',
   icons: {

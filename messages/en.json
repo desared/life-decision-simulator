@@ -17,9 +17,9 @@
     "title": "See Your Future",
     "titleHighlight": "Before You Decide",
     "subtitle": "Life's biggest decisions shouldn't feel like guesswork. Our AI-powered simulator models real outcomes so you can choose with clarity.",
-    "inputPlaceholder": "What if I...",
+    "inputPlaceholder": "Should I...",
     "simulate": "Simulate",
-    "tryExample": "Try: \"What if I change jobs?\" or \"What if I move to a new city?\""
+    "tryExample": "Try: \"Should I change jobs?\" or \"Should I buy a home?\""
   },
   "scenarios": {
     "title": "Popular Scenarios",
@@ -127,7 +127,7 @@
     }
   },
   "features": {
-    "title": "Why LifePath?",
+    "title": "Why shouldI?",
     "subtitle": "Built for real decisions, not academic exercises",
     "probabilistic": {
       "title": "Probabilistic Modeling",
@@ -158,7 +158,7 @@
     "title": "Trusted by Decision Makers",
     "subtitle": "Join thousands who've gained clarity on their biggest life choices",
     "quote1": {
-      "text": "I was paralyzed about whether to leave my corporate job. LifePath showed me the realistic range of outcomes, and I finally had the confidence to make the leap.",
+      "text": "I was paralyzed about whether to leave my corporate job. shouldI showed me the realistic range of outcomes, and I finally had the confidence to make the leap.",
       "author": "Sarah M.",
       "role": "Former VP, now Founder"
     },
@@ -168,7 +168,7 @@
       "role": "Software Engineer"
     },
     "quote3": {
-      "text": "As a financial advisor, I recommend LifePath to all my clients. It helps them visualize outcomes in a way spreadsheets never could.",
+      "text": "As a financial advisor, I recommend shouldI to all my clients. It helps them visualize outcomes in a way spreadsheets never could.",
       "author": "Jennifer L.",
       "role": "Certified Financial Planner"
     }
@@ -176,24 +176,37 @@
   "pricing": {
     "title": "Simple, Transparent Pricing",
     "subtitle": "Start free, upgrade when you need more",
+    "free": {
+      "title": "Free",
+      "price": "€0",
+      "period": "forever",
+      "description": "Try shouldI with no commitment",
+      "features": [
+        "2 free scenarios",
+        "Change Jobs & Buy vs Rent",
+        "Core outcome analysis",
+        "Community support"
+      ],
+      "cta": "Get Started Free"
+    },
     "perScenario": {
       "title": "Pay Per Scenario",
-      "price": "$4.99",
+      "price": "€3.99",
       "period": "per simulation",
-      "description": "Perfect for one-time decisions",
+      "description": "Unlock any premium scenario",
       "features": [
-        "Single detailed simulation",
-        "Full outcome analysis",
-        "PDF export",
-        "24-hour access to results"
+        "Access any premium scenario",
+        "Full detailed simulation",
+        "Complete outcome analysis",
+        "48-hour access to results"
       ],
       "cta": "Buy Simulation"
     },
     "monthly": {
-      "title": "Monthly Plan",
-      "price": "$19",
+      "title": "Pro",
+      "price": "€19",
       "period": "per month",
-      "description": "For ongoing life planning",
+      "description": "For serious life planners",
       "features": [
         "Unlimited simulations",
         "All premium scenarios",
@@ -204,27 +217,12 @@
       "cta": "Start Free Trial",
       "popular": "Most Popular"
     },
-    "annual": {
-      "title": "Annual Plan",
-      "price": "$149",
-      "period": "per year",
-      "description": "Best value for serious planners",
-      "features": [
-        "Everything in Monthly",
-        "35% savings",
-        "Exclusive scenarios",
-        "1-on-1 onboarding call",
-        "API access"
-      ],
-      "cta": "Get Annual Plan",
-      "savings": "Save $79"
-    },
     "freeTrial": "Try free for 7 days",
     "noCardRequired": "No credit card required"
   },
   "faq": {
     "title": "Frequently Asked Questions",
-    "subtitle": "Everything you need to know about LifePath",
+    "subtitle": "Everything you need to know about shouldI",
     "q1": {
       "question": "How accurate are the simulations?",
       "answer": "Our models are based on real-world economic data, actuarial tables, and peer-reviewed research. While no prediction is perfect, we provide confidence ranges to help you understand the uncertainty. Most users find our predictions align closely with their actual outcomes."
@@ -257,7 +255,7 @@
   },
   "moreSimulations": {
     "title": "Want More Simulations?",
-    "description": "Unlock unlimited scenarios, detailed analysis, and premium features with a LifePath account.",
+    "description": "Unlock unlimited scenarios, detailed analysis, and premium features with a shouldI account.",
     "cta": "Get Started Free"
   },
   "footer": {
@@ -289,7 +287,7 @@
       "terms": "Terms of Service",
       "cookies": "Cookie Policy"
     },
-    "copyright": "© 2025 LifePath. All rights reserved."
+    "copyright": "© 2025 shouldI. All rights reserved."
   },
   "auth": {
     "signInTitle": "Welcome back",
@@ -310,5 +308,72 @@
     "verificationSentMessage": "We have sent you a verification email. Please verify it and log in.",
     "loginButton": "Login",
     "emailNotVerified": "Please verify your email before logging in. Check your inbox for the verification link."
+  },
+  "dashboard": {
+    "logout": "Log out",
+    "noScenario": "No Scenario Selected",
+    "noScenarioDescription": "Select a scenario from the sidebar to view simulations.",
+    "newSimulation": "New Simulation",
+    "simulationDetails": "Simulation Details",
+    "home": "Home",
+    "deleteSimulation": "Delete Simulation?",
+    "deleteSimulationDescription": "This will permanently delete this simulation. This action cannot be undone.",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "continue": "Continue",
+    "createSimulation": "Create New Simulation",
+    "createSimulationDescription": "Try different assumptions to see how they affect your outcomes",
+    "nameSimulation": "Name Your Simulation",
+    "nameSimulationDescription": "Give your simulation a memorable name to easily find it later.",
+    "simulationName": "Simulation Name",
+    "simulationNamePlaceholder": "e.g., Optimistic Scenario",
+    "results": {
+      "optimal": "Optimal Outcome",
+      "moderate": "Moderate Outcome",
+      "risk": "At Risk",
+      "back": "Back",
+      "downloadPdf": "Download Report",
+      "inputFactors": "Input Factors",
+      "predictedOutcomes": "Predicted Outcomes"
+    },
+    "sidebar": {
+      "title": "Life Scenarios",
+      "openMenu": "Open menu",
+      "simulation": "simulation",
+      "simulations": "simulations",
+      "addScenario": "Add New Scenario",
+      "createScenario": "Create New Scenario",
+      "customScenario": "Custom scenario",
+      "creating": "Creating...",
+      "createSelected": "Create Selected Scenario",
+      "proFeatures": "Pro Features",
+      "proDescription": "Unlock unlimited simulations and AI insights.",
+      "upgradePlan": "Upgrade Plan",
+      "deleteScenarioTitle": "Delete Scenario?",
+      "deleteScenarioDescription": "This will permanently delete this scenario and all its simulations. This action cannot be undone.",
+      "delete": "Delete",
+      "cancel": "Cancel"
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Manage your account and subscription settings.",
+      "account": "Account",
+      "subscription": "Subscription",
+      "currentPlan": "Current plan",
+      "freePlan": "Free",
+      "pauseSubscription": "Pause Subscription",
+      "pausing": "Pausing...",
+      "pauseSuccess": "Your subscription has been paused.",
+      "dangerZone": "Danger Zone",
+      "deleteWarning": "Permanently delete your account and all data. This action cannot be undone.",
+      "deleteAccount": "Delete Account",
+      "deleteConfirmTitle": "Are you absolutely sure?",
+      "deleteConfirmDescription": "This will permanently delete your account, all scenarios, and simulations. This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirmDelete": "Yes, delete my account",
+      "deleting": "Deleting...",
+      "reAuthRequired": "Please log out and log back in to delete your account.",
+      "deleteError": "Failed to delete account. Please try again."
+    }
   }
 }

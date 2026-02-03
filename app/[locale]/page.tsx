@@ -21,7 +21,7 @@ import { SimulationPanelTranslated } from "@/components/simulation-panel-transla
 import { onAuthStateChanged, signOut, User } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 
-export default function LifePathSimulator() {
+export default function ShouldISimulator() {
   const tCommon = useTranslations('common')
   const tNav = useTranslations('nav')
   const tFactors = useTranslations('factors')
@@ -171,7 +171,7 @@ export default function LifePathSimulator() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
               <Sparkles className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-foreground">LifePath</span>
+            <span className="text-xl font-bold text-foreground">should<span className="text-primary">I</span></span>
           </button>
 
           {/* Desktop nav */}

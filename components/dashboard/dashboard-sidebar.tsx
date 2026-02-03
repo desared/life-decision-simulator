@@ -3,7 +3,6 @@
 import React, { useState } from "react"
 import { Briefcase, MapPin, Baby, Plus, FolderOpen, Trash2, MoreHorizontal, Home, TrendingUp, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
     Dialog,
     DialogContent,
@@ -29,6 +28,8 @@ import {
 } from "@/components/ui/alert-dialog"
 import { cn } from "@/lib/utils"
 import { useFirestore } from "@/contexts/firestore-context"
+import { useTranslations } from "next-intl"
+import { UpgradeDialog } from "./upgrade-dialog"
 
 const iconMap: Record<string, React.ElementType> = {
     briefcase: Briefcase,
@@ -41,6 +42,7 @@ const iconMap: Record<string, React.ElementType> = {
 }
 
 export function DashboardSidebar() {
+    const t = useTranslations('dashboard')
     const {
         scenarios,
         selectedScenario,
@@ -55,6 +57,7 @@ export function DashboardSidebar() {
     const [isCreating, setIsCreating] = useState(false)
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [scenarioToDelete, setScenarioToDelete] = useState<string | null>(null)
+    const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false)
 
     const handleCreateScenario = async () => {
         if (!newScenarioTitle) return
@@ -62,17 +65,14 @@ export function DashboardSidebar() {
         setIsCreating(true)
         try {
             const scenario = [
-                { title: "Change Career", icon: "briefcase" },
-                { title: "Buy a Home", icon: "home" },
-                { title: "Start a Business", icon: "trending-up" },
-                { title: "Relocate", icon: "map-pin" },
-                { title: "Have a Child", icon: "baby" },
-                { title: "Retire Early", icon: "sun" },
+                { title: "Change Jobs", icon: "briefcase" },
+                { title: "Buy vs Rent", icon: "home" },
+                { title: "Move to a New City", icon: "map-pin" },
             ].find(s => s.title === newScenarioTitle)
 
             const icon = scenario ? scenario.icon : "folder"
 
-            await createScenario(newScenarioTitle, "Custom scenario", icon)
+            await createScenario(newScenarioTitle, t('sidebar.customScenario'), icon)
             setNewScenarioTitle("")
             setIsAddDialogOpen(false)
         } catch (error) {
@@ -100,7 +100,7 @@ export function DashboardSidebar() {
             <div className="flex-1 overflow-y-auto p-6">
                 <div className="mb-6 flex items-center justify-between">
                     <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        Life Scenarios
+                        {t('sidebar.title')}
                     </h3>
                 </div>
 
@@ -134,7 +134,7 @@ export function DashboardSidebar() {
                                     <div className="flex flex-1 flex-col items-start gap-0.5">
                                         <span>{scenario.title}</span>
                                         <span className="text-xs font-normal text-muted-foreground">
-                                            {scenario.simulationCount} simulation{scenario.simulationCount !== 1 ? "s" : ""}
+                                            {scenario.simulationCount} {scenario.simulationCount !== 1 ? t('sidebar.simulations') : t('sidebar.simulation')}
                                         </span>
                                     </div>
 
@@ -160,7 +160,7 @@ export function DashboardSidebar() {
                                                     }}
                                                 >
                                                     <Trash2 className="mr-2 h-4 w-4" />
-                                                    Delete
+                                                    {t('sidebar.delete')}
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
@@ -179,12 +179,12 @@ export function DashboardSidebar() {
                                 className="w-full justify-start gap-2 border-dashed text-muted-foreground hover:text-foreground"
                             >
                                 <Plus className="h-4 w-4" />
-                                Add New Scenario
+                                {t('sidebar.addScenario')}
                             </Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
-                                <DialogTitle>Create New Scenario</DialogTitle>
+                                <DialogTitle>{t('sidebar.createScenario')}</DialogTitle>
                             </DialogHeader>
                             <div className="space-y-4 py-4">
                                 <div className="grid grid-cols-2 gap-2">
@@ -215,7 +215,7 @@ export function DashboardSidebar() {
                                     disabled={!newScenarioTitle || isCreating}
                                     className="w-full"
                                 >
-                                    {isCreating ? "Creating..." : "Create Selected Scenario"}
+                                    {isCreating ? t('sidebar.creating') : t('sidebar.createSelected')}
                                 </Button>
                             </div>
                         </DialogContent>
@@ -226,19 +226,18 @@ export function DashboardSidebar() {
             <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Scenario?</AlertDialogTitle>
+                        <AlertDialogTitle>{t('sidebar.deleteScenarioTitle')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This will permanently delete this scenario and all its simulations. This action cannot be
-                            undone.
+                            {t('sidebar.deleteScenarioDescription')}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>{t('sidebar.cancel')}</AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleDeleteScenario}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         >
-                            Delete
+                            {t('sidebar.delete')}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
@@ -246,13 +245,19 @@ export function DashboardSidebar() {
 
             <div className="border-t border-border p-4">
                 <div className="rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 p-4">
-                    <h4 className="mb-1 text-sm font-semibold text-primary">Pro Features</h4>
-                    <p className="text-xs text-muted-foreground">Unlock unlimited simulations and AI insights.</p>
-                    <Button size="sm" className="mt-3 w-full gradient-primary text-white">
-                        Upgrade Plan
+                    <h4 className="mb-1 text-sm font-semibold text-primary">{t('sidebar.proFeatures')}</h4>
+                    <p className="text-xs text-muted-foreground">{t('sidebar.proDescription')}</p>
+                    <Button
+                        size="sm"
+                        className="mt-3 w-full gradient-primary text-white"
+                        onClick={() => setUpgradeDialogOpen(true)}
+                    >
+                        {t('sidebar.upgradePlan')}
                     </Button>
                 </div>
             </div>
+
+            <UpgradeDialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen} />
         </aside>
     )
 }

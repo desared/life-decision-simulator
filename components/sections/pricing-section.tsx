@@ -13,16 +13,16 @@ export function PricingSection({ onGetStarted }: PricingSectionProps) {
 
   const plans = [
     {
+      key: 'free',
+      popular: false
+    },
+    {
       key: 'perScenario',
       popular: false
     },
     {
       key: 'monthly',
       popular: true
-    },
-    {
-      key: 'annual',
-      popular: false
     }
   ]
 
@@ -57,13 +57,6 @@ export function PricingSection({ onGetStarted }: PricingSectionProps) {
                 </div>
               )}
 
-              {plan.key === 'annual' && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-accent px-4 py-1 text-sm font-medium text-white">
-                    {t(`${plan.key}.savings`)}
-                  </span>
-                </div>
-              )}
 
               <div className="mb-6">
                 <h3 className="text-xl font-semibold text-foreground mb-2">
