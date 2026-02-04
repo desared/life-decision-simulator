@@ -18,6 +18,8 @@ export interface Factor {
   min: number;
   max: number;
   unit?: string;
+  question?: string; // Full question text
+  answer?: string;   // User selected answer text
 }
 
 // Outcome Interface (predicted results)
@@ -28,6 +30,10 @@ export interface Outcome {
   rangeMin: number;
   rangeMax: number;
   trend: "up" | "down" | "stable";
+  description?: string;
+  confidence?: "high" | "medium" | "low";
+  confidenceInterval?: string;
+  recommendation?: string;
 }
 
 // Scenario Interface (parent container for simulations)

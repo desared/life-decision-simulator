@@ -10,15 +10,31 @@ interface HeroSectionProps {
   setCustomQuestion: (value: string) => void
   onSelectScenario: (id: string) => void
   onPremiumClick: () => void
+  onCustomQuestionSubmit: (question: string) => void
 }
 
 export function HeroSection({
   customQuestion,
   setCustomQuestion,
   onSelectScenario,
-  onPremiumClick
+  onPremiumClick,
+  onCustomQuestionSubmit
 }: HeroSectionProps) {
   const t = useTranslations('hero')
+
+  const handleSimulateClick = () => {
+    // Check if user entered a custom "Should I...?" question
+    const trimmedQuestion = customQuestion.trim().toLowerCase()
+    if (trimmedQuestion && (trimmedQuestion.startsWith('should i') || trimmedQuestion.startsWith('should'))) {
+      onCustomQuestionSubmit(customQuestion.trim())
+    } else if (customQuestion.trim()) {
+      // If they typed something but not a "Should I" question, prepend it
+      onCustomQuestionSubmit(`Should I ${customQuestion.trim()}?`)
+    } else {
+      // No custom question, show premium/auth modal
+      onPremiumClick()
+    }
+  }
 
   return (
     <section className="relative overflow-hidden pb-16 pt-12 md:pb-24 md:pt-20">
@@ -59,7 +75,7 @@ export function HeroSection({
               placeholder={t('inputPlaceholder')}
             />
             <Button
-              onClick={onPremiumClick}
+              onClick={handleSimulateClick}
               className="h-14 px-6 md:px-8 gradient-primary text-white font-semibold shadow-lg hover:opacity-90 transition-opacity shrink-0"
             >
               <span className="hidden sm:inline">{t('simulate')}</span>

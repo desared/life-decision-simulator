@@ -1,21 +1,9 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import { Plus } from "lucide-react"
-import { SimulationCard } from "@/components/dashboard/simulation-card"
-import { SimulationPanel, Factor, Outcome } from "@/components/simulation-panel"
-import { SimulationResults } from "@/components/dashboard/simulation-results"
+import { useState, useEffect } from "react"
+import { Search, ArrowRight, Sparkles, Eye, Trash2, Plus, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -26,189 +14,88 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"
 import { useFirestore } from "@/contexts/firestore-context"
 import { useTranslations } from "next-intl"
 import { Timestamp } from "firebase/firestore"
+import { DashboardSurveyModal } from "@/components/dashboard/dashboard-survey-modal"
+import { SimulationResults } from "@/components/dashboard/simulation-results"
+
 
 export default function DashboardPage() {
     const t = useTranslations('dashboard')
-    const [viewMode, setViewMode] = useState<"list" | "view" | "edit" | "new">("list")
+    const [searchQuery, setSearchQuery] = useState("")
+    const [surveyModalOpen, setSurveyModalOpen] = useState(false)
+    const [currentQuestion, setCurrentQuestion] = useState("")
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-    const [simulationToDelete, setSimulationToDelete] = useState<string | null>(null)
-    const [nameDialogOpen, setNameDialogOpen] = useState(false)
-    const [newSimulationName, setNewSimulationName] = useState("")
+    const [scenarioToDelete, setScenarioToDelete] = useState<string | null>(null)
+    const [viewingScenarioId, setViewingScenarioId] = useState<string | null>(null)
 
     const {
-        selectedScenario,
+        scenarios,
         simulations,
-        selectedSimulation,
-        selectSimulation,
-        createSimulation,
-        updateSimulation,
-        deleteSimulation,
-        simulationsLoading,
+        selectedScenario,
+        selectScenario,
+        deleteScenario,
         loading,
+        simulationsLoading,
+        freeTierLimits,
+        canCreateScenario,
     } = useFirestore()
 
-    // Context-aware defaults for new simulation
-    const { defaultFactors, defaultOutcomes } = useMemo(() => {
-        const title = selectedScenario?.title || ""
+    const canCreate = canCreateScenario()
 
-        if (title === "Buy vs Rent") {
-            return {
-                defaultFactors: [
-                    { id: "property-price", label: "Property Price", value: 500, min: 100, max: 2000, unit: "k" },
-                    { id: "monthly-rent", label: "Monthly Rent", value: 2000, min: 500, max: 10000, unit: "$" },
-                    { id: "mortgage-rate", label: "Interest Rate", value: 6.5, min: 2, max: 15, unit: "%" },
-                    { id: "appreciation", label: "Appreciation", value: 4, min: -5, max: 15, unit: "%" },
-                ],
-                defaultOutcomes: [
-                    { id: "net-worth", label: "Net Worth (10y)", value: 50, rangeMin: 40, rangeMax: 60, trend: "stable" as const },
-                    { id: "monthly-cashflow", label: "Monthly Cashflow", value: 40, rangeMin: 30, rangeMax: 50, trend: "stable" as const },
-                    { id: "flexibility", label: "Flexibility", value: 30, rangeMin: 20, rangeMax: 40, trend: "down" as const },
-                ]
-            }
+    // When viewingScenarioId changes, select that scenario to load its simulations
+    useEffect(() => {
+        if (viewingScenarioId) {
+            selectScenario(viewingScenarioId)
         }
+    }, [viewingScenarioId, selectScenario])
 
-        if (title === "Move to a New City") {
-            return {
-                defaultFactors: [
-                    { id: "col-change", label: "Cost of Living", value: 10, min: -50, max: 100, unit: "%" },
-                    { id: "moving-cost", label: "Moving Costs", value: 5000, min: 1000, max: 20000, unit: "$" },
-                    { id: "quality-life", label: "Quality of Life", value: 70, min: 0, max: 100, unit: "/100" },
-                    { id: "social-network", label: "Social Network", value: 30, min: 0, max: 100, unit: "/100" },
-                ],
-                defaultOutcomes: [
-                    { id: "disposable-income", label: "Disposable Income", value: 60, rangeMin: 50, rangeMax: 70, trend: "up" as const },
-                    { id: "happiness", label: "Overall Happiness", value: 65, rangeMin: 55, rangeMax: 75, trend: "up" as const },
-                    { id: "career-opps", label: "Job Opportunities", value: 60, rangeMin: 50, rangeMax: 70, trend: "stable" as const },
-                ]
-            }
+    const handleSearchSubmit = () => {
+        const trimmed = searchQuery.trim()
+        if (!trimmed) return
+
+        let question = trimmed
+        if (!trimmed.toLowerCase().startsWith('should i')) {
+            question = `Should I ${trimmed}?`
         }
+        setCurrentQuestion(question)
+        setSurveyModalOpen(true)
+        setSearchQuery("")
+    }
 
-        // Default: Change Jobs / Other
-        return {
-            defaultFactors: [
-                { id: "salary-change", label: "Salary Change", value: 20, min: -50, max: 100, unit: "%" },
-                { id: "commute-time", label: "Commute Time", value: 30, min: 0, max: 120, unit: " min" },
-                { id: "job-satisfaction", label: "Expected Satisfaction", value: 70, min: 0, max: 100, unit: "%" },
-                { id: "career-growth", label: "Career Growth", value: 80, min: 0, max: 100, unit: "%" },
-            ],
-            defaultOutcomes: [
-                { id: "financial", label: "Financial Stability", value: 60, rangeMin: 50, rangeMax: 70, trend: "up" as const },
-                { id: "work-life", label: "Work-Life Balance", value: 50, rangeMin: 40, rangeMax: 60, trend: "stable" as const },
-                { id: "growth", label: "Career Advancement", value: 75, rangeMin: 65, rangeMax: 85, trend: "up" as const },
-            ]
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleSearchSubmit()
         }
-    }, [selectedScenario?.title])
-
-    const handleCreateNew = () => {
-        setNewSimulationName("")
-        setNameDialogOpen(true)
     }
 
-    const handleStartNewSimulation = () => {
-        setNameDialogOpen(false)
-        selectSimulation(null)
-        setViewMode("new")
-    }
-
-    const handleViewSimulation = (id: string) => {
-        selectSimulation(id)
-        setViewMode("view")
-    }
-
-    const handleEditSimulation = (id: string) => {
-        selectSimulation(id)
-        setViewMode("edit")
-    }
-
-    const handleBack = () => {
-        setViewMode("list")
-        selectSimulation(null)
-    }
-
-    const handleSave = async (factors: Factor[], outcomes: Outcome[]) => {
-        if (!selectedScenario) return
-
-        // Calculate status based on outcomes
-        const avgValue = outcomes.reduce((acc, o) => acc + o.value, 0) / outcomes.length
-        const status: "optimal" | "moderate" | "risk" =
-            avgValue >= 70 ? "optimal" : avgValue >= 40 ? "moderate" : "risk"
-
-        // Create input summary
-        const inputSummary = factors.slice(0, 2).map((f) => ({
-            label: f.label,
-            value: `${f.value}${f.unit || ""}`,
-        }))
-
-        // Create outcome summary (use first outcome)
-        const primaryOutcome = outcomes[0]
-        const outcomeSummary = {
-            label: primaryOutcome.label,
-            value: `${primaryOutcome.value}%`,
-            trend:
-                primaryOutcome.trend === "up"
-                    ? ("positive" as const)
-                    : primaryOutcome.trend === "down"
-                        ? ("negative" as const)
-                        : ("neutral" as const),
-        }
-
+    const handleDeleteScenario = async () => {
+        if (!scenarioToDelete) return
         try {
-            if (viewMode === "new") {
-                // Create new simulation with custom name
-                const title = newSimulationName.trim() || `Simulation ${new Date().toLocaleDateString()}`
-                await createSimulation({
-                    title,
-                    status,
-                    factors,
-                    outcomes,
-                    inputSummary,
-                    outcomeSummary,
-                })
-            } else if (selectedSimulation) {
-                // Update existing simulation
-                await updateSimulation(selectedSimulation.id, {
-                    status,
-                    factors,
-                    outcomes,
-                    inputSummary,
-                    outcomeSummary,
-                })
-            }
-            handleBack()
+            await deleteScenario(scenarioToDelete)
         } catch (error) {
-            console.error("Error saving simulation:", error)
+            console.error("Error deleting scenario:", error)
+        } finally {
+            setScenarioToDelete(null)
+            setDeleteDialogOpen(false)
         }
     }
 
-    const handleDeleteConfirm = async () => {
-        if (simulationToDelete) {
-            try {
-                await deleteSimulation(simulationToDelete)
-            } catch (error) {
-                console.error("Error deleting simulation:", error)
-            } finally {
-                setSimulationToDelete(null)
-                setDeleteDialogOpen(false)
-            }
-        }
+    const handleViewScenario = (scenarioId: string) => {
+        setViewingScenarioId(scenarioId)
+    }
+
+    const handleBackFromResults = () => {
+        setViewingScenarioId(null)
+        selectScenario('')
     }
 
     const formatDate = (timestamp: Timestamp | undefined) => {
         if (!timestamp) return "Just now"
         try {
             const date = timestamp.toDate()
-            return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+            return date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
         } catch {
             return "Just now"
         }
@@ -223,179 +110,220 @@ export default function DashboardPage() {
         )
     }
 
-    // No scenario selected
-    if (!selectedScenario) {
-        return (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-                <h2 className="text-xl font-semibold text-foreground">{t('noScenario')}</h2>
-                <p className="mt-2 text-muted-foreground">{t('noScenarioDescription')}</p>
-            </div>
-        )
-    }
-
-    // View mode (read-only results with PDF download)
-    if (viewMode === "view" && selectedSimulation) {
-        return (
-            <div className="space-y-6">
-                <Breadcrumb>
-                    <BreadcrumbList>
-                        <BreadcrumbItem>
-                            <BreadcrumbLink onClick={handleBack} className="cursor-pointer">
-                                {t('home')}
-                            </BreadcrumbLink>
-                        </BreadcrumbItem>
-                        <BreadcrumbSeparator />
-                        <BreadcrumbItem>
-                            <BreadcrumbLink onClick={handleBack} className="cursor-pointer">
-                                {selectedScenario.title}
-                            </BreadcrumbLink>
-                        </BreadcrumbItem>
-                        <BreadcrumbSeparator />
-                        <BreadcrumbItem>
-                            <BreadcrumbPage>{selectedSimulation.title}</BreadcrumbPage>
-                        </BreadcrumbItem>
-                    </BreadcrumbList>
-                </Breadcrumb>
-
-                <SimulationResults
-                    title={selectedSimulation.title}
-                    factors={selectedSimulation.factors}
-                    outcomes={selectedSimulation.outcomes}
-                    status={selectedSimulation.status}
-                    onBack={handleBack}
-                />
-            </div>
-        )
-    }
-
-    // Edit/New view
-    if (viewMode === "new" || viewMode === "edit") {
-        const currentFactors = selectedSimulation?.factors || defaultFactors
-        const currentOutcomes = selectedSimulation?.outcomes || defaultOutcomes
-        const title = viewMode === "new"
-            ? (newSimulationName.trim() || t('newSimulation'))
-            : selectedSimulation?.title || t('simulationDetails')
-
-        return (
-            <div className="space-y-6">
-                <Breadcrumb>
-                    <BreadcrumbList>
-                        <BreadcrumbItem>
-                            <BreadcrumbLink onClick={handleBack} className="cursor-pointer">
-                                {t('home')}
-                            </BreadcrumbLink>
-                        </BreadcrumbItem>
-                        <BreadcrumbSeparator />
-                        <BreadcrumbItem>
-                            <BreadcrumbLink onClick={handleBack} className="cursor-pointer">
-                                {selectedScenario.title}
-                            </BreadcrumbLink>
-                        </BreadcrumbItem>
-                        <BreadcrumbSeparator />
-                        <BreadcrumbItem>
-                            <BreadcrumbPage>{title}</BreadcrumbPage>
-                        </BreadcrumbItem>
-                    </BreadcrumbList>
-                </Breadcrumb>
-
-                <SimulationPanel
-                    title={title}
-                    description="Adjust the factors below to see how they impact your life trajectory."
-                    factors={currentFactors}
-                    outcomes={currentOutcomes}
-                    onBack={handleBack}
-                    onSave={handleSave}
-                />
-            </div>
-        )
-    }
-
-    // List view
-    return (
-        <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight text-foreground">{selectedScenario.title}</h1>
-                <p className="mt-2 text-muted-foreground">{selectedScenario.description}</p>
-            </div>
-
-            {simulationsLoading ? (
+    // Viewing a specific scenario's simulations
+    if (viewingScenarioId && selectedScenario) {
+        // Show loading while simulations are being fetched
+        if (simulationsLoading) {
+            return (
                 <div className="flex items-center justify-center py-20">
                     <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
                 </div>
-            ) : (
-                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                    {simulations.map((sim) => (
-                        <SimulationCard
-                            key={sim.id}
-                            title={sim.title}
-                            date={formatDate(sim.createdAt)}
-                            status={sim.status}
-                            inputs={sim.inputSummary}
-                            outcome={sim.outcomeSummary}
-                            onView={() => handleViewSimulation(sim.id)}
-                            onEdit={() => handleEditSimulation(sim.id)}
-                            onDelete={() => {
-                                setSimulationToDelete(sim.id)
-                                setDeleteDialogOpen(true)
-                            }}
-                        />
+            )
+        }
+
+        // Show results if we have simulations
+        if (simulations.length > 0) {
+            return (
+                <div className="space-y-10">
+                    {simulations.map((simulation, index) => (
+                        <div key={simulation.id} className="relative">
+                            {/* Visual separator for multiple simulations */}
+                            {index > 0 && (
+                                <div className="absolute -top-5 left-0 right-0 flex items-center justify-center">
+                                    <div className="h-px bg-border w-full max-w-xs"></div>
+                                </div>
+                            )}
+
+                            <SimulationResults
+                                title={simulation.title}
+                                factors={simulation.factors}
+                                outcomes={simulation.outcomes}
+                                status={simulation.status}
+                                onBack={handleBackFromResults}
+                            />
+
+                            <div className="flex justify-end mt-2">
+                                <p className="text-xs text-muted-foreground">
+                                    {formatDate(simulation.createdAt)}
+                                </p>
+                            </div>
+                        </div>
                     ))}
 
-                    {/* Helper card to encourage more simulations */}
-                    <button
-                        onClick={handleCreateNew}
-                        className="group flex h-full min-h-[220px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-transparent p-6 text-center transition-colors hover:border-primary/50 hover:bg-muted/50"
-                    >
-                        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted group-hover:bg-primary/10">
-                            <Plus className="h-6 w-6 text-muted-foreground group-hover:text-primary" />
-                        </div>
-                        <h3 className="font-semibold text-foreground group-hover:text-primary">{t('createSimulation')}</h3>
-                        <p className="mt-1 text-sm text-muted-foreground">{t('createSimulationDescription')}</p>
-                    </button>
+                    {/* Add simulation button removed as per requirements - 1 simulation per scenario */}
                 </div>
+            )
+        }
+
+        // No simulations found - should not normally happen
+        return (
+            <div className="text-center py-12">
+                <p className="text-muted-foreground">{t('emptyState.description')}</p>
+                <Button onClick={handleBackFromResults} variant="outline" className="mt-4">
+                    {t('results.back')}
+                </Button>
+            </div>
+        )
+    }
+
+    return (
+        <div className="space-y-12">
+            {/* Hero Section with Search */}
+            <section className="relative py-8 md:py-12">
+                {/* Background decoration */}
+                <div className="absolute inset-0 -z-10 overflow-hidden">
+                    <div className="absolute top-0 -left-4 w-72 h-72 bg-primary/20 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob" />
+                    <div className="absolute top-0 -right-4 w-72 h-72 bg-accent/20 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-2000" />
+                </div>
+
+                <div className="text-center max-w-3xl mx-auto">
+                    {/* Badge */}
+                    <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5">
+                        <Sparkles className="h-4 w-4 text-primary" />
+                        <span className="text-sm font-medium text-primary">
+                            {t('hero.badge')}
+                        </span>
+                    </div>
+
+                    {/* Main headline */}
+                    <h1 className="mb-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
+                        {t('hero.title')}
+                    </h1>
+
+                    {/* Subheadline */}
+                    <p className="mx-auto mb-8 max-w-xl text-muted-foreground">
+                        {t('hero.subtitle')}
+                    </p>
+
+                    {/* Search Bar */}
+                    <div className="mx-auto max-w-xl">
+                        <div className="flex gap-3">
+                            <div className="relative flex-1">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                <Input
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                    placeholder={t('hero.placeholder')}
+                                    className="h-14 pl-12 bg-card text-foreground placeholder:text-muted-foreground text-lg shadow-lg border-2 border-border focus:border-primary"
+                                />
+                            </div>
+                            <Button
+                                onClick={handleSearchSubmit}
+                                disabled={!searchQuery.trim() || !canCreate}
+                                className="h-14 px-6 md:px-8 gradient-primary text-white font-semibold shadow-lg hover:opacity-90 transition-opacity shrink-0"
+                            >
+                                <span className="hidden sm:inline">{t('hero.simulate')}</span>
+                                <ArrowRight className="h-5 w-5 sm:ml-2" />
+                            </Button>
+                        </div>
+
+                        {/* Usage indicator */}
+                        <div className="mt-4 flex items-center justify-center gap-4 text-sm text-muted-foreground">
+                            <span>{scenarios.length}/{freeTierLimits.maxScenarios} {t('hero.scenariosUsed')}</span>
+                            {!canCreate && (
+                                <span className="text-yellow-600 dark:text-yellow-400">
+                                    {t('hero.upgradeForMore')}
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Recent Decisions */}
+            {scenarios.length > 0 && (
+                <section>
+                    <h2 className="text-xl font-semibold text-foreground mb-6">
+                        {t('recentDecisions')}
+                    </h2>
+                    <div className="grid gap-4 md:grid-cols-2">
+                        {scenarios.map((scenario) => (
+                            <div
+                                key={scenario.id}
+                                className="group relative rounded-xl border border-border bg-card p-5 transition-all hover:shadow-md hover:border-primary/30"
+                            >
+                                <div className="flex items-start justify-between">
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-semibold text-foreground truncate pr-8">
+                                            {scenario.title}
+                                        </h3>
+                                        <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+                                            {scenario.description}
+                                        </p>
+                                        <div className="mt-3 flex items-center gap-4 text-xs text-muted-foreground">
+                                            <span>{formatDate(scenario.createdAt)}</span>
+                                            <span>{scenario.simulationCount} {scenario.simulationCount === 1 ? 'simulation' : 'simulations'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Actions */}
+                                <div className="mt-4 flex items-center gap-2">
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => handleViewScenario(scenario.id)}
+                                        className="gap-2"
+                                    >
+                                        <Eye className="h-4 w-4" />
+                                        {t('viewResults')}
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => {
+                                            setScenarioToDelete(scenario.id)
+                                            setDeleteDialogOpen(true)
+                                        }}
+                                        className="text-muted-foreground hover:text-destructive"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
             )}
 
-            {/* Name Dialog for New Simulation */}
-            <Dialog open={nameDialogOpen} onOpenChange={setNameDialogOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>{t('nameSimulation')}</DialogTitle>
-                        <DialogDescription>{t('nameSimulationDescription')}</DialogDescription>
-                    </DialogHeader>
-                    <div className="py-4">
-                        <Label htmlFor="simulation-name">{t('simulationName')}</Label>
-                        <Input
-                            id="simulation-name"
-                            value={newSimulationName}
-                            onChange={(e) => setNewSimulationName(e.target.value)}
-                            placeholder={t('simulationNamePlaceholder')}
-                            className="mt-2"
-                        />
+            {/* Empty state */}
+            {scenarios.length === 0 && (
+                <section className="text-center py-12">
+                    <div className="mx-auto max-w-md">
+                        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                            <Sparkles className="h-8 w-8 text-primary" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-foreground">
+                            {t('emptyState.title')}
+                        </h3>
+                        <p className="mt-2 text-muted-foreground">
+                            {t('emptyState.description')}
+                        </p>
                     </div>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setNameDialogOpen(false)}>
-                            {t('cancel')}
-                        </Button>
-                        <Button onClick={handleStartNewSimulation} className="gradient-primary text-white">
-                            {t('continue')}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+                </section>
+            )}
+
+            {/* Survey Modal */}
+            <DashboardSurveyModal
+                isOpen={surveyModalOpen}
+                onClose={() => setSurveyModalOpen(false)}
+                userQuestion={currentQuestion}
+            />
 
             {/* Delete Confirmation Dialog */}
             <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>{t('deleteSimulation')}</AlertDialogTitle>
+                        <AlertDialogTitle>{t('deleteScenario')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            {t('deleteSimulationDescription')}
+                            {t('deleteScenarioDescription')}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
                         <AlertDialogAction
-                            onClick={handleDeleteConfirm}
+                            onClick={handleDeleteScenario}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         >
                             {t('delete')}

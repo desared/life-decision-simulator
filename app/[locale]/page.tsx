@@ -18,6 +18,7 @@ import { FAQSection } from "@/components/sections/faq-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FooterSection } from "@/components/sections/footer-section"
 import { SimulationPanelTranslated } from "@/components/simulation-panel-translated"
+import { SurveyModal } from "@/components/survey-modal"
 import { onAuthStateChanged, signOut, User } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 
@@ -91,6 +92,8 @@ export default function ShouldISimulator() {
   const [isAuthOpen, setIsAuthOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [user, setUser] = useState<User | null>(null)
+  const [isSurveyOpen, setIsSurveyOpen] = useState(false)
+  const [surveyQuestion, setSurveyQuestion] = useState("")
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -137,6 +140,11 @@ export default function ShouldISimulator() {
 
   const handlePremiumClick = () => {
     setIsAuthOpen(true)
+  }
+
+  const handleCustomQuestionSubmit = (question: string) => {
+    setSurveyQuestion(question)
+    setIsSurveyOpen(true)
   }
 
   const goToHome = () => {
@@ -285,6 +293,7 @@ export default function ShouldISimulator() {
               setCustomQuestion={setCustomQuestion}
               onSelectScenario={setSelectedScenario}
               onPremiumClick={handlePremiumClick}
+              onCustomQuestionSubmit={handleCustomQuestionSubmit}
             />
             <ScenariosSection
               onSelectScenario={setSelectedScenario}
@@ -319,6 +328,13 @@ export default function ShouldISimulator() {
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
         defaultMode="signup"
+      />
+
+      {/* Survey Modal for custom questions */}
+      <SurveyModal
+        isOpen={isSurveyOpen}
+        onClose={() => setIsSurveyOpen(false)}
+        userQuestion={surveyQuestion}
       />
     </div>
   )

@@ -19,7 +19,6 @@ import { User } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { signOut } from "firebase/auth"
 import { useRouter } from "next/navigation"
-import { MobileSidebar } from "./mobile-sidebar"
 import { SettingsDialog } from "./settings-dialog"
 
 interface DashboardHeaderProps {
@@ -43,14 +42,11 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
     return (
         <>
             <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-border bg-background/80 px-4 md:px-6 backdrop-blur-lg">
-                <div className="flex items-center gap-3">
-                    <MobileSidebar />
-                    <div className="flex items-center gap-2">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg gradient-primary">
-                            <Sparkles className="h-4 w-4 text-white" />
-                        </div>
-                        <span className="text-lg font-bold text-foreground">should<span className="text-primary">I</span></span>
+                <div className="flex items-center gap-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg gradient-primary">
+                        <Sparkles className="h-4 w-4 text-white" />
                     </div>
+                    <span className="text-lg font-bold text-foreground">should<span className="text-primary">I</span></span>
                 </div>
 
                 <div className="flex items-center gap-2 md:gap-4">

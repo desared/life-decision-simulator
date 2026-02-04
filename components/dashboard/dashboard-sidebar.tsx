@@ -1,15 +1,8 @@
 "use client"
 
 import React, { useState } from "react"
-import { Briefcase, MapPin, Baby, Plus, FolderOpen, Trash2, MoreHorizontal, Home, TrendingUp, Sun } from "lucide-react"
+import { Briefcase, MapPin, FolderOpen, Trash2, MoreHorizontal, Home, TrendingUp, Sun, HelpCircle, GraduationCap, DollarSign, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -32,13 +25,19 @@ import { useTranslations } from "next-intl"
 import { UpgradeDialog } from "./upgrade-dialog"
 
 const iconMap: Record<string, React.ElementType> = {
+    Briefcase: Briefcase,
     briefcase: Briefcase,
     "map-pin": MapPin,
-    baby: Baby,
+    MapPin: MapPin,
     folder: FolderOpen,
+    Home: Home,
     home: Home,
     "trending-up": TrendingUp,
     sun: Sun,
+    HelpCircle: HelpCircle,
+    GraduationCap: GraduationCap,
+    DollarSign: DollarSign,
+    Heart: Heart,
 }
 
 export function DashboardSidebar() {
@@ -47,40 +46,14 @@ export function DashboardSidebar() {
         scenarios,
         selectedScenario,
         selectScenario,
-        createScenario,
         deleteScenario,
         scenariosLoading,
+        freeTierLimits,
     } = useFirestore()
 
-    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-    const [newScenarioTitle, setNewScenarioTitle] = useState("")
-    const [isCreating, setIsCreating] = useState(false)
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [scenarioToDelete, setScenarioToDelete] = useState<string | null>(null)
     const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false)
-
-    const handleCreateScenario = async () => {
-        if (!newScenarioTitle) return
-
-        setIsCreating(true)
-        try {
-            const scenario = [
-                { title: "Change Jobs", icon: "briefcase" },
-                { title: "Buy vs Rent", icon: "home" },
-                { title: "Move to a New City", icon: "map-pin" },
-            ].find(s => s.title === newScenarioTitle)
-
-            const icon = scenario ? scenario.icon : "folder"
-
-            await createScenario(newScenarioTitle, t('sidebar.customScenario'), icon)
-            setNewScenarioTitle("")
-            setIsAddDialogOpen(false)
-        } catch (error) {
-            console.error("Failed to create scenario:", error)
-        } finally {
-            setIsCreating(false)
-        }
-    }
 
     const handleDeleteScenario = async () => {
         if (!scenarioToDelete) return
@@ -171,56 +144,23 @@ export function DashboardSidebar() {
                     </div>
                 )}
 
-                <div className="mt-6">
-                    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button
-                                variant="outline"
-                                className="w-full justify-start gap-2 border-dashed text-muted-foreground hover:text-foreground"
-                            >
-                                <Plus className="h-4 w-4" />
-                                {t('sidebar.addScenario')}
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>{t('sidebar.createScenario')}</DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-4 py-4">
-                                <div className="grid grid-cols-2 gap-2">
-                                    {[
-                                        { title: "Change Jobs", icon: "briefcase" },
-                                        { title: "Move to a New City", icon: "map-pin" },
-                                        { title: "Buy vs Rent", icon: "home" },
-                                    ].map((scenario) => (
-                                        <Button
-                                            key={scenario.title}
-                                            variant={newScenarioTitle === scenario.title ? "default" : "outline"}
-                                            className="h-auto flex-col gap-2 py-4"
-                                            onClick={() => setNewScenarioTitle(scenario.title)}
-                                        >
-                                            <div className="rounded-full bg-background p-2 text-foreground">
-                                                {iconMap[scenario.icon] ? (
-                                                    React.createElement(iconMap[scenario.icon], { className: "h-4 w-4" })
-                                                ) : (
-                                                    <FolderOpen className="h-4 w-4" />
-                                                )}
-                                            </div>
-                                            <span className="text-xs">{scenario.title}</span>
-                                        </Button>
-                                    ))}
-                                </div>
-                                <Button
-                                    onClick={handleCreateScenario}
-                                    disabled={!newScenarioTitle || isCreating}
-                                    className="w-full"
-                                >
-                                    {isCreating ? t('sidebar.creating') : t('sidebar.createSelected')}
-                                </Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
+                {/* Free tier usage indicator */}
+                <div className="mt-4 mb-2 px-2">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                        <span>Scenarios</span>
+                        <span>{scenarios.length}/{freeTierLimits.maxScenarios}</span>
+                    </div>
+                    <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+                        <div
+                            className={cn(
+                                "h-full transition-all duration-300",
+                                scenarios.length >= freeTierLimits.maxScenarios ? "bg-yellow-500" : "bg-primary"
+                            )}
+                            style={{ width: `${Math.min(100, (scenarios.length / freeTierLimits.maxScenarios) * 100)}%` }}
+                        />
+                    </div>
                 </div>
+
             </div>
 
             <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

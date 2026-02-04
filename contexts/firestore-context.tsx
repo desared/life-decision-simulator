@@ -5,9 +5,22 @@ import { User } from "firebase/auth";
 import type { UserProfile, Scenario, Simulation, Factor, Outcome } from "@/lib/types/firestore";
 import * as firestoreService from "@/lib/firestore-service";
 
+// Free tier limits
+const FREE_TIER_LIMITS = {
+  maxScenarios: 2,
+  maxSimulationsPerScenario: 1,
+};
+
 interface FirestoreContextType {
   // User
   userProfile: UserProfile | null;
+
+  // Free tier limits
+  freeTierLimits: typeof FREE_TIER_LIMITS;
+  canCreateScenario: () => boolean;
+  canCreateSimulation: () => boolean;
+  getRemainingScenarios: () => number;
+  getRemainingSimulations: () => number;
 
   // Scenarios
   scenarios: Scenario[];
@@ -27,7 +40,7 @@ interface FirestoreContextType {
     outcomes: Outcome[];
     inputSummary: { label: string; value: string }[];
     outcomeSummary: { label: string; value: string; trend: "positive" | "negative" | "neutral" };
-  }) => Promise<string>;
+  }, scenarioId?: string) => Promise<string>;
   updateSimulation: (simulationId: string, data: {
     title?: string;
     status?: "optimal" | "moderate" | "risk";
@@ -216,25 +229,27 @@ export function FirestoreProvider({ children, user }: FirestoreProviderProps) {
       outcomes: Outcome[];
       inputSummary: { label: string; value: string }[];
       outcomeSummary: { label: string; value: string; trend: "positive" | "negative" | "neutral" };
-    }): Promise<string> => {
-      if (!user || !selectedScenario) throw new Error("Not authenticated or no scenario selected");
+    }, scenarioId?: string): Promise<string> => {
+      // Use provided scenarioId or fall back to selectedScenario
+      const targetScenarioId = scenarioId || selectedScenario?.id;
+      if (!user || !targetScenarioId) throw new Error("Not authenticated or no scenario selected");
 
-      const id = await firestoreService.createSimulation(user.uid, selectedScenario.id, {
+      const id = await firestoreService.createSimulation(user.uid, targetScenarioId, {
         ...data,
         userId: user.uid,
-        scenarioId: selectedScenario.id,
+        scenarioId: targetScenarioId,
       });
 
-      // Refresh simulations
-      const updated = await firestoreService.getScenarioSimulations(user.uid, selectedScenario.id);
+      // Refresh simulations for the target scenario
+      const updated = await firestoreService.getScenarioSimulations(user.uid, targetScenarioId);
       setSimulations(updated);
 
       // Update scenario simulation count
       const updatedScenarios = await firestoreService.getUserScenarios(user.uid);
       setScenarios(updatedScenarios);
 
-      // Update selected scenario with new count
-      const refreshedScenario = updatedScenarios.find((s) => s.id === selectedScenario.id);
+      // Update selected scenario with new count if it matches
+      const refreshedScenario = updatedScenarios.find((s) => s.id === targetScenarioId);
       if (refreshedScenario) {
         setSelectedScenario(refreshedScenario);
       }
@@ -317,8 +332,31 @@ export function FirestoreProvider({ children, user }: FirestoreProviderProps) {
 
   const clearError = useCallback(() => setError(null), []);
 
+  // Free tier limit helpers
+  const canCreateScenario = useCallback(() => {
+    return scenarios.length < FREE_TIER_LIMITS.maxScenarios;
+  }, [scenarios.length]);
+
+  const canCreateSimulation = useCallback(() => {
+    if (!selectedScenario) return false;
+    return simulations.length < FREE_TIER_LIMITS.maxSimulationsPerScenario;
+  }, [selectedScenario, simulations.length]);
+
+  const getRemainingScenarios = useCallback(() => {
+    return Math.max(0, FREE_TIER_LIMITS.maxScenarios - scenarios.length);
+  }, [scenarios.length]);
+
+  const getRemainingSimulations = useCallback(() => {
+    return Math.max(0, FREE_TIER_LIMITS.maxSimulationsPerScenario - simulations.length);
+  }, [simulations.length]);
+
   const value: FirestoreContextType = {
     userProfile,
+    freeTierLimits: FREE_TIER_LIMITS,
+    canCreateScenario,
+    canCreateSimulation,
+    getRemainingScenarios,
+    getRemainingSimulations,
     scenarios,
     selectedScenario,
     selectScenario,
