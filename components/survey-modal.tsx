@@ -12,9 +12,8 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { generateSurveyQuestionsAction, generateOutcomesAction } from "@/app/actions/gemini"
 import {
-  generateSurveyQuestions,
-  generateOutcomes,
   type SurveyQuestion,
   type GeminiOutcomeResponse
 } from "@/lib/gemini-service"
@@ -55,7 +54,7 @@ export function SurveyModal({ isOpen, onClose, userQuestion }: SurveyModalProps)
   const loadQuestions = async () => {
     setStep("loading")
     try {
-      const response = await generateSurveyQuestions(userQuestion)
+      const response = await generateSurveyQuestionsAction(userQuestion, 4)
       setQuestions(response.questions)
       setStep("questions")
     } catch (error) {
@@ -78,7 +77,7 @@ export function SurveyModal({ isOpen, onClose, userQuestion }: SurveyModalProps)
       // All questions answered, generate outcomes
       setStep("generating")
       try {
-        const response = await generateOutcomes(userQuestion, answers)
+        const response = await generateOutcomesAction(userQuestion, answers)
         setOutcomes(response)
         setStep("results")
       } catch (error) {

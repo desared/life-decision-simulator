@@ -12,18 +12,15 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import {
-  generateSurveyQuestions,
-  generateOutcomes,
-  type SurveyQuestion,
-  type GeminiOutcomeResponse
-} from "@/lib/gemini-service"
+import { generateSurveyQuestionsAction, generateOutcomesAction } from "@/app/actions/gemini"
+import { type SurveyQuestion, type SurveyOutcome, type GeminiOutcomeResponse } from "@/lib/gemini-service"
 import { useFirestore } from "@/contexts/firestore-context"
 
 interface DashboardSurveyModalProps {
   isOpen: boolean
   onClose: () => void
   userQuestion: string
+  onSave: (questions: string[], answers: Record<string, string>, outcomes: SurveyOutcome[]) => Promise<void>
 }
 
 type SurveyStep = "loading" | "questions" | "generating" | "saving" | "results"
@@ -41,7 +38,7 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion }: Dashboar
 
   useEffect(() => {
     if (isOpen && userQuestion) {
-      loadQuestions()
+      fetchQuestions() // Renamed loadQuestions to fetchQuestions
     }
   }, [isOpen, userQuestion])
 
@@ -55,15 +52,25 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion }: Dashboar
     }
   }, [isOpen])
 
-  const loadQuestions = async () => {
+  const fetchQuestions = async () => { // Renamed loadQuestions to fetchQuestions
     setStep("loading")
     try {
-      // Use 6 questions for logged-in users
-      const response = await generateSurveyQuestions(userQuestion, 6)
-      setQuestions(response.questions)
+      // Use Server Action
+      const data = await generateSurveyQuestionsAction(userQuestion, 4) // Changed function name and argument
+      setQuestions(data.questions)
+
+      // Initialize current answers (this part was in the user's snippet, but the original code handles answers differently)
+      // The original code's `answers` state stores `{ question: string; answer: string }`
+      // The user's snippet implies `answers` would store just the option value.
+      // I will keep the original `answers` structure and initialize it with empty answers.
+      const initialAnswers: Record<string, { question: string; answer: string }> = {}
+      data.questions.forEach(q => {
+        initialAnswers[q.id] = { question: q.question, answer: "" }
+      })
+      setAnswers(initialAnswers) // Initialize answers for all questions
       setStep("questions")
     } catch (error) {
-      console.error("Failed to load questions:", error)
+      console.error("Failed to fetch questions:", error)
       onClose()
     }
   }
@@ -82,13 +89,23 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion }: Dashboar
       // All questions answered - generate outcomes and auto-save
       setStep("generating")
       try {
-        const response = await generateOutcomes(userQuestion, answers)
-        setOutcomes(response)
+        // Prepare answers with full question context for the action
+        const minimalAnswers: Record<string, { question: string; answer: string }> = {}
+        questions.forEach(q => {
+          minimalAnswers[q.id] = answers[q.id] || { question: q.question, answer: "Unknown" } // Ensure all questions have an answer, even if empty
+        })
+
+        // Use Server Action
+        const data = await generateOutcomesAction(userQuestion, minimalAnswers)
+        setOutcomes(data)
 
         // Auto-save scenario and simulation if user can save
         if (canSave) {
           setStep("saving")
-          await saveScenarioAndSimulation(response)
+          // The `onSave` prop was added, but the original code directly calls `saveScenarioAndSimulation`.
+          // I will keep the original `saveScenarioAndSimulation` call for now, as `onSave` is not used in the provided snippet.
+          // If the user intended to replace `saveScenarioAndSimulation` with `onSave`, that would be a separate instruction.
+          await saveScenarioAndSimulation({ summary: data.summary, outcomes: data.outcomes }) // Pass the full response structure
         }
 
         setStep("results")
