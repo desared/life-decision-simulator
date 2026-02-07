@@ -117,12 +117,12 @@
     "title": "So funktioniert's",
     "subtitle": "Treffen Sie sichere Entscheidungen in drei einfachen Schritten",
     "step1": {
-      "title": "Wählen Sie Ihr Szenario",
-      "description": "Wählen Sie aus beliebten Lebensentscheidungen oder beschreiben Sie Ihre einzigartige Situation in natürlicher Sprache."
+      "title": "Stellen Sie Ihre Frage",
+      "description": "Beschreiben Sie jede Lebensentscheidung in Ihren eigenen Worten—tippen Sie einfach eine \"Sollte ich...?\"-Frage ein."
     },
     "step2": {
-      "title": "Passen Sie Ihre Variablen an",
-      "description": "Optimieren Sie die Faktoren, die Ihnen am wichtigsten sind—Gehalt, Standort, Zeithorizont und mehr."
+      "title": "Beantworten Sie ein paar Fragen",
+      "description": "Unsere KI generiert personalisierte Fragen, die auf Ihre spezifische Situation zugeschnitten sind. Ihre Antworten formen die Analyse."
     },
     "step3": {
       "title": "Sehen Sie Ihre Ergebnisse",

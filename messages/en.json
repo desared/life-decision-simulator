@@ -117,12 +117,12 @@
     "title": "How It Works",
     "subtitle": "Make confident decisions in three simple steps",
     "step1": {
-      "title": "Choose Your Scenario",
-      "description": "Select from popular life decisions or describe your unique situation in natural language."
+      "title": "Ask Your Question",
+      "description": "Describe any life decision in your own words—just type a \"Should I...?\" question in natural language."
     },
     "step2": {
-      "title": "Adjust Your Variables",
-      "description": "Fine-tune the factors that matter most to you—salary, location, time horizon, and more."
+      "title": "Answer a Few Questions",
+      "description": "Our AI generates personalized questions tailored to your specific situation. Your answers shape the analysis."
     },
     "step3": {
       "title": "See Your Outcomes",
