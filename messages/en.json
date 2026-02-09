@@ -17,7 +17,7 @@
   "hero": {
     "title": "See Your Future",
     "titleHighlight": "Before You Decide",
-    "subtitle": "Life's biggest decisions shouldn't feel like guesswork. Our AI-powered simulator models real outcomes so you can choose with clarity.",
+    "subtitle": "Your biggest decisions shouldn't feel like guesswork. Our AI-powered simulator models real outcomes so you can choose with clarity.",
     "inputPlaceholder": "Should I...",
     "simulate": "Simulate",
     "tryExample": "Ask anything, answer 2 quick questions, and get a free analysis",
@@ -25,7 +25,7 @@
   },
   "scenarios": {
     "title": "Popular Scenarios",
-    "subtitle": "Start with one of our most simulated life decisions",
+    "subtitle": "Start with one of our most simulated decisions",
     "suggestions": "Suggested scenarios",
     "noResults": "No matching scenarios found",
     "tryScenario": "Try this scenario",
@@ -142,7 +142,7 @@
     },
     "private": {
       "title": "Private & Secure",
-      "description": "Your life decisions stay private. We never share or sell your personal scenario data."
+      "description": "Your decisions stay private. We never share or sell your personal scenario data."
     },
     "datadriven": {
       "title": "Data-Driven Insights",
@@ -159,7 +159,7 @@
   },
   "testimonials": {
     "title": "Trusted by Decision Makers",
-    "subtitle": "Join thousands who've gained clarity on their biggest life choices",
+    "subtitle": "Join thousands who've gained clarity on their biggest decisions",
     "quote1": {
       "text": "I was paralyzed about whether to leave my corporate job. shouldi showed me the realistic range of outcomes, and I finally had the confidence to make the leap.",
       "author": "Sarah M.",
@@ -231,7 +231,7 @@
       "answer": "Our models are based on real-world economic data, actuarial tables, and peer-reviewed research. While no prediction is perfect, we provide confidence ranges to help you understand the uncertainty. Most users find our predictions align closely with their actual outcomes."
     },
     "q2": {
-      "question": "Can I simulate any life decision?",
+      "question": "Can I simulate any decision?",
       "answer": "Yes! While we offer pre-built scenarios for common decisions, you can describe any situation in natural language. Our AI will build a custom model for your unique circumstances."
     },
     "q3": {
@@ -253,7 +253,7 @@
   },
   "cta": {
     "title": "Ready to Make Better Decisions?",
-    "subtitle": "Join over 50,000 people who've gained clarity on their biggest life choices.",
+    "subtitle": "Join over 50,000 people who've gained clarity on their biggest decisions.",
     "button": "Start Your Free Simulation"
   },
   "moreSimulations": {
@@ -361,7 +361,7 @@
     "deleteScenarioDescription": "This will permanently delete this decision analysis and all its data. This action cannot be undone.",
     "emptyState": {
       "title": "No decisions analyzed yet",
-      "description": "Start by asking a \"Should I...?\" question above to get AI-powered insights for your life decisions."
+      "description": "Start by asking a \"Should I...?\" question above to get AI-powered insights for your decisions."
     },
     "noScenario": "No Scenario Selected",
     "noScenarioDescription": "Select a scenario from the sidebar to view simulations.",
@@ -391,7 +391,7 @@
       "predictedOutcomes": "Predicted Outcomes"
     },
     "sidebar": {
-      "title": "Life Scenarios",
+      "title": "Scenarios",
       "openMenu": "Open menu",
       "simulation": "simulation",
       "simulations": "simulations",

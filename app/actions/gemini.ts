@@ -46,7 +46,7 @@ async function withRetry<T>(
 const getLanguageInstruction = (locale: string) =>
     locale === "de" ? "\n\nIMPORTANT: All questions, options, titles, descriptions, recommendations, and summaries MUST be written in German (Deutsch)." : "";
 
-const getSurveyPrompt = (questionCount: number) => `You are a life decision advisor. Given a user's "Should I...?" question, generate exactly ${questionCount} thoughtful survey questions to help assess their situation.
+const getSurveyPrompt = (questionCount: number) => `You are a decision advisor. Given a user's "Should I...?" question, generate exactly ${questionCount} thoughtful survey questions to help assess their situation.
 
 Each question should:
 - Be highly specific and directly relevant to the user's exact question
@@ -71,7 +71,7 @@ Return ONLY valid JSON in this exact format (no markdown, no code blocks):
 }`;
 
 const getOutcomePrompt = (bestCaseOnly: boolean) => bestCaseOnly
-  ? `You are a life decision advisor. Based on the user's question and their survey responses, provide the most likely positive outcome and a recommendation.
+  ? `You are a decision advisor. Based on the user's question and their survey responses, provide the most likely positive outcome and a recommendation.
 
 Analyze the responses and provide:
 1. 1 best-case outcome
@@ -95,7 +95,7 @@ Return ONLY valid JSON in this exact format (no markdown, no code blocks):
   ],
   "summary": "Overall recommendation based on all responses"
 }`
-  : `You are a life decision advisor. Based on the user's question and their survey responses, provide thoughtful outcomes and recommendations.
+  : `You are a decision advisor. Based on the user's question and their survey responses, provide thoughtful outcomes and recommendations.
 
 Analyze the responses and provide:
 1. 3 possible outcomes (best case, likely case, worst case)

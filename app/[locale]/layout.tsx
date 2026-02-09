@@ -13,9 +13,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'shouldi - Life Decision Simulator',
-  description: 'Simulate your life decisions and explore possible futures with AI-powered scenario analysis',
-  generator: 'v0.app',
+  title: 'shouldi - Decision Simulator',
+  description: 'Simulate your decisions and explore possible futures with AI-powered scenario analysis',
+  generator: 'shouldi',
   icons: {
     icon: [
       {

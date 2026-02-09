@@ -1,7 +1,7 @@
 "use client"
 
 import { useTranslations } from 'next-intl'
-import { Sparkles } from 'lucide-react'
+import { LogoIcon } from '@/components/logo-icon'
 
 export function FooterSection() {
   const t = useTranslations('footer')
@@ -52,7 +52,7 @@ export function FooterSection() {
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
-                <Sparkles className="h-5 w-5 text-white" />
+                <LogoIcon className="h-5 w-5 text-white" />
               </div>
               <span className="text-xl font-bold text-foreground">should<span className="text-primary">i</span></span>
             </div>

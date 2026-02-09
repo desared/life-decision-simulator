@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Sparkles, Settings, LogOut, User as UserIcon } from "lucide-react"
+import { Settings, LogOut, User as UserIcon } from "lucide-react"
+import { LogoIcon } from "@/components/logo-icon"
 import { useTranslations } from 'next-intl'
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
@@ -18,7 +19,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { User } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { signOut } from "firebase/auth"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
+import Link from "next/link"
 import { SettingsDialog } from "./settings-dialog"
 
 interface DashboardHeaderProps {
@@ -29,6 +31,8 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
     const t = useTranslations('dashboard')
     const [settingsOpen, setSettingsOpen] = useState(false)
     const router = useRouter()
+    const params = useParams()
+    const locale = params.locale || 'en'
 
     const handleLogout = async () => {
         try {
@@ -42,12 +46,12 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
     return (
         <>
             <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-border bg-background/80 px-4 md:px-6 backdrop-blur-lg">
-                <div className="flex items-center gap-2">
+                <Link href={`/${locale}`} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg gradient-primary">
-                        <Sparkles className="h-4 w-4 text-white" />
+                        <LogoIcon className="h-4 w-4 text-white" />
                     </div>
                     <span className="text-lg font-bold text-foreground">should<span className="text-primary">i</span></span>
-                </div>
+                </Link>
 
                 <div className="flex items-center gap-2 md:gap-4">
                     <ThemeToggle />

@@ -19,11 +19,13 @@ import { useTranslations } from "next-intl"
 import { Timestamp } from "firebase/firestore"
 import { DashboardSurveyModal } from "@/components/dashboard/dashboard-survey-modal"
 import { SimulationResults } from "@/components/dashboard/simulation-results"
+import { UpgradeDialog } from "@/components/dashboard/upgrade-dialog"
 
 
 export default function DashboardPage() {
     const t = useTranslations('dashboard')
     const [searchQuery, setSearchQuery] = useState("")
+    const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false)
     const [surveyModalOpen, setSurveyModalOpen] = useState(false)
     const [currentQuestion, setCurrentQuestion] = useState("")
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -222,9 +224,9 @@ export default function DashboardPage() {
                         <div className="mt-4 flex items-center justify-center gap-4 text-sm text-muted-foreground">
                             <span>{scenarios.length}/{freeTierLimits.maxScenarios} {t('hero.scenariosUsed')}</span>
                             {!canCreate && (
-                                <span className="text-yellow-600 dark:text-yellow-400">
+                                <button onClick={() => setUpgradeDialogOpen(true)} className="text-yellow-600 dark:text-yellow-400 underline hover:opacity-80 transition-opacity">
                                     {t('hero.upgradeForMore')}
-                                </span>
+                                </button>
                             )}
                         </div>
                     </div>
@@ -331,6 +333,8 @@ export default function DashboardPage() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+
+            <UpgradeDialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen} />
         </div>
     )
 }

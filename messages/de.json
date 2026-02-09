@@ -17,7 +17,7 @@
   "hero": {
     "title": "Sehen Sie Ihre Zukunft",
     "titleHighlight": "Bevor Sie entscheiden",
-    "subtitle": "Ihre wichtigsten Lebensentscheidungen sollten kein Ratespiel sein. Unser KI-Simulator modelliert echte Ergebnisse, damit Sie mit Klarheit wählen können.",
+    "subtitle": "Ihre wichtigsten Entscheidungen sollten kein Ratespiel sein. Unser KI-Simulator modelliert echte Ergebnisse, damit Sie mit Klarheit wählen können.",
     "inputPlaceholder": "Sollte ich...",
     "simulate": "Simulieren",
     "tryExample": "Fragen Sie was Sie wollen, beantworten Sie 2 kurze Fragen und erhalten Sie eine kostenlose Analyse",
@@ -25,7 +25,7 @@
   },
   "scenarios": {
     "title": "Beliebte Szenarien",
-    "subtitle": "Beginnen Sie mit einer der meistsimulierten Lebensentscheidungen",
+    "subtitle": "Beginnen Sie mit einer der meistsimulierten Entscheidungen",
     "suggestions": "Vorgeschlagene Szenarien",
     "noResults": "Keine passenden Szenarien gefunden",
     "tryScenario": "Szenario ausprobieren",
@@ -142,7 +142,7 @@
     },
     "private": {
       "title": "Privat & Sicher",
-      "description": "Ihre Lebensentscheidungen bleiben privat. Wir teilen oder verkaufen niemals Ihre persönlichen Szenariodaten."
+      "description": "Ihre Entscheidungen bleiben privat. Wir teilen oder verkaufen niemals Ihre persönlichen Szenariodaten."
     },
     "datadriven": {
       "title": "Datengetriebene Erkenntnisse",
@@ -159,7 +159,7 @@
   },
   "testimonials": {
     "title": "Vertraut von Entscheidungsträgern",
-    "subtitle": "Schließen Sie sich Tausenden an, die Klarheit über ihre wichtigsten Lebensentscheidungen gewonnen haben",
+    "subtitle": "Schließen Sie sich Tausenden an, die Klarheit über ihre wichtigsten Entscheidungen gewonnen haben",
     "quote1": {
       "text": "Ich war gelähmt, ob ich meinen Firmenjob verlassen sollte. shouldi zeigte mir die realistische Bandbreite der Ergebnisse, und ich hatte endlich das Vertrauen, den Sprung zu wagen.",
       "author": "Sarah M.",
@@ -231,7 +231,7 @@
       "answer": "Unsere Modelle basieren auf realen Wirtschaftsdaten, versicherungsmathematischen Tabellen und peer-reviewed Forschung. Obwohl keine Vorhersage perfekt ist, bieten wir Konfidenzintervalle, um Ihnen die Unsicherheit zu verstehen. Die meisten Nutzer finden, dass unsere Vorhersagen eng mit ihren tatsächlichen Ergebnissen übereinstimmen."
     },
     "q2": {
-      "question": "Kann ich jede Lebensentscheidung simulieren?",
+      "question": "Kann ich jede Entscheidung simulieren?",
       "answer": "Ja! Während wir vorgefertigte Szenarien für häufige Entscheidungen anbieten, können Sie jede Situation in natürlicher Sprache beschreiben. Unsere KI erstellt ein maßgeschneidertes Modell für Ihre einzigartigen Umstände."
     },
     "q3": {
@@ -253,7 +253,7 @@
   },
   "cta": {
     "title": "Bereit für bessere Entscheidungen?",
-    "subtitle": "Schließen Sie sich über 50.000 Menschen an, die Klarheit über ihre wichtigsten Lebensentscheidungen gewonnen haben.",
+    "subtitle": "Schließen Sie sich über 50.000 Menschen an, die Klarheit über ihre wichtigsten Entscheidungen gewonnen haben.",
     "button": "Starten Sie Ihre kostenlose Simulation"
   },
   "moreSimulations": {
@@ -361,7 +361,7 @@
     "deleteScenarioDescription": "Diese Entscheidungsanalyse und alle zugehörigen Daten werden dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
     "emptyState": {
       "title": "Noch keine Entscheidungen analysiert",
-      "description": "Stellen Sie oben eine \"Soll ich...?\"-Frage, um KI-gestützte Einblicke für Ihre Lebensentscheidungen zu erhalten."
+      "description": "Stellen Sie oben eine \"Soll ich...?\"-Frage, um KI-gestützte Einblicke für Ihre Entscheidungen zu erhalten."
     },
     "noScenario": "Kein Szenario ausgewählt",
     "noScenarioDescription": "Wählen Sie ein Szenario in der Seitenleiste aus, um Simulationen anzuzeigen.",
@@ -391,7 +391,7 @@
       "predictedOutcomes": "Vorhergesagte Ergebnisse"
     },
     "sidebar": {
-      "title": "Lebensszenarien",
+      "title": "Szenarien",
       "openMenu": "Menü öffnen",
       "simulation": "Simulation",
       "simulations": "Simulationen",

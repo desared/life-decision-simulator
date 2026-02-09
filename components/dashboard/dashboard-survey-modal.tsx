@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils"
 import { generateSurveyQuestionsAction, generateOutcomesAction } from "@/app/actions/gemini"
 import { type SurveyQuestion, type SurveyOutcome, type GeminiOutcomeResponse } from "@/lib/gemini-service"
 import { useFirestore } from "@/contexts/firestore-context"
+import { UpgradeDialog } from "@/components/dashboard/upgrade-dialog"
 
 interface DashboardSurveyModalProps {
   isOpen: boolean
@@ -29,6 +30,7 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion }: Dashboar
   const t = useTranslations('survey')
   const locale = useLocale()
   const [step, setStep] = useState<SurveyStep>("loading")
+  const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false)
   const [questions, setQuestions] = useState<SurveyQuestion[]>([])
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Record<string, { question: string; answer: string }>>({})
@@ -235,6 +237,7 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion }: Dashboar
   const progress = questions.length > 0 ? ((currentQuestion + 1) / questions.length) * 100 : 0
 
   return (
+    <>
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -328,12 +331,12 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion }: Dashboar
 
             {/* Show limit warning */}
             {!canSave && (
-              <div className="flex items-center gap-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+              <button onClick={() => setUpgradeDialogOpen(true)} className="flex items-center gap-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg hover:opacity-80 transition-opacity w-full text-left">
                 <Lock className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
-                <span className="text-sm text-yellow-600 dark:text-yellow-400">
+                <span className="text-sm text-yellow-600 dark:text-yellow-400 underline">
                   {t('limitReached')}. {t('upgradeForMore')}
                 </span>
-              </div>
+              </button>
             )}
           </div>
         )}
@@ -431,5 +434,8 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion }: Dashboar
         )}
       </DialogContent>
     </Dialog>
+
+    <UpgradeDialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen} />
+    </>
   )
 }

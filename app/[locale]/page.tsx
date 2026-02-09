@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react"
 import { useTranslations } from 'next-intl'
-import { useRouter, useParams } from 'next/navigation'
-import { Sparkles, Menu, X } from "lucide-react"
+import { useParams } from 'next/navigation'
+import Link from 'next/link'
+import { Menu, X, LayoutDashboard } from "lucide-react"
+import { LogoIcon } from "@/components/logo-icon"
 import { Button } from "@/components/ui/button"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -17,14 +19,14 @@ import { FAQSection } from "@/components/sections/faq-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FooterSection } from "@/components/sections/footer-section"
 import { SurveyModal } from "@/components/survey-modal"
-import { onAuthStateChanged, signOut, User } from "firebase/auth"
+import { onAuthStateChanged, User } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 
 export default function ShouldISimulator() {
   const tCommon = useTranslations('common')
   const tNav = useTranslations('nav')
-  const router = useRouter()
   const params = useParams()
+  const locale = params.locale || 'en'
 
   const [customQuestion, setCustomQuestion] = useState("")
   const [isAuthOpen, setIsAuthOpen] = useState(false)
@@ -39,19 +41,10 @@ export default function ShouldISimulator() {
       setUser(currentUser)
       if (currentUser && currentUser.emailVerified) {
         setIsAuthOpen(false)
-        router.push(`/${params.locale}/dashboard`)
       }
     })
     return () => unsubscribe()
-  }, [router, params.locale])
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth)
-    } catch (error) {
-      console.error("Error signing out", error)
-    }
-  }
+  }, [])
 
   const handleLogIn = () => {
     setAuthMode('signin')
@@ -102,7 +95,7 @@ export default function ShouldISimulator() {
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
             <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
-              <Sparkles className="h-5 w-5 text-white" />
+              <LogoIcon className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-bold text-foreground">should<span className="text-primary">i</span></span>
           </button>
@@ -142,12 +135,12 @@ export default function ShouldISimulator() {
 
             {user ? (
               <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-foreground hidden sm:inline-block">
-                  {user.displayName || user.email?.split('@')[0]}
-                </span>
-                <Button onClick={handleLogout} variant="outline" className="hidden sm:flex">
-                  Log out
-                </Button>
+                <Link href={`/${locale}/dashboard`}>
+                  <Button variant="outline" className="hidden sm:flex gap-2">
+                    <LayoutDashboard className="h-4 w-4" />
+                    Dashboard
+                  </Button>
+                </Link>
               </div>
             ) : (
               <Button onClick={handleLogIn} className="hidden sm:flex gradient-primary text-white">
@@ -198,9 +191,18 @@ export default function ShouldISimulator() {
                 {tNav('faq')}
               </button>
               <div className="pt-4 border-t border-border">
-                <Button onClick={handleLogIn} className="w-full gradient-primary text-white">
-                  {tCommon('logIn')}
-                </Button>
+                {user ? (
+                  <Link href={`/${locale}/dashboard`}>
+                    <Button variant="outline" className="w-full gap-2">
+                      <LayoutDashboard className="h-4 w-4" />
+                      Dashboard
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button onClick={handleLogIn} className="w-full gradient-primary text-white">
+                    {tCommon('logIn')}
+                  </Button>
+                )}
               </div>
             </nav>
           </div>
