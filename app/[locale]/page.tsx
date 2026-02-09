@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useTranslations } from 'next-intl'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Menu, X, LayoutDashboard } from "lucide-react"
 import { LogoIcon } from "@/components/logo-icon"
@@ -25,6 +25,7 @@ import { auth } from "@/lib/firebase"
 export default function ShouldISimulator() {
   const tCommon = useTranslations('common')
   const tNav = useTranslations('nav')
+  const router = useRouter()
   const params = useParams()
   const locale = params.locale || 'en'
 
@@ -35,23 +36,30 @@ export default function ShouldISimulator() {
   const [user, setUser] = useState<User | null>(null)
   const [isSurveyOpen, setIsSurveyOpen] = useState(false)
   const [surveyQuestion, setSurveyQuestion] = useState("")
+  const isLoggingIn = useRef(false)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser)
       if (currentUser && currentUser.emailVerified) {
         setIsAuthOpen(false)
+        if (isLoggingIn.current) {
+          isLoggingIn.current = false
+          router.push(`/${locale}/dashboard`)
+        }
       }
     })
     return () => unsubscribe()
-  }, [])
+  }, [router, locale])
 
   const handleLogIn = () => {
+    isLoggingIn.current = true
     setAuthMode('signin')
     setIsAuthOpen(true)
   }
 
   const handleSignUp = () => {
+    isLoggingIn.current = true
     setAuthMode('signup')
     setIsAuthOpen(true)
   }
