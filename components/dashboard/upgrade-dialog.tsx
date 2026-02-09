@@ -19,12 +19,6 @@ interface UpgradeDialogProps {
 export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
     const t = useTranslations('pricing')
 
-    const handleSelectPlan = (plan: string) => {
-        // In production, this would redirect to payment flow
-        console.log(`Selected plan: ${plan}`)
-        onOpenChange(false)
-    }
-
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-2xl">
@@ -67,8 +61,8 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
                             ))}
                         </ul>
                         <Button
-                            onClick={() => handleSelectPlan('perScenario')}
-                            className="w-full"
+                            disabled
+                            className="w-full opacity-50 cursor-not-allowed"
                             variant="outline"
                         >
                             {t('perScenario.cta')}
@@ -111,8 +105,9 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
                             ))}
                         </ul>
                         <Button
-                            onClick={() => handleSelectPlan('monthly')}
-                            className="w-full gradient-primary text-white"
+                            disabled
+                            className="w-full opacity-50 cursor-not-allowed"
+                            variant="outline"
                         >
                             {t('monthly.cta')}
                         </Button>
