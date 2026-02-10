@@ -658,5 +658,108 @@
       "popular": "Am beliebtesten"
     },
     "note": "Der kostenlose Plan ist jetzt verfügbar. Pro Szenario und Pro Pläne sind demnächst verfügbar."
+  },
+  "cookies": {
+    "banner": {
+      "title": "Wir verwenden Cookies",
+      "description": "Wir verwenden Cookies, um Sie angemeldet zu halten, Ihre Erfahrung zu verbessern und zu verstehen, wie Sie shouldi nutzen.",
+      "learnMore": "Cookie-Richtlinie",
+      "acceptAll": "Alle akzeptieren",
+      "rejectOptional": "Nur notwendige",
+      "customize": "Anpassen",
+      "customizeTitle": "Cookie-Einstellungen",
+      "savePreferences": "Einstellungen speichern"
+    },
+    "categories": {
+      "necessary": {
+        "title": "Notwendig",
+        "description": "Erforderlich für Authentifizierung, Sicherheit und grundlegende Website-Funktionalität. Diese können nicht deaktiviert werden."
+      },
+      "analytics": {
+        "title": "Analyse",
+        "description": "Helfen uns zu verstehen, wie Besucher die Website nutzen, damit wir die Erfahrung verbessern können."
+      },
+      "marketing": {
+        "title": "Marketing",
+        "description": "Werden verwendet, um relevante Werbung zu liefern und die Kampagneneffektivität zu messen."
+      }
+    }
+  },
+  "cookiesPage": {
+    "backHome": "Zurück zur Startseite",
+    "title": "Cookie-Richtlinie",
+    "lastUpdated": "Letzte Aktualisierung: Februar 2026",
+    "intro": "Diese Cookie-Richtlinie erklärt, was Cookies sind, wie shouldi sie verwendet, welche Arten von Cookies wir einsetzen und wie Sie Ihre Cookie-Einstellungen verwalten können.",
+    "whatAreCookies": {
+      "title": "Was sind Cookies?",
+      "text": "Cookies sind kleine Textdateien, die auf Ihrem Gerät gespeichert werden, wenn Sie eine Website besuchen. Sie helfen der Website, Ihre Einstellungen zu merken, Sie angemeldet zu halten und zu verstehen, wie Sie mit dem Dienst interagieren. Einige Cookies sind für die Funktion der Website unerlässlich, während andere uns helfen, Ihre Erfahrung zu verbessern."
+    },
+    "categoriesTitle": "Von uns verwendete Cookies",
+    "mandatory": "Pflicht",
+    "optional": "Optional",
+    "duration": "Dauer",
+    "categories": {
+      "necessary": {
+        "title": "Notwendige Cookies",
+        "description": "Diese Cookies sind für die Funktion der Website unerlässlich. Sie ermöglichen Kernfunktionen wie Benutzerauthentifizierung, Sitzungsverwaltung und Sicherheit. Sie können diese Cookies nicht deaktivieren.",
+        "cookies": {
+          "session": {
+            "name": "Sitzung & Authentifizierung",
+            "purpose": "Hält Sie angemeldet und verwaltet Ihre Sitzung sicher über Seiten hinweg. Betrieben durch Firebase Authentication.",
+            "duration": "Sitzung / 14 Tage"
+          },
+          "consent": {
+            "name": "Cookie-Einstellungen",
+            "purpose": "Speichert Ihre Cookie-Einstellungen, damit wir Sie nicht bei jedem Besuch erneut fragen.",
+            "duration": "1 Jahr"
+          },
+          "csrf": {
+            "name": "Sicherheits-Token",
+            "purpose": "Schützt vor Cross-Site-Request-Forgery-Angriffen, um Ihr Konto sicher zu halten.",
+            "duration": "Sitzung"
+          }
+        }
+      },
+      "analytics": {
+        "title": "Analyse-Cookies",
+        "description": "Diese Cookies helfen uns zu verstehen, wie Besucher mit shouldi interagieren. Wir verwenden diese Daten, um das Produkt zu verbessern, Probleme zu beheben und die Funktionsnutzung zu messen. Es werden keine personenbezogenen Daten erfasst.",
+        "cookies": {
+          "vercelAnalytics": {
+            "name": "Vercel Web Analytics",
+            "purpose": "Erfasst anonyme Nutzungsdaten wie Seitenaufrufe, Verweisquellen und Gerätetypen, um Verkehrsmuster zu verstehen.",
+            "duration": "Sitzung"
+          },
+          "performance": {
+            "name": "Leistungsüberwachung",
+            "purpose": "Misst Seitenladezeiten und Anwendungsleistung, um langsame Seiten zu identifizieren und zu beheben.",
+            "duration": "Sitzung"
+          }
+        }
+      },
+      "marketing": {
+        "title": "Marketing-Cookies",
+        "description": "Diese Cookies können in Zukunft verwendet werden, um relevante Werbung zu liefern und die Kampagnenleistung zu verfolgen. Sie sind derzeit nicht aktiv, werden aber hier der Transparenz halber aufgeführt, da wir planen, kostenpflichtige Pläne einzuführen.",
+        "cookies": {
+          "adPersonalization": {
+            "name": "Werbepersonalisierung",
+            "purpose": "Kann verwendet werden, um Ihnen relevante Werbung basierend auf Ihren Interessen und Ihrem Surfverhalten anzuzeigen.",
+            "duration": "90 Tage"
+          },
+          "retargeting": {
+            "name": "Retargeting",
+            "purpose": "Kann verwendet werden, um Besucher erneut anzusprechen, die zuvor mit shouldi interagiert haben.",
+            "duration": "30 Tage"
+          }
+        }
+      }
+    },
+    "managing": {
+      "title": "Cookies verwalten",
+      "text": "Sie können Ihre Cookie-Einstellungen jederzeit über das Cookie-Banner ändern, das beim ersten Besuch der Website erscheint. Sie können Cookies auch über Ihre Browsereinstellungen löschen. Beachten Sie, dass das Deaktivieren notwendiger Cookies Sie daran hindern kann, sich anzumelden oder bestimmte Funktionen der Website zu nutzen."
+    },
+    "contact": {
+      "title": "Kontakt",
+      "text": "Wenn Sie Fragen zu unserer Verwendung von Cookies haben, kontaktieren Sie uns bitte unter privacy@shouldi.app. shouldi ist ein Produkt von ActOnData (ActOnData.io)."
+    }
   }
 }

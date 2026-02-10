@@ -35,7 +35,8 @@ export function FooterSection() {
       title: t('legal.title'),
       links: [
         { label: t('legal.privacy'), href: `/${locale}/privacy` },
-        { label: t('legal.terms'), href: `/${locale}/terms` }
+        { label: t('legal.terms'), href: `/${locale}/terms` },
+        { label: t('legal.cookies'), href: `/${locale}/cookies` }
       ]
     }
   ]

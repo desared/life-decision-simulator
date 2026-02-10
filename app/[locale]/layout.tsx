@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, setRequestLocale } from 'next-intl/server'
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
+import { CookieConsentProvider } from '@/components/cookie-consent'
 import '../globals.css'
 
 const inter = Inter({
@@ -60,7 +61,9 @@ export default async function LocaleLayout({
           disableTransitionOnChange
         >
           <NextIntlClientProvider messages={messages}>
-            {children}
+            <CookieConsentProvider>
+              {children}
+            </CookieConsentProvider>
           </NextIntlClientProvider>
         </ThemeProvider>
         <Analytics />
