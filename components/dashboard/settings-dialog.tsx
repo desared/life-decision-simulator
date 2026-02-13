@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { AlertTriangle, CreditCard, Trash2 } from "lucide-react"
+import { AlertTriangle, CreditCard, Trash2, Palette, Globe } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
@@ -25,6 +25,8 @@ import { User } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { deleteUser } from "firebase/auth"
 import { useRouter } from "next/navigation"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 interface SettingsDialogProps {
     open: boolean
@@ -84,6 +86,25 @@ export function SettingsDialog({ open, onOpenChange, user, userPlan = "free" }: 
                         <div className="rounded-lg border border-border p-4">
                             <h4 className="text-sm font-medium text-foreground mb-2">{t('settings.account')}</h4>
                             <p className="text-sm text-muted-foreground">{user?.email}</p>
+                        </div>
+
+                        {/* Preferences */}
+                        <div className="rounded-lg border border-border p-4 space-y-3">
+                            <h4 className="text-sm font-medium text-foreground">{t('settings.preferences')}</h4>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <Palette className="h-4 w-4 text-muted-foreground" />
+                                    <span className="text-sm text-muted-foreground">{t('settings.theme')}</span>
+                                </div>
+                                <ThemeToggle />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <Globe className="h-4 w-4 text-muted-foreground" />
+                                    <span className="text-sm text-muted-foreground">{t('settings.language')}</span>
+                                </div>
+                                <LanguageSwitcher />
+                            </div>
                         </div>
 
                         {/* Subscription Section */}

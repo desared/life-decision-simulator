@@ -137,8 +137,10 @@ export default function ShouldISimulator() {
           </nav>
 
           <div className="flex items-center gap-2 md:gap-3">
-            <ThemeToggle />
-            <LanguageSwitcher />
+            <div className="hidden md:flex items-center gap-2">
+              <ThemeToggle />
+              <LanguageSwitcher />
+            </div>
 
 
             {user ? (
@@ -211,6 +213,10 @@ export default function ShouldISimulator() {
                     {tCommon('logIn')}
                   </Button>
                 )}
+              </div>
+              <div className="pt-4 border-t border-border flex items-center gap-3">
+                <ThemeToggle />
+                <LanguageSwitcher />
               </div>
             </nav>
           </div>
