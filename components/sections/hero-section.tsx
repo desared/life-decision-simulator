@@ -1,15 +1,26 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { ArrowRight, Search } from 'lucide-react'
+import { ArrowRight, Sparkles, ChevronDown, Check, Wand2, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+} from "@/components/ui/alert-dialog"
+import { SkillIcon } from '@/lib/skills/skill-icon'
+import { getAllSkills, getSkill } from '@/lib/skills/registry'
+import { detectSkill } from '@/lib/skills/detector'
+import type { SkillId, SupportedLocale } from '@/lib/skills/types'
 
 interface HeroSectionProps {
   customQuestion: string
   setCustomQuestion: (value: string) => void
-  onCustomQuestionSubmit: (question: string) => void
+  onCustomQuestionSubmit: (question: string, skillId?: SkillId) => void
 }
 
 const rotatingQuestionsEn = [
@@ -34,11 +45,18 @@ export function HeroSection({
   onCustomQuestionSubmit
 }: HeroSectionProps) {
   const t = useTranslations('hero')
-  const locale = useLocale()
+  const tAdvisors = useTranslations('advisors')
+  const locale = useLocale() as SupportedLocale
   const [currentIndex, setCurrentIndex] = useState(0)
   const [animationKey, setAnimationKey] = useState(0)
+  const [selectedSkill, setSelectedSkill] = useState<SkillId | "auto">("auto")
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [mismatchOpen, setMismatchOpen] = useState(false)
+  const [mismatchData, setMismatchData] = useState<{ question: string; detectedSkillId: SkillId } | null>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const rotatingQuestions = locale === 'de' ? rotatingQuestionsDe : rotatingQuestionsEn
+  const skills = getAllSkills()
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -48,14 +66,67 @@ export function HeroSection({
     return () => clearInterval(interval)
   }, [rotatingQuestions.length])
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const buildQuestion = (input: string): string => {
+    if (input.toLowerCase().startsWith('should i') || input.toLowerCase().startsWith('should')) {
+      return input
+    }
+    return `Should I ${input}?`
+  }
+
   const handleSimulateClick = () => {
     const trimmed = customQuestion.trim()
     if (!trimmed) return
-    if (trimmed.toLowerCase().startsWith('should i') || trimmed.toLowerCase().startsWith('should')) {
-      onCustomQuestionSubmit(trimmed)
-    } else {
-      onCustomQuestionSubmit(`Should I ${trimmed}?`)
+    const question = buildQuestion(trimmed)
+
+    // If auto-detect or no specific advisor, proceed directly
+    if (selectedSkill === "auto") {
+      onCustomQuestionSubmit(question)
+      return
     }
+
+    // Check for mismatch between selected advisor and question topic
+    const detected = detectSkill(question, locale)
+    if (detected.skillId !== "generic" && detected.skillId !== selectedSkill) {
+      setMismatchData({ question, detectedSkillId: detected.skillId })
+      setMismatchOpen(true)
+      return
+    }
+
+    // No mismatch or question is generic — proceed with selected advisor
+    onCustomQuestionSubmit(question, selectedSkill)
+  }
+
+  const handleMismatchSwitch = () => {
+    if (!mismatchData) return
+    setSelectedSkill(mismatchData.detectedSkillId)
+    onCustomQuestionSubmit(mismatchData.question, mismatchData.detectedSkillId)
+    setMismatchOpen(false)
+    setMismatchData(null)
+  }
+
+  const handleMismatchAutoDetect = () => {
+    if (!mismatchData) return
+    setSelectedSkill("auto")
+    onCustomQuestionSubmit(mismatchData.question)
+    setMismatchOpen(false)
+    setMismatchData(null)
+  }
+
+  const handleMismatchContinue = () => {
+    if (!mismatchData) return
+    onCustomQuestionSubmit(mismatchData.question, selectedSkill === "auto" ? undefined : selectedSkill)
+    setMismatchOpen(false)
+    setMismatchData(null)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -65,8 +136,22 @@ export function HeroSection({
     }
   }
 
+  const getSelectedLabel = () => {
+    if (selectedSkill === "auto") {
+      return t('autoAssigned')
+    }
+    const skill = skills.find(s => s.id === selectedSkill)
+    return skill?.displayName[locale] ?? t('autoAssigned')
+  }
+
+  const getSelectedIcon = () => {
+    if (selectedSkill === "auto") return null
+    const skill = skills.find(s => s.id === selectedSkill)
+    return skill?.icon ?? null
+  }
+
   return (
-    <section className="relative overflow-hidden pb-16 pt-12 md:pb-24 md:pt-20">
+    <section className="relative pb-16 pt-12 md:pb-24 md:pt-20">
       <div className="relative mx-auto max-w-6xl px-4">
         <div className="text-center">
           {/* Badge */}
@@ -97,35 +182,148 @@ export function HeroSection({
             </span>
           </div>
 
-          {/* Search bar */}
-          <div className="mx-auto mb-4 flex max-w-xl gap-3">
-            <div className="relative w-full">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input
-                value={customQuestion}
-                onChange={(e) => setCustomQuestion(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={t('inputPlaceholder')}
-                className="h-14 pl-12 bg-card text-foreground placeholder:text-muted-foreground text-lg shadow-lg border-2 border-border focus:border-primary"
-              />
+          {/* Chatbot-style search bar */}
+          <div className="mx-auto max-w-2xl">
+            <div className="rounded-2xl border-2 border-border bg-card shadow-xl transition-colors focus-within:border-primary">
+              {/* Input area */}
+              <div className="flex items-center gap-2 px-4 py-3">
+                <Sparkles className="h-5 w-5 text-primary shrink-0" />
+                <input
+                  value={customQuestion}
+                  onChange={(e) => setCustomQuestion(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder={t('inputPlaceholder')}
+                  className="flex-1 bg-transparent text-lg text-foreground placeholder:text-muted-foreground outline-none"
+                />
+              </div>
+
+              {/* Bottom toolbar */}
+              <div className="flex items-center justify-between border-t border-border bg-secondary/30 px-3 py-2 rounded-b-2xl">
+                {/* Skill selector */}
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                  >
+                    {getSelectedIcon() ? (
+                      <SkillIcon name={getSelectedIcon()!} className="h-4 w-4 text-primary" />
+                    ) : (
+                      <Wand2 className="h-4 w-4 text-primary" />
+                    )}
+                    <span>{getSelectedLabel()}</span>
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  </button>
+
+                  {/* Dropdown */}
+                  {isDropdownOpen && (
+                    <div className="absolute top-full left-0 mt-2 w-72 rounded-xl border border-border bg-card shadow-2xl z-50 overflow-hidden">
+                      <div className="px-3 py-2 border-b border-border">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                          {t('advisorLabel')}
+                        </p>
+                      </div>
+                      <div className="max-h-80 overflow-y-auto py-1">
+                        {/* Auto-detect option */}
+                        <button
+                          onClick={() => { setSelectedSkill("auto"); setIsDropdownOpen(false) }}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-secondary/50 transition-colors"
+                        >
+                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
+                            <Wand2 className="h-4 w-4" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-foreground">{t('autoAssigned')}</p>
+                            <p className="text-xs text-muted-foreground truncate">{t('autoDescription')}</p>
+                          </div>
+                          {selectedSkill === "auto" && (
+                            <Check className="h-4 w-4 text-primary shrink-0" />
+                          )}
+                        </button>
+
+                        <div className="h-px bg-border mx-3 my-1" />
+
+                        {/* Skill options */}
+                        {skills.map((skill) => {
+                          const advisorKey = skill.id === "real-estate" ? "realEstate" : skill.id
+                          return (
+                            <button
+                              key={skill.id}
+                              onClick={() => { setSelectedSkill(skill.id); setIsDropdownOpen(false) }}
+                              className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-secondary/50 transition-colors"
+                            >
+                              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
+                                <SkillIcon name={skill.icon} className="h-4 w-4" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-foreground">{skill.displayName[locale]}</p>
+                                <p className="text-xs text-muted-foreground truncate">{tAdvisors(`${advisorKey}.description`)}</p>
+                              </div>
+                              {selectedSkill === skill.id && (
+                                <Check className="h-4 w-4 text-primary shrink-0" />
+                              )}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Submit button */}
+                <Button
+                  onClick={handleSimulateClick}
+                  disabled={!customQuestion.trim()}
+                  size="sm"
+                  className="gradient-primary text-white font-semibold hover:opacity-90 transition-opacity gap-1.5"
+                >
+                  {t('simulate')}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-            <Button
-              onClick={handleSimulateClick}
-              disabled={!customQuestion.trim()}
-              className="h-14 px-6 md:px-8 gradient-primary text-white font-semibold shadow-lg hover:opacity-90 transition-opacity shrink-0"
-            >
-              <span className="hidden sm:inline">{t('simulate')}</span>
-              <ArrowRight className="h-5 w-5 sm:ml-2" />
-            </Button>
+
+            <p className="text-sm text-muted-foreground mt-4">
+              {t('tryExample')}
+            </p>
+            <p className="text-xs text-muted-foreground/70 mt-2">
+              {t('freeHint')}
+            </p>
           </div>
-          <p className="text-sm text-muted-foreground">
-            {t('tryExample')}
-          </p>
-          <p className="text-xs text-muted-foreground/70 mt-2">
-            {t('freeHint')}
-          </p>
         </div>
       </div>
+
+      {/* Mismatch Warning Dialog */}
+      <AlertDialog open={mismatchOpen} onOpenChange={setMismatchOpen}>
+        <AlertDialogContent className="sm:max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-yellow-500" />
+              {t('mismatchTitle')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {mismatchData && t('mismatchDescription', {
+                detected: getSkill(mismatchData.detectedSkillId).displayName[locale],
+                selected: selectedSkill !== "auto" ? getSkill(selectedSkill).displayName[locale] : t('autoAssigned')
+              })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col gap-2 sm:flex-col">
+            {mismatchData && (
+              <Button onClick={handleMismatchSwitch} className="w-full gradient-primary text-white gap-2">
+                <SkillIcon name={getSkill(mismatchData.detectedSkillId).icon} className="h-4 w-4" />
+                {t('switchTo', { advisor: getSkill(mismatchData.detectedSkillId).displayName[locale] })}
+              </Button>
+            )}
+            <Button onClick={handleMismatchAutoDetect} variant="outline" className="w-full gap-2">
+              <Wand2 className="h-4 w-4" />
+              {t('useAutoDetect')}
+            </Button>
+            <Button onClick={handleMismatchContinue} variant="ghost" className="w-full text-muted-foreground">
+              {t('continueAnyway')}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   )
 }

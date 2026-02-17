@@ -1,9 +1,14 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Search, ArrowRight, Sparkles, Eye, Trash2, Plus, Lock } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { ArrowRight, Sparkles, Eye, Trash2, Plus, Lock, Wand2, ChevronDown, Check, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { SkillIcon } from "@/lib/skills/skill-icon"
+import { getAllSkills, getSkill } from "@/lib/skills/registry"
+import { detectSkill } from "@/lib/skills/detector"
+import type { SkillId, SupportedLocale } from "@/lib/skills/types"
+import { useLocale } from "next-intl"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -24,6 +29,9 @@ import { UpgradeDialog } from "@/components/dashboard/upgrade-dialog"
 
 export default function DashboardPage() {
     const t = useTranslations('dashboard')
+    const tHero = useTranslations('hero')
+    const tAdvisors = useTranslations('advisors')
+    const locale = useLocale() as SupportedLocale
     const [searchQuery, setSearchQuery] = useState("")
     const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false)
     const [surveyModalOpen, setSurveyModalOpen] = useState(false)
@@ -31,6 +39,12 @@ export default function DashboardPage() {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [scenarioToDelete, setScenarioToDelete] = useState<string | null>(null)
     const [viewingScenarioId, setViewingScenarioId] = useState<string | null>(null)
+    const [selectedSkill, setSelectedSkill] = useState<SkillId | "auto">("auto")
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+    const [mismatchOpen, setMismatchOpen] = useState(false)
+    const [mismatchData, setMismatchData] = useState<{ question: string; detectedSkillId: SkillId } | null>(null)
+    const dropdownRef = useRef<HTMLDivElement>(null)
+    const skills = getAllSkills()
 
     const {
         scenarios,
@@ -54,17 +68,82 @@ export default function DashboardPage() {
     }, [viewingScenarioId, selectScenario])
 
 
-    const handleSearchSubmit = () => {
-        const trimmed = searchQuery.trim()
-        if (!trimmed) return
-
-        let question = trimmed
-        if (!trimmed.toLowerCase().startsWith('should i')) {
-            question = `Should I ${trimmed}?`
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false)
+            }
         }
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
+
+    const getSelectedLabel = () => {
+        if (selectedSkill === "auto") return tHero('autoAssigned')
+        const skill = skills.find(s => s.id === selectedSkill)
+        return skill?.displayName[locale] ?? tHero('autoAssigned')
+    }
+
+    const getSelectedIcon = () => {
+        if (selectedSkill === "auto") return null
+        const skill = skills.find(s => s.id === selectedSkill)
+        return skill?.icon ?? null
+    }
+
+    const buildQuestion = (input: string): string => {
+        if (input.toLowerCase().startsWith('should i') || input.toLowerCase().startsWith('should')) {
+            return input
+        }
+        return `Should I ${input}?`
+    }
+
+    const openSurvey = (question: string, skillId?: SkillId) => {
         setCurrentQuestion(question)
         setSurveyModalOpen(true)
         setSearchQuery("")
+    }
+
+    const handleSearchSubmit = () => {
+        const trimmed = searchQuery.trim()
+        if (!trimmed) return
+        const question = buildQuestion(trimmed)
+
+        if (selectedSkill === "auto") {
+            openSurvey(question)
+            return
+        }
+
+        const detected = detectSkill(question, locale)
+        if (detected.skillId !== "generic" && detected.skillId !== selectedSkill) {
+            setMismatchData({ question, detectedSkillId: detected.skillId })
+            setMismatchOpen(true)
+            return
+        }
+
+        openSurvey(question, selectedSkill)
+    }
+
+    const handleMismatchSwitch = () => {
+        if (!mismatchData) return
+        setSelectedSkill(mismatchData.detectedSkillId)
+        openSurvey(mismatchData.question, mismatchData.detectedSkillId)
+        setMismatchOpen(false)
+        setMismatchData(null)
+    }
+
+    const handleMismatchAutoDetect = () => {
+        if (!mismatchData) return
+        setSelectedSkill("auto")
+        openSurvey(mismatchData.question)
+        setMismatchOpen(false)
+        setMismatchData(null)
+    }
+
+    const handleMismatchContinue = () => {
+        if (!mismatchData) return
+        openSurvey(mismatchData.question, selectedSkill === "auto" ? undefined : selectedSkill)
+        setMismatchOpen(false)
+        setMismatchData(null)
     }
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -199,27 +278,104 @@ export default function DashboardPage() {
                         {t('hero.subtitle')}
                     </p>
 
-                    {/* Search Bar */}
+                    {/* Chatbot-style Search Bar */}
                     <div className="mx-auto max-w-xl">
-                        <div className="flex gap-3">
-                            <div className="relative flex-1">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                <Input
+                        <div className="rounded-2xl border-2 border-border bg-card shadow-xl transition-colors focus-within:border-primary">
+                            {/* Input area */}
+                            <div className="flex items-center gap-2 px-4 py-3">
+                                <Sparkles className="h-5 w-5 text-primary shrink-0" />
+                                <input
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     onKeyDown={handleKeyDown}
                                     placeholder={t('hero.placeholder')}
-                                    className="h-14 pl-12 bg-card text-foreground placeholder:text-muted-foreground text-lg shadow-lg border-2 border-border focus:border-primary"
+                                    className="flex-1 bg-transparent text-lg text-foreground placeholder:text-muted-foreground outline-none"
                                 />
                             </div>
-                            <Button
-                                onClick={handleSearchSubmit}
-                                disabled={!searchQuery.trim() || !canCreate}
-                                className="h-14 px-6 md:px-8 gradient-primary text-white font-semibold shadow-lg hover:opacity-90 transition-opacity shrink-0"
-                            >
-                                <span className="hidden sm:inline">{t('hero.simulate')}</span>
-                                <ArrowRight className="h-5 w-5 sm:ml-2" />
-                            </Button>
+
+                            {/* Bottom toolbar */}
+                            <div className="flex items-center justify-between border-t border-border bg-secondary/30 px-3 py-2 rounded-b-2xl">
+                                {/* Skill selector */}
+                                <div className="relative" ref={dropdownRef}>
+                                    <button
+                                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                                    >
+                                        {getSelectedIcon() ? (
+                                            <SkillIcon name={getSelectedIcon()!} className="h-4 w-4 text-primary" />
+                                        ) : (
+                                            <Wand2 className="h-4 w-4 text-primary" />
+                                        )}
+                                        <span>{getSelectedLabel()}</span>
+                                        <ChevronDown className="h-3.5 w-3.5" />
+                                    </button>
+
+                                    {/* Dropdown */}
+                                    {isDropdownOpen && (
+                                        <div className="absolute top-full left-0 mt-2 w-72 rounded-xl border border-border bg-card shadow-2xl z-50 overflow-hidden">
+                                            <div className="px-3 py-2 border-b border-border">
+                                                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                                    {tHero('advisorLabel')}
+                                                </p>
+                                            </div>
+                                            <div className="max-h-80 overflow-y-auto py-1">
+                                                {/* Auto-detect option */}
+                                                <button
+                                                    onClick={() => { setSelectedSkill("auto"); setIsDropdownOpen(false) }}
+                                                    className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-secondary/50 transition-colors"
+                                                >
+                                                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
+                                                        <Wand2 className="h-4 w-4" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm font-medium text-foreground">{tHero('autoAssigned')}</p>
+                                                        <p className="text-xs text-muted-foreground truncate">{tHero('autoDescription')}</p>
+                                                    </div>
+                                                    {selectedSkill === "auto" && (
+                                                        <Check className="h-4 w-4 text-primary shrink-0" />
+                                                    )}
+                                                </button>
+
+                                                <div className="h-px bg-border mx-3 my-1" />
+
+                                                {/* Skill options */}
+                                                {skills.map((skill) => {
+                                                    const advisorKey = skill.id === "real-estate" ? "realEstate" : skill.id
+                                                    return (
+                                                        <button
+                                                            key={skill.id}
+                                                            onClick={() => { setSelectedSkill(skill.id); setIsDropdownOpen(false) }}
+                                                            className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-secondary/50 transition-colors"
+                                                        >
+                                                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
+                                                                <SkillIcon name={skill.icon} className="h-4 w-4" />
+                                                            </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <p className="text-sm font-medium text-foreground">{skill.displayName[locale]}</p>
+                                                                <p className="text-xs text-muted-foreground truncate">{tAdvisors(`${advisorKey}.description`)}</p>
+                                                            </div>
+                                                            {selectedSkill === skill.id && (
+                                                                <Check className="h-4 w-4 text-primary shrink-0" />
+                                                            )}
+                                                        </button>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Submit button */}
+                                <Button
+                                    onClick={handleSearchSubmit}
+                                    disabled={!searchQuery.trim() || !canCreate}
+                                    size="sm"
+                                    className="gradient-primary text-white font-semibold hover:opacity-90 transition-opacity gap-1.5"
+                                >
+                                    {t('hero.simulate')}
+                                    <ArrowRight className="h-4 w-4" />
+                                </Button>
+                            </div>
                         </div>
 
                         {/* Usage indicator */}
@@ -313,6 +469,7 @@ export default function DashboardPage() {
                 isOpen={surveyModalOpen}
                 onClose={() => setSurveyModalOpen(false)}
                 userQuestion={currentQuestion}
+                forcedSkillId={selectedSkill === "auto" ? undefined : selectedSkill}
             />
 
             {/* Delete Confirmation Dialog */}
@@ -337,6 +494,39 @@ export default function DashboardPage() {
             </AlertDialog>
 
             <UpgradeDialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen} />
+
+            {/* Mismatch Warning Dialog */}
+            <AlertDialog open={mismatchOpen} onOpenChange={setMismatchOpen}>
+                <AlertDialogContent className="sm:max-w-md">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="flex items-center gap-2">
+                            <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                            {tHero('mismatchTitle')}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {mismatchData && tHero('mismatchDescription', {
+                                detected: getSkill(mismatchData.detectedSkillId).displayName[locale],
+                                selected: selectedSkill !== "auto" ? getSkill(selectedSkill).displayName[locale] : tHero('autoAssigned')
+                            })}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="flex-col gap-2 sm:flex-col">
+                        {mismatchData && (
+                            <Button onClick={handleMismatchSwitch} className="w-full gradient-primary text-white gap-2">
+                                <SkillIcon name={getSkill(mismatchData.detectedSkillId).icon} className="h-4 w-4" />
+                                {tHero('switchTo', { advisor: getSkill(mismatchData.detectedSkillId).displayName[locale] })}
+                            </Button>
+                        )}
+                        <Button onClick={handleMismatchAutoDetect} variant="outline" className="w-full gap-2">
+                            <Wand2 className="h-4 w-4" />
+                            {tHero('useAutoDetect')}
+                        </Button>
+                        <Button onClick={handleMismatchContinue} variant="ghost" className="w-full text-muted-foreground">
+                            {tHero('continueAnyway')}
+                        </Button>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }

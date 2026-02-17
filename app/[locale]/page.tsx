@@ -14,6 +14,7 @@ import { HeroSection } from "@/components/sections/hero-section"
 import { ScenariosSection } from "@/components/sections/scenarios-section"
 import { HowItWorksSection } from "@/components/sections/how-it-works-section"
 import { FeaturesSection } from "@/components/sections/features-section"
+import { AdvisorsSection } from "@/components/sections/advisors-section"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { CTASection } from "@/components/sections/cta-section"
@@ -21,6 +22,7 @@ import { FooterSection } from "@/components/sections/footer-section"
 import { SurveyModal } from "@/components/survey-modal"
 import { onAuthStateChanged, User } from "firebase/auth"
 import { auth } from "@/lib/firebase"
+import type { SkillId } from "@/lib/skills/types"
 
 export default function ShouldISimulator() {
   const tCommon = useTranslations('common')
@@ -36,6 +38,7 @@ export default function ShouldISimulator() {
   const [user, setUser] = useState<User | null>(null)
   const [isSurveyOpen, setIsSurveyOpen] = useState(false)
   const [surveyQuestion, setSurveyQuestion] = useState("")
+  const [forcedSkillId, setForcedSkillId] = useState<SkillId | undefined>(undefined)
   const isLoggingIn = useRef(false)
 
   useEffect(() => {
@@ -64,8 +67,9 @@ export default function ShouldISimulator() {
     setIsAuthOpen(true)
   }
 
-  const handleCustomQuestionSubmit = (question: string) => {
+  const handleCustomQuestionSubmit = (question: string, skillId?: SkillId) => {
     setSurveyQuestion(question)
+    setForcedSkillId(skillId)
     setIsSurveyOpen(true)
   }
 
@@ -121,6 +125,12 @@ export default function ShouldISimulator() {
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               {tNav('features')}
+            </button>
+            <button
+              onClick={() => scrollToSection('advisors')}
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {tNav('advisors')}
             </button>
             <button
               onClick={() => scrollToSection('pricing')}
@@ -189,6 +199,12 @@ export default function ShouldISimulator() {
                 {tNav('features')}
               </button>
               <button
+                onClick={() => scrollToSection('advisors')}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground text-left py-2"
+              >
+                {tNav('advisors')}
+              </button>
+              <button
                 onClick={() => scrollToSection('pricing')}
                 className="text-sm font-medium text-muted-foreground hover:text-foreground text-left py-2"
               >
@@ -234,6 +250,7 @@ export default function ShouldISimulator() {
         />
         <HowItWorksSection />
         <FeaturesSection />
+        <AdvisorsSection />
         <PricingSection onGetStarted={handleSignUp} />
         <FAQSection />
         <CTASection onGetStarted={handleSignUp} />
@@ -255,6 +272,7 @@ export default function ShouldISimulator() {
         userQuestion={surveyQuestion}
         questionCount={3}
         bestCaseOnly={true}
+        forcedSkillId={forcedSkillId}
         onSignUp={() => {
           setIsSurveyOpen(false)
           setAuthMode('signup')

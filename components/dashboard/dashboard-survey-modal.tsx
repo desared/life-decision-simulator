@@ -16,17 +16,22 @@ import { generateSurveyQuestionsAction, generateOutcomesAction } from "@/app/act
 import { type SurveyQuestion, type SurveyOutcome, type GeminiOutcomeResponse } from "@/lib/gemini-service"
 import { useFirestore } from "@/contexts/firestore-context"
 import { UpgradeDialog } from "@/components/dashboard/upgrade-dialog"
+import { detectSkill } from "@/lib/skills/detector"
+import { getSkill } from "@/lib/skills/registry"
+import { SkillIcon } from "@/lib/skills/skill-icon"
+import type { SupportedLocale, SkillId } from "@/lib/skills/types"
 
 interface DashboardSurveyModalProps {
   isOpen: boolean
   onClose: () => void
   userQuestion: string
-  onSave: (questions: string[], answers: Record<string, string>, outcomes: SurveyOutcome[]) => Promise<void>
+  forcedSkillId?: SkillId
+  onSave?: (questions: string[], answers: Record<string, string>, outcomes: SurveyOutcome[]) => Promise<void>
 }
 
 type SurveyStep = "loading" | "questions" | "generating" | "saving" | "results"
 
-export function DashboardSurveyModal({ isOpen, onClose, userQuestion }: DashboardSurveyModalProps) {
+export function DashboardSurveyModal({ isOpen, onClose, userQuestion, forcedSkillId }: DashboardSurveyModalProps) {
   const t = useTranslations('survey')
   const locale = useLocale()
   const [step, setStep] = useState<SurveyStep>("loading")
@@ -35,6 +40,7 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion }: Dashboar
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Record<string, { question: string; answer: string }>>({})
   const [outcomes, setOutcomes] = useState<GeminiOutcomeResponse | null>(null)
+  const [detectedSkillId, setDetectedSkillId] = useState<SkillId>("generic")
 
   const { createScenario, createSimulation, selectScenario, canCreateScenario } = useFirestore()
   const canSave = canCreateScenario()
@@ -52,14 +58,19 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion }: Dashboar
       setCurrentQuestion(0)
       setAnswers({})
       setOutcomes(null)
+      setDetectedSkillId("generic")
     }
   }, [isOpen])
 
-  const fetchQuestions = async () => { // Renamed loadQuestions to fetchQuestions
+  const fetchQuestions = async () => {
     setStep("loading")
     try {
+      // Use forced skill if provided, otherwise auto-detect
+      const skillId = forcedSkillId ?? detectSkill(userQuestion, locale as SupportedLocale).skillId
+      setDetectedSkillId(skillId)
+
       // Use Server Action
-      const data = await generateSurveyQuestionsAction(userQuestion, 4, locale)
+      const data = await generateSurveyQuestionsAction(userQuestion, 5, locale, skillId)
       setQuestions(data.questions)
 
       // Initialize current answers (this part was in the user's snippet, but the original code handles answers differently)
@@ -99,7 +110,7 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion }: Dashboar
         })
 
         // Use Server Action
-        const data = await generateOutcomesAction(userQuestion, minimalAnswers, false, locale)
+        const data = await generateOutcomesAction(userQuestion, minimalAnswers, false, locale, detectedSkillId !== "generic" ? detectedSkillId : undefined)
         setOutcomes(data)
 
         // Auto-save scenario and simulation if user can save
@@ -125,22 +136,9 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion }: Dashboar
       const title = userQuestion.replace(/^should i\s*/i, '').replace(/\?$/, '')
       const capitalizedTitle = title.charAt(0).toUpperCase() + title.slice(1)
 
-      // Determine icon based on keywords
-      let icon = "HelpCircle"
-      const lowerQuestion = userQuestion.toLowerCase()
-      if (lowerQuestion.includes('job') || lowerQuestion.includes('career') || lowerQuestion.includes('work')) {
-        icon = "Briefcase"
-      } else if (lowerQuestion.includes('buy') || lowerQuestion.includes('rent') || lowerQuestion.includes('house') || lowerQuestion.includes('home')) {
-        icon = "Home"
-      } else if (lowerQuestion.includes('move') || lowerQuestion.includes('relocate') || lowerQuestion.includes('city')) {
-        icon = "MapPin"
-      } else if (lowerQuestion.includes('study') || lowerQuestion.includes('learn') || lowerQuestion.includes('degree')) {
-        icon = "GraduationCap"
-      } else if (lowerQuestion.includes('invest') || lowerQuestion.includes('money') || lowerQuestion.includes('save')) {
-        icon = "DollarSign"
-      } else if (lowerQuestion.includes('relationship') || lowerQuestion.includes('marry') || lowerQuestion.includes('date')) {
-        icon = "Heart"
-      }
+      // Use detected skill for icon
+      const skill = getSkill(detectedSkillId)
+      const icon = skill.icon
 
       // Create description from summary
       const description = outcomeData.summary.length > 150
@@ -148,7 +146,7 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion }: Dashboar
         : outcomeData.summary
 
       // Create the scenario first
-      const scenarioId = await createScenario(capitalizedTitle, description, icon)
+      const scenarioId = await createScenario(capitalizedTitle, description, icon, detectedSkillId !== "generic" ? detectedSkillId : undefined)
 
       // Select the new scenario to create simulation under it
       selectScenario(scenarioId)
@@ -244,6 +242,12 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion }: Dashboar
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
             {step === "results" ? t('results') : t('title')}
+            {detectedSkillId !== "generic" && (
+              <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary">
+                <SkillIcon name={getSkill(detectedSkillId).icon} className="h-3 w-3" />
+                {getSkill(detectedSkillId).displayName[locale as SupportedLocale]}
+              </span>
+            )}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
             {step === "loading" && t('loading')}

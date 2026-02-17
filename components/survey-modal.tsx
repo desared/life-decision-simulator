@@ -17,6 +17,10 @@ import {
   type SurveyQuestion,
   type GeminiOutcomeResponse
 } from "@/lib/gemini-service"
+import { detectSkill } from "@/lib/skills/detector"
+import { getSkill } from "@/lib/skills/registry"
+import { SkillIcon } from "@/lib/skills/skill-icon"
+import type { SupportedLocale, SkillId } from "@/lib/skills/types"
 
 interface SurveyModalProps {
   isOpen: boolean
@@ -24,12 +28,13 @@ interface SurveyModalProps {
   userQuestion: string
   questionCount?: number
   bestCaseOnly?: boolean
+  forcedSkillId?: SkillId
   onSignUp?: () => void
 }
 
 type SurveyStep = "loading" | "questions" | "generating" | "results"
 
-export function SurveyModal({ isOpen, onClose, userQuestion, questionCount = 4, bestCaseOnly = false, onSignUp }: SurveyModalProps) {
+export function SurveyModal({ isOpen, onClose, userQuestion, questionCount = 4, bestCaseOnly = false, forcedSkillId, onSignUp }: SurveyModalProps) {
   const t = useTranslations('survey')
   const locale = useLocale()
   const [step, setStep] = useState<SurveyStep>("loading")
@@ -37,6 +42,7 @@ export function SurveyModal({ isOpen, onClose, userQuestion, questionCount = 4, 
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Record<string, { question: string; answer: string }>>({})
   const [outcomes, setOutcomes] = useState<GeminiOutcomeResponse | null>(null)
+  const [detectedSkillId, setDetectedSkillId] = useState<SkillId>("generic")
 
   useEffect(() => {
     if (isOpen && userQuestion) {
@@ -52,13 +58,18 @@ export function SurveyModal({ isOpen, onClose, userQuestion, questionCount = 4, 
       setCurrentQuestion(0)
       setAnswers({})
       setOutcomes(null)
+      setDetectedSkillId("generic")
     }
   }, [isOpen])
 
   const loadQuestions = async () => {
     setStep("loading")
     try {
-      const response = await generateSurveyQuestionsAction(userQuestion, questionCount, locale)
+      // Use forced skill if provided, otherwise auto-detect
+      const skillId = forcedSkillId ?? detectSkill(userQuestion, locale as SupportedLocale).skillId
+      setDetectedSkillId(skillId)
+
+      const response = await generateSurveyQuestionsAction(userQuestion, questionCount, locale, skillId)
       setQuestions(response.questions)
       setStep("questions")
     } catch (error) {
@@ -81,7 +92,7 @@ export function SurveyModal({ isOpen, onClose, userQuestion, questionCount = 4, 
       // All questions answered, generate outcomes
       setStep("generating")
       try {
-        const response = await generateOutcomesAction(userQuestion, answers, bestCaseOnly, locale)
+        const response = await generateOutcomesAction(userQuestion, answers, bestCaseOnly, locale, detectedSkillId !== "generic" ? detectedSkillId : undefined)
         setOutcomes(response)
         setStep("results")
       } catch (error) {
@@ -108,6 +119,12 @@ export function SurveyModal({ isOpen, onClose, userQuestion, questionCount = 4, 
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
             {step === "results" ? t('results') : t('title')}
+            {detectedSkillId !== "generic" && (
+              <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary">
+                <SkillIcon name={getSkill(detectedSkillId).icon} className="h-3 w-3" />
+                {getSkill(detectedSkillId).displayName[locale as SupportedLocale]}
+              </span>
+            )}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
             {step === "loading" && t('loading')}

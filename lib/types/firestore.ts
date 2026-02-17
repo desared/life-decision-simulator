@@ -43,6 +43,7 @@ export interface Scenario {
   title: string;
   description: string;
   icon: string;
+  skillId?: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
   simulationCount: number;

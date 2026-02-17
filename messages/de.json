@@ -12,6 +12,7 @@
     "howItWorks": "So funktioniert's",
     "pricing": "Preise",
     "features": "Funktionen",
+    "advisors": "Berater",
     "faq": "FAQ"
   },
   "hero": {
@@ -21,7 +22,15 @@
     "inputPlaceholder": "Sollte ich...",
     "simulate": "Simulieren",
     "tryExample": "Fragen Sie was Sie wollen, beantworten Sie 3 kurze Fragen und erhalten Sie eine kostenlose Analyse",
-    "freeHint": "Melden Sie sich an für tiefere Analysen, Ergebnisse speichern und Szenarien vergleichen"
+    "freeHint": "Melden Sie sich an für tiefere Analysen, Ergebnisse speichern und Szenarien vergleichen",
+    "advisorLabel": "Berater",
+    "autoAssigned": "Automatisch",
+    "autoDescription": "Weist automatisch den besten Experten basierend auf Ihrer Frage zu",
+    "mismatchTitle": "Berater-Konflikt",
+    "mismatchDescription": "Ihre Frage scheint sich auf {detected} zu beziehen, aber Sie haben {selected} ausgewählt. Für die besten Ergebnisse empfehlen wir einen Wechsel.",
+    "switchTo": "Zu {advisor} wechseln",
+    "useAutoDetect": "Automatisch erkennen",
+    "continueAnyway": "Trotzdem fortfahren"
   },
   "scenarios": {
     "title": "Beliebte Szenarien",
@@ -157,6 +166,42 @@
       "description": "Laden Sie Ihre Analyse als PDF herunter oder teilen Sie Szenarien mit Beratern und Familie."
     }
   },
+  "advisors": {
+    "title": "KI-Fachberater",
+    "subtitle": "Jede Frage wird von einem spezialisierten KI-Berater analysiert, der im jeweiligen Fachgebiet geschult ist — kein generischer Chatbot",
+    "finance": {
+      "title": "Finanzberater",
+      "description": "Zertifizierte Finanzplanungsexpertise für Investitionen, Sparen, Schulden, Rente und wichtige Geldentscheidungen."
+    },
+    "career": {
+      "title": "Karrierestratege",
+      "description": "Executive-Coaching-Einblicke für Jobwechsel, Beförderungen, Gehaltsverhandlungen und Karriereübergänge."
+    },
+    "health": {
+      "title": "Gesundheit & Wellness",
+      "description": "Evidenzbasierte Gesundheitsberatung für Lebensstiländerungen, Fitnessziele, psychische Gesundheit und medizinische Entscheidungen."
+    },
+    "relationships": {
+      "title": "Beziehungsberater",
+      "description": "Lizenzierte Therapie-Frameworks für Ehe, Dating, Familiendynamik und wichtige Beziehungsentscheidungen."
+    },
+    "education": {
+      "title": "Bildungsberater",
+      "description": "ROI-fokussierte Beratung für Abschlüsse, Zertifizierungen, Bootcamps und lebenslange Bildungsinvestitionen."
+    },
+    "realEstate": {
+      "title": "Immobilienberater",
+      "description": "Immobilienmarkt-Expertise für Kauf-vs-Miete-Entscheidungen, Hauskauf und Immobilieninvestitionen."
+    },
+    "lifestyle": {
+      "title": "Lifestyle-Berater",
+      "description": "Umzugs- und Lebensübergangsexpertise für Auslandsumzüge, Sabbaticals und große Lebensstiländerungen."
+    },
+    "business": {
+      "title": "Gründungsberater",
+      "description": "Startup- und Geschäftsstrategie für Unternehmensgründungen, Nebenprojekte und unternehmerische Entscheidungen."
+    }
+  },
   "testimonials": {
     "title": "Vertraut von Entscheidungsträgern",
     "subtitle": "Schließen Sie sich Tausenden an, die Klarheit über ihre wichtigsten Entscheidungen gewonnen haben",
@@ -186,7 +231,7 @@
       "description": "Simulieren Sie jedes Thema kostenlos",
       "features": [
         "2 Szenarien zu jedem Thema",
-        "4-Fragen-Analyse pro Szenario",
+        "5-Fragen-Analyse pro Szenario",
         "Ergebnisse speichern & abrufen",
         "Community-Support"
       ],
@@ -240,7 +285,7 @@
     },
     "q4": {
       "question": "Was ist der Unterschied zwischen kostenlosen und kostenpflichtigen Plänen?",
-      "answer": "Der kostenlose Plan ermöglicht 2 Simulationen zu beliebigen Themen mit einer 4-Fragen-Analyse. Kostenpflichtige Pläne (Pro Szenario oder Pro) verwenden eine 10-Fragen-Tiefenanalyse für genauere, fallspezifische Vorhersagen. Pro bietet unbegrenzte Simulationen."
+      "answer": "Der kostenlose Plan ermöglicht 2 Simulationen zu beliebigen Themen mit einer 5-Fragen-Analyse. Kostenpflichtige Pläne (Pro Szenario oder Pro) verwenden eine 10-Fragen-Tiefenanalyse für genauere, fallspezifische Vorhersagen. Pro bietet unbegrenzte Simulationen."
     },
     "q5": {
       "question": "Kann ich mein Abonnement jederzeit kündigen?",
@@ -645,7 +690,7 @@
       "description": "Starten Sie mit zwei vollständigen Simulationen zu jedem Thema — komplett kostenlos, keine Kreditkarte erforderlich.",
       "features": [
         "2 Szenarien zu jedem Thema",
-        "4-Fragen-Analyse pro Szenario",
+        "5-Fragen-Analyse pro Szenario",
         "Ergebnisse speichern & abrufen",
         "Community-Support"
       ]

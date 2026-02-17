@@ -12,6 +12,7 @@
     "howItWorks": "How it works",
     "pricing": "Pricing",
     "features": "Features",
+    "advisors": "Advisors",
     "faq": "FAQ"
   },
   "hero": {
@@ -21,7 +22,15 @@
     "inputPlaceholder": "Should I...",
     "simulate": "Simulate",
     "tryExample": "Ask anything, answer 3 quick questions, and get a free analysis",
-    "freeHint": "Log in to get deeper analysis, save results, and compare scenarios"
+    "freeHint": "Log in to get deeper analysis, save results, and compare scenarios",
+    "advisorLabel": "Advisor",
+    "autoAssigned": "Auto-detect",
+    "autoDescription": "Automatically assigns the best expert based on your question",
+    "mismatchTitle": "Advisor Mismatch",
+    "mismatchDescription": "Your question seems to be about {detected}, but you selected {selected}. For the best results, we recommend switching.",
+    "switchTo": "Switch to {advisor}",
+    "useAutoDetect": "Use Auto-detect",
+    "continueAnyway": "Continue Anyway"
   },
   "scenarios": {
     "title": "Popular Scenarios",
@@ -157,6 +166,42 @@
       "description": "Download your analysis as PDF or share scenarios with advisors and family."
     }
   },
+  "advisors": {
+    "title": "Expert AI Advisors",
+    "subtitle": "Every question is analyzed by a specialized AI advisor trained in the relevant domain — not a generic chatbot",
+    "finance": {
+      "title": "Financial Advisor",
+      "description": "Certified financial planning expertise for investments, savings, debt, retirement, and major money decisions."
+    },
+    "career": {
+      "title": "Career Strategist",
+      "description": "Executive coaching insights for job changes, promotions, salary negotiations, and career transitions."
+    },
+    "health": {
+      "title": "Health & Wellness",
+      "description": "Evidence-based health guidance for lifestyle changes, fitness goals, mental health, and medical decisions."
+    },
+    "relationships": {
+      "title": "Relationship Counselor",
+      "description": "Licensed therapy frameworks for marriage, dating, family dynamics, and major relationship decisions."
+    },
+    "education": {
+      "title": "Education Consultant",
+      "description": "ROI-focused guidance for degrees, certifications, bootcamps, and lifelong learning investments."
+    },
+    "realEstate": {
+      "title": "Real Estate Advisor",
+      "description": "Property market expertise for buy-vs-rent decisions, home purchases, and real estate investments."
+    },
+    "lifestyle": {
+      "title": "Lifestyle Advisor",
+      "description": "Relocation and life transition expertise for moving abroad, sabbaticals, and major lifestyle changes."
+    },
+    "business": {
+      "title": "Entrepreneurship Advisor",
+      "description": "Startup and business strategy for launching ventures, side hustles, and entrepreneurial decisions."
+    }
+  },
   "testimonials": {
     "title": "Trusted by Decision Makers",
     "subtitle": "Join thousands who've gained clarity on their biggest decisions",
@@ -186,7 +231,7 @@
       "description": "Simulate any topic for free",
       "features": [
         "2 scenarios on any topic",
-        "4-question analysis per scenario",
+        "5-question analysis per scenario",
         "Save & revisit your results",
         "Community support"
       ],
@@ -240,7 +285,7 @@
     },
     "q4": {
       "question": "What's the difference between free and paid plans?",
-      "answer": "The free plan lets you simulate any 2 topics with a 4-question analysis. Paid plans (per-scenario or Pro) use a 10-question in-depth analysis for more accurate, case-specific predictions. Pro gives you unlimited simulations."
+      "answer": "The free plan lets you simulate any 2 topics with a 5-question analysis. Paid plans (per-scenario or Pro) use a 10-question in-depth analysis for more accurate, case-specific predictions. Pro gives you unlimited simulations."
     },
     "q5": {
       "question": "Can I cancel my subscription anytime?",
@@ -645,7 +690,7 @@
       "description": "Get started with two full simulations on any topic — completely free, no credit card required.",
       "features": [
         "2 scenarios on any topic",
-        "4-question analysis per scenario",
+        "5-question analysis per scenario",
         "Save & revisit your results",
         "Community support"
       ]

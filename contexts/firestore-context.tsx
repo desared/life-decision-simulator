@@ -26,7 +26,7 @@ interface FirestoreContextType {
   scenarios: Scenario[];
   selectedScenario: Scenario | null;
   selectScenario: (scenarioId: string) => void;
-  createScenario: (title: string, description: string, icon: string) => Promise<string>;
+  createScenario: (title: string, description: string, icon: string, skillId?: string) => Promise<string>;
   deleteScenario: (scenarioId: string) => Promise<void>;
 
   // Simulations
@@ -165,7 +165,7 @@ export function FirestoreProvider({ children, user }: FirestoreProviderProps) {
   );
 
   const createScenarioHandler = useCallback(
-    async (title: string, description: string, icon: string): Promise<string> => {
+    async (title: string, description: string, icon: string, skillId?: string): Promise<string> => {
       if (!user) throw new Error("Not authenticated");
 
       const id = await firestoreService.createScenario(user.uid, {
@@ -173,6 +173,7 @@ export function FirestoreProvider({ children, user }: FirestoreProviderProps) {
         title,
         description,
         icon,
+        ...(skillId && { skillId }),
       });
 
       // Refresh scenarios list
