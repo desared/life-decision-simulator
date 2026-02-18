@@ -57,7 +57,8 @@
       "description": "Log in to ask any \"Should I...?\" question and get AI-powered insights"
     },
     "free": "Free",
-    "premium": "Premium"
+    "premium": "Premium",
+    "exploreAll": "More details"
   },
   "factors": {
     "salaryChange": "Salary Change",
@@ -169,37 +170,55 @@
   "advisors": {
     "title": "Expert AI Advisors",
     "subtitle": "Every question is analyzed by a specialized AI advisor trained in the relevant domain — not a generic chatbot",
+    "exampleQuestions": "Example questions",
+    "exploreAll": "More details",
     "finance": {
       "title": "Financial Advisor",
-      "description": "Certified financial planning expertise for investments, savings, debt, retirement, and major money decisions."
+      "tagline": "Certified financial planning expertise",
+      "description": "Analyzes investments, savings strategies, debt management, retirement planning, and major money decisions using financial modeling frameworks.",
+      "examples": "Should I invest in index funds or real estate?|Is it worth paying off my mortgage early?|Should I max out my 401k or pay student loans?"
     },
     "career": {
       "title": "Career Strategist",
-      "description": "Executive coaching insights for job changes, promotions, salary negotiations, and career transitions."
+      "tagline": "Executive coaching & career intelligence",
+      "description": "Guides job transitions, promotions, salary negotiations, and long-term career planning with industry benchmarks and strategic frameworks.",
+      "examples": "Should I leave my stable job for a startup?|Is an MBA worth it at 35?|Should I negotiate my salary or accept the offer?"
     },
     "health": {
       "title": "Health & Wellness",
-      "description": "Evidence-based health guidance for lifestyle changes, fitness goals, mental health, and medical decisions."
+      "tagline": "Evidence-based health guidance",
+      "description": "Evaluates lifestyle changes, fitness goals, mental health decisions, and medical choices using research-backed methodologies and risk analysis.",
+      "examples": "Should I try intermittent fasting?|Is it worth switching to a standing desk?|Should I see a therapist or try self-help first?"
     },
     "relationships": {
       "title": "Relationship Counselor",
-      "description": "Licensed therapy frameworks for marriage, dating, family dynamics, and major relationship decisions."
+      "tagline": "Licensed therapy frameworks",
+      "description": "Applies counseling frameworks to marriage, dating, family dynamics, and major relationship crossroads for thoughtful, balanced decisions.",
+      "examples": "Should we move in together after 6 months?|Is couples therapy worth it?|Should I reconnect with an estranged family member?"
     },
     "education": {
       "title": "Education Consultant",
-      "description": "ROI-focused guidance for degrees, certifications, bootcamps, and lifelong learning investments."
+      "tagline": "ROI-focused learning strategy",
+      "description": "Compares degrees, certifications, bootcamps, and self-study paths with cost-benefit analysis and career outcome projections.",
+      "examples": "Is a computer science degree worth it in 2025?|Should I do a coding bootcamp or self-teach?|Is getting a PhD worth the opportunity cost?"
     },
     "realEstate": {
       "title": "Real Estate Advisor",
-      "description": "Property market expertise for buy-vs-rent decisions, home purchases, and real estate investments."
+      "tagline": "Property market expertise",
+      "description": "Models buy-vs-rent scenarios, home purchase timing, rental investments, and relocation costs with local market data considerations.",
+      "examples": "Should I buy a house now or wait?|Is renting really throwing money away?|Should I invest in a rental property?"
     },
     "lifestyle": {
       "title": "Lifestyle Advisor",
-      "description": "Relocation and life transition expertise for moving abroad, sabbaticals, and major lifestyle changes."
+      "tagline": "Life transition specialist",
+      "description": "Navigates relocations, sabbaticals, digital nomad transitions, and major lifestyle pivots with practical scenario planning.",
+      "examples": "Should I move abroad for a year?|Is taking a sabbatical worth the career risk?|Should I downsize to a tiny home?"
     },
     "business": {
       "title": "Entrepreneurship Advisor",
-      "description": "Startup and business strategy for launching ventures, side hustles, and entrepreneurial decisions."
+      "tagline": "Startup & business strategy",
+      "description": "Evaluates venture viability, side hustle potential, market entry timing, and business model decisions with lean startup methodologies.",
+      "examples": "Should I quit my job to start a business?|Is my side hustle worth scaling?|Should I take on a co-founder?"
     }
   },
   "testimonials": {
@@ -311,6 +330,7 @@
     "product": {
       "title": "Product",
       "scenarios": "Scenarios",
+      "advisors": "Advisors",
       "pricing": "Pricing",
       "demo": "Live Demo",
       "api": "API"
@@ -537,6 +557,47 @@
     "subtitle": "Have a question, feedback, or just want to say hello? We'd love to hear from you.",
     "emailTitle": "Email Us",
     "emailDescription": "For any questions, partnerships, or support inquiries, drop us an email and we'll get back to you as soon as possible."
+  },
+  "advisorsPage": {
+    "backHome": "Back to Home",
+    "title": "Meet Your AI Advisors",
+    "subtitle": "Each advisor brings specialized expertise to analyze your decisions. They're automatically matched to your question — or you can choose one manually.",
+    "tryNow": "Try now",
+    "ctaTitle": "Ready to decide with confidence?",
+    "ctaDescription": "Ask any question and let the right advisor guide your simulation.",
+    "ctaButton": "Start a Simulation",
+    "finance": {
+      "longDescription": "Our Financial Advisor applies certified financial planning frameworks to evaluate your money decisions. Whether you're weighing investment options, planning for retirement, managing debt, or making a major purchase, it models the financial impact across multiple scenarios — factoring in risk tolerance, time horizons, and opportunity costs.",
+      "specialties": "Investments|Retirement Planning|Debt Management|Budgeting|Tax Strategy|Major Purchases"
+    },
+    "career": {
+      "longDescription": "The Career Strategist draws on executive coaching methodologies and labor market data to help you navigate professional crossroads. From evaluating job offers and negotiating compensation to planning long-term career pivots, it provides structured analysis of both the tangible and intangible factors that shape career outcomes.",
+      "specialties": "Job Transitions|Salary Negotiation|Career Pivots|Promotions|Work-Life Balance|Skill Development"
+    },
+    "health": {
+      "longDescription": "Our Health & Wellness advisor uses evidence-based health frameworks to help you think through lifestyle changes, fitness commitments, mental health decisions, and medical choices. It weighs scientific evidence, personal factors, and long-term wellbeing to model realistic outcomes for your health-related decisions.",
+      "specialties": "Lifestyle Changes|Fitness Goals|Mental Health|Nutrition|Medical Decisions|Preventive Care"
+    },
+    "relationships": {
+      "longDescription": "The Relationship Counselor applies licensed therapy frameworks — including attachment theory, communication models, and family systems thinking — to help you navigate major relationship decisions. It provides balanced, thoughtful analysis for matters of the heart without rushing to judgment.",
+      "specialties": "Marriage & Commitment|Dating|Family Dynamics|Conflict Resolution|Boundaries|Long-Distance"
+    },
+    "education": {
+      "longDescription": "Our Education Consultant takes an ROI-focused approach to learning decisions. It compares degree programs, certifications, bootcamps, and self-study paths using cost-benefit analysis, career outcome data, and your personal learning goals to help you invest wisely in your education.",
+      "specialties": "Degree Programs|Certifications|Bootcamps|Self-Study|Career ROI|Lifelong Learning"
+    },
+    "realEstate": {
+      "longDescription": "The Real Estate Advisor brings property market expertise to your housing and investment decisions. It models buy-vs-rent scenarios, evaluates purchase timing, analyzes rental income potential, and factors in local market conditions, interest rates, and your financial situation to provide clear guidance.",
+      "specialties": "Buy vs. Rent|Home Buying|Investment Properties|Relocation|Refinancing|Market Timing"
+    },
+    "lifestyle": {
+      "longDescription": "Our Lifestyle Advisor specializes in the big life transitions that don't fit neatly into other categories. Whether you're considering moving abroad, taking a sabbatical, adopting a minimalist lifestyle, or making any major life pivot, it maps out the practical, emotional, and financial dimensions of your decision.",
+      "specialties": "Relocation|Sabbaticals|Digital Nomad|Downsizing|Gap Years|Life Transitions"
+    },
+    "business": {
+      "longDescription": "The Entrepreneurship Advisor evaluates business opportunities using lean startup methodologies, market analysis frameworks, and financial modeling. From validating a startup idea to scaling a side hustle or choosing between co-founders, it helps you make data-informed entrepreneurial decisions.",
+      "specialties": "Startup Viability|Side Hustles|Market Entry|Funding|Co-Founders|Business Models"
+    }
   },
   "helpPage": {
     "backHome": "Back to home",

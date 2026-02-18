@@ -57,7 +57,8 @@
       "description": "Melden Sie sich an, um jede \"Soll ich...?\"-Frage zu stellen und KI-Einblicke zu erhalten"
     },
     "free": "Kostenlos",
-    "premium": "Premium"
+    "premium": "Premium",
+    "exploreAll": "Mehr Details"
   },
   "factors": {
     "salaryChange": "Gehaltsänderung",
@@ -169,37 +170,55 @@
   "advisors": {
     "title": "KI-Fachberater",
     "subtitle": "Jede Frage wird von einem spezialisierten KI-Berater analysiert, der im jeweiligen Fachgebiet geschult ist — kein generischer Chatbot",
+    "exampleQuestions": "Beispielfragen",
+    "exploreAll": "Mehr Details",
     "finance": {
       "title": "Finanzberater",
-      "description": "Zertifizierte Finanzplanungsexpertise für Investitionen, Sparen, Schulden, Rente und wichtige Geldentscheidungen."
+      "tagline": "Zertifizierte Finanzplanungsexpertise",
+      "description": "Analysiert Investitionen, Sparstrategien, Schuldenmanagement, Altersvorsorge und wichtige Geldentscheidungen mit Finanzmodellierungs-Frameworks.",
+      "examples": "Sollte ich in Indexfonds oder Immobilien investieren?|Lohnt es sich, meine Hypothek vorzeitig abzuzahlen?|Sollte ich meine Altersvorsorge maximieren oder Studienkredite tilgen?"
     },
     "career": {
       "title": "Karrierestratege",
-      "description": "Executive-Coaching-Einblicke für Jobwechsel, Beförderungen, Gehaltsverhandlungen und Karriereübergänge."
+      "tagline": "Executive Coaching & Karriereintelligenz",
+      "description": "Begleitet Jobwechsel, Beförderungen, Gehaltsverhandlungen und langfristige Karriereplanung mit Branchenbenchmarks und strategischen Frameworks.",
+      "examples": "Sollte ich meinen sicheren Job für ein Startup verlassen?|Lohnt sich ein MBA mit 35?|Sollte ich mein Gehalt verhandeln oder das Angebot annehmen?"
     },
     "health": {
       "title": "Gesundheit & Wellness",
-      "description": "Evidenzbasierte Gesundheitsberatung für Lebensstiländerungen, Fitnessziele, psychische Gesundheit und medizinische Entscheidungen."
+      "tagline": "Evidenzbasierte Gesundheitsberatung",
+      "description": "Bewertet Lebensstiländerungen, Fitnessziele, psychische Gesundheitsentscheidungen und medizinische Wahlmöglichkeiten mit forschungsbasierten Methoden und Risikoanalyse.",
+      "examples": "Sollte ich Intervallfasten ausprobieren?|Lohnt sich ein Stehschreibtisch?|Sollte ich einen Therapeuten aufsuchen oder Selbsthilfe versuchen?"
     },
     "relationships": {
       "title": "Beziehungsberater",
-      "description": "Lizenzierte Therapie-Frameworks für Ehe, Dating, Familiendynamik und wichtige Beziehungsentscheidungen."
+      "tagline": "Lizenzierte Therapie-Frameworks",
+      "description": "Wendet Beratungs-Frameworks auf Ehe, Dating, Familiendynamik und wichtige Beziehungsentscheidungen für durchdachte, ausgewogene Entscheidungen an.",
+      "examples": "Sollten wir nach 6 Monaten zusammenziehen?|Lohnt sich eine Paartherapie?|Sollte ich den Kontakt zu einem entfremdeten Familienmitglied wiederherstellen?"
     },
     "education": {
       "title": "Bildungsberater",
-      "description": "ROI-fokussierte Beratung für Abschlüsse, Zertifizierungen, Bootcamps und lebenslange Bildungsinvestitionen."
+      "tagline": "ROI-fokussierte Lernstrategie",
+      "description": "Vergleicht Abschlüsse, Zertifizierungen, Bootcamps und Selbststudium mit Kosten-Nutzen-Analyse und Karriereergebnisprognosen.",
+      "examples": "Lohnt sich ein Informatikstudium 2025?|Sollte ich ein Coding-Bootcamp machen oder selbst lernen?|Ist eine Promotion die Opportunitätskosten wert?"
     },
     "realEstate": {
       "title": "Immobilienberater",
-      "description": "Immobilienmarkt-Expertise für Kauf-vs-Miete-Entscheidungen, Hauskauf und Immobilieninvestitionen."
+      "tagline": "Immobilienmarkt-Expertise",
+      "description": "Modelliert Kauf-vs-Miete-Szenarien, Hauskauf-Timing, Mietinvestitionen und Umzugskosten mit lokalen Marktdaten.",
+      "examples": "Sollte ich jetzt ein Haus kaufen oder warten?|Ist Mieten wirklich rausgeworfenes Geld?|Sollte ich in eine Mietimmobilie investieren?"
     },
     "lifestyle": {
       "title": "Lifestyle-Berater",
-      "description": "Umzugs- und Lebensübergangsexpertise für Auslandsumzüge, Sabbaticals und große Lebensstiländerungen."
+      "tagline": "Spezialist für Lebensübergänge",
+      "description": "Navigiert Umzüge, Sabbaticals, digitale Nomaden-Übergänge und große Lebensstil-Pivots mit praktischer Szenarioplanung.",
+      "examples": "Sollte ich für ein Jahr ins Ausland ziehen?|Ist ein Sabbatical das Karriererisiko wert?|Sollte ich in ein Tiny House umziehen?"
     },
     "business": {
       "title": "Gründungsberater",
-      "description": "Startup- und Geschäftsstrategie für Unternehmensgründungen, Nebenprojekte und unternehmerische Entscheidungen."
+      "tagline": "Startup- & Geschäftsstrategie",
+      "description": "Bewertet Gründungsviabilität, Nebenprojekt-Potenzial, Markteintritts-Timing und Geschäftsmodellentscheidungen mit Lean-Startup-Methoden.",
+      "examples": "Sollte ich meinen Job kündigen, um ein Unternehmen zu gründen?|Lohnt es sich, mein Nebenprojekt zu skalieren?|Sollte ich einen Mitgründer aufnehmen?"
     }
   },
   "testimonials": {
@@ -311,6 +330,7 @@
     "product": {
       "title": "Produkt",
       "scenarios": "Szenarien",
+      "advisors": "Berater",
       "pricing": "Preise",
       "demo": "Live-Demo",
       "api": "API"
@@ -537,6 +557,47 @@
     "subtitle": "Haben Sie eine Frage, Feedback oder möchten einfach Hallo sagen? Wir freuen uns von Ihnen zu hören.",
     "emailTitle": "Schreiben Sie uns",
     "emailDescription": "Bei Fragen, Partnerschaften oder Support-Anfragen senden Sie uns eine E-Mail und wir melden uns so schnell wie möglich bei Ihnen."
+  },
+  "advisorsPage": {
+    "backHome": "Zurück zur Startseite",
+    "title": "Lernen Sie Ihre KI-Berater kennen",
+    "subtitle": "Jeder Berater bringt spezialisiertes Fachwissen mit, um Ihre Entscheidungen zu analysieren. Sie werden automatisch Ihrer Frage zugeordnet — oder Sie wählen manuell einen aus.",
+    "tryNow": "Jetzt testen",
+    "ctaTitle": "Bereit, mit Zuversicht zu entscheiden?",
+    "ctaDescription": "Stellen Sie eine beliebige Frage und lassen Sie den richtigen Berater Ihre Simulation leiten.",
+    "ctaButton": "Simulation starten",
+    "finance": {
+      "longDescription": "Unser Finanzberater wendet zertifizierte Finanzplanungs-Frameworks an, um Ihre Geldentscheidungen zu bewerten. Ob Sie Anlageoptionen abwägen, für den Ruhestand planen, Schulden verwalten oder einen großen Kauf tätigen — er modelliert die finanziellen Auswirkungen über mehrere Szenarien hinweg und berücksichtigt Risikotoleranz, Zeithorizonte und Opportunitätskosten.",
+      "specialties": "Investitionen|Altersvorsorge|Schuldenmanagement|Budgetierung|Steuerstrategie|Große Anschaffungen"
+    },
+    "career": {
+      "longDescription": "Der Karrierestratege nutzt Executive-Coaching-Methoden und Arbeitsmarktdaten, um Ihnen bei beruflichen Entscheidungen zu helfen. Von der Bewertung von Jobangeboten über Gehaltsverhandlungen bis zur Planung langfristiger Karrierewechsel bietet er eine strukturierte Analyse der greifbaren und immateriellen Faktoren, die Karriereergebnisse prägen.",
+      "specialties": "Jobwechsel|Gehaltsverhandlung|Karrierewechsel|Beförderungen|Work-Life-Balance|Kompetenzentwicklung"
+    },
+    "health": {
+      "longDescription": "Unser Gesundheits- und Wellness-Berater nutzt evidenzbasierte Gesundheits-Frameworks, um Ihnen bei Lebensstiländerungen, Fitness-Verpflichtungen, psychischen Gesundheitsentscheidungen und medizinischen Wahlmöglichkeiten zu helfen. Er wägt wissenschaftliche Erkenntnisse, persönliche Faktoren und langfristiges Wohlbefinden ab.",
+      "specialties": "Lebensstiländerungen|Fitnessziele|Psychische Gesundheit|Ernährung|Medizinische Entscheidungen|Vorsorge"
+    },
+    "relationships": {
+      "longDescription": "Der Beziehungsberater wendet lizenzierte Therapie-Frameworks an — einschließlich Bindungstheorie, Kommunikationsmodelle und Familiensystemdenken — um Ihnen bei wichtigen Beziehungsentscheidungen zu helfen. Er bietet ausgewogene, durchdachte Analysen für Herzensangelegenheiten, ohne vorschnell zu urteilen.",
+      "specialties": "Ehe & Bindung|Dating|Familiendynamik|Konfliktlösung|Grenzen setzen|Fernbeziehungen"
+    },
+    "education": {
+      "longDescription": "Unser Bildungsberater verfolgt einen ROI-fokussierten Ansatz bei Lernentscheidungen. Er vergleicht Studiengänge, Zertifizierungen, Bootcamps und Selbststudium mit Kosten-Nutzen-Analyse, Karriereergebnisdaten und Ihren persönlichen Lernzielen, damit Sie klug in Ihre Bildung investieren.",
+      "specialties": "Studiengänge|Zertifizierungen|Bootcamps|Selbststudium|Karriere-ROI|Lebenslanges Lernen"
+    },
+    "realEstate": {
+      "longDescription": "Der Immobilienberater bringt Immobilienmarkt-Expertise in Ihre Wohn- und Investitionsentscheidungen ein. Er modelliert Kauf-vs-Miete-Szenarien, bewertet den Kaufzeitpunkt, analysiert Mieteinnahmepotenzial und berücksichtigt lokale Marktbedingungen, Zinssätze und Ihre finanzielle Situation.",
+      "specialties": "Kaufen vs. Mieten|Hauskauf|Anlageimmobilien|Umzug|Umfinanzierung|Markt-Timing"
+    },
+    "lifestyle": {
+      "longDescription": "Unser Lifestyle-Berater ist auf große Lebensübergänge spezialisiert, die nicht in andere Kategorien passen. Ob Sie einen Umzug ins Ausland, ein Sabbatical, einen minimalistischen Lebensstil oder eine andere große Lebenswende erwägen — er kartiert die praktischen, emotionalen und finanziellen Dimensionen Ihrer Entscheidung.",
+      "specialties": "Umzug|Sabbaticals|Digitale Nomaden|Downsizing|Auszeit|Lebensübergänge"
+    },
+    "business": {
+      "longDescription": "Der Gründungsberater bewertet Geschäftsmöglichkeiten mit Lean-Startup-Methoden, Marktanalyse-Frameworks und Finanzmodellierung. Von der Validierung einer Startup-Idee bis zur Skalierung eines Nebenprojekts oder der Wahl zwischen Mitgründern hilft er Ihnen, datenbasierte unternehmerische Entscheidungen zu treffen.",
+      "specialties": "Startup-Viabilität|Nebenprojekte|Markteintritt|Finanzierung|Mitgründer|Geschäftsmodelle"
+    }
   },
   "helpPage": {
     "backHome": "Zurück zur Startseite",

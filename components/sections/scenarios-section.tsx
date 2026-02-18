@@ -1,7 +1,9 @@
 "use client"
 
 import { useTranslations } from 'next-intl'
-import { Briefcase, MapPin, Home } from 'lucide-react'
+import { useParams } from 'next/navigation'
+import Link from 'next/link'
+import { Briefcase, MapPin, Home, ArrowRight } from 'lucide-react'
 
 interface ScenariosSectionProps {
   onSelectScenario: (id: string) => void
@@ -9,6 +11,8 @@ interface ScenariosSectionProps {
 
 export function ScenariosSection({ onSelectScenario }: ScenariosSectionProps) {
   const t = useTranslations('scenarios')
+  const params = useParams()
+  const locale = params.locale || 'en'
 
   const scenarios = [
     {
@@ -84,6 +88,16 @@ export function ScenariosSection({ onSelectScenario }: ScenariosSectionProps) {
               </div>
             </button>
           ))}
+        </div>
+
+        <div className="mt-8 text-center">
+          <Link
+            href={`/${locale}/scenarios`}
+            className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+          >
+            {t('exploreAll')}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </div>
     </section>

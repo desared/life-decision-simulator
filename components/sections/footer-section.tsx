@@ -15,6 +15,7 @@ export function FooterSection() {
       title: t('product.title'),
       links: [
         { label: t('product.scenarios'), href: `/${locale}/scenarios` },
+        { label: t('product.advisors'), href: `/${locale}/advisors` },
         { label: t('product.pricing'), href: `/${locale}/pricing` }
       ]
     },
