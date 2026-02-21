@@ -206,8 +206,6 @@ export async function generateOutcomesAction(
                             "Basierend auf Ihren Antworten könnte diese Veränderung zu positiven Ergebnissen führen.",
                         confidence: "medium",
                         confidenceInterval: "60-75%",
-                        recommendation:
-                            "Erwägen Sie, mit sorgfältiger Planung und Vorbereitung voranzuschreiten.",
                     },
                     {
                         title: "Neutrales Ergebnis",
@@ -215,8 +213,6 @@ export async function generateOutcomesAction(
                             "Die Situation wird sich möglicherweise in keiner Richtung wesentlich verändern.",
                         confidence: "medium",
                         confidenceInterval: "40-60%",
-                        recommendation:
-                            "Nehmen Sie sich mehr Zeit, um Ihre Optionen zu bewerten, bevor Sie sich entscheiden.",
                     },
                     {
                         title: "Vorsichtiges Ergebnis",
@@ -224,12 +220,12 @@ export async function generateOutcomesAction(
                             "Es könnten Herausforderungen bevorstehen, die Aufmerksamkeit erfordern.",
                         confidence: "low",
                         confidenceInterval: "20-40%",
-                        recommendation:
-                            "Gehen Sie mögliche Hindernisse an, bevor Sie eine endgültige Entscheidung treffen.",
                     },
                 ],
                 summary:
-                    "Basierend auf Ihren Antworten empfehlen wir, sich Zeit zu nehmen, um alle Faktoren sorgfältig abzuwägen, bevor Sie Ihre Entscheidung treffen.",
+                    "Basierend auf Ihren Antworten gibt es sowohl Chancen als auch Risiken, die sorgfältig abgewogen werden sollten.",
+                recommendation:
+                    "Nehmen Sie sich Zeit, um alle Faktoren sorgfältig abzuwägen, und erstellen Sie einen konkreten Aktionsplan, bevor Sie Ihre Entscheidung treffen.",
             };
         }
         return {
@@ -240,8 +236,6 @@ export async function generateOutcomesAction(
                         "Based on your responses, making this change could lead to positive results.",
                     confidence: "medium",
                     confidenceInterval: "60-75%",
-                    recommendation:
-                        "Consider moving forward with careful planning and preparation.",
                 },
                 {
                     title: "Neutral Outcome",
@@ -249,8 +243,6 @@ export async function generateOutcomesAction(
                         "The situation may not change significantly either way.",
                     confidence: "medium",
                     confidenceInterval: "40-60%",
-                    recommendation:
-                        "Take more time to evaluate your options before deciding.",
                 },
                 {
                     title: "Cautious Outcome",
@@ -258,12 +250,12 @@ export async function generateOutcomesAction(
                         "There may be challenges ahead that require attention.",
                     confidence: "low",
                     confidenceInterval: "20-40%",
-                    recommendation:
-                        "Address potential obstacles before making a final decision.",
                 },
             ],
             summary:
-                "Based on your responses, we recommend taking time to carefully consider all factors before making your decision.",
+                "Based on your responses, there are both opportunities and risks that should be carefully weighed.",
+            recommendation:
+                "Take time to carefully consider all factors, create a concrete action plan, and address potential obstacles before making your final decision.",
         };
     }
 }

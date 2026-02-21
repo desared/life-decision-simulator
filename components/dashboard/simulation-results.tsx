@@ -1,8 +1,9 @@
 "use client"
 
-import { ArrowUpRight, ArrowDownRight, Minus, Download, ArrowLeft } from "lucide-react"
+import { Download, ArrowLeft } from "lucide-react"
 import { jsPDF } from "jspdf"
 import { Button } from "@/components/ui/button"
+import { ConfidenceChart } from "@/components/ui/confidence-chart"
 import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 
@@ -27,7 +28,6 @@ interface Outcome {
     description?: string
     confidence?: "high" | "medium" | "low"
     confidenceInterval?: string
-    recommendation?: string
 }
 
 interface SimulationResultsProps {
@@ -35,11 +35,12 @@ interface SimulationResultsProps {
     factors: Factor[]
     outcomes: Outcome[]
     status: "optimal" | "moderate" | "risk"
+    recommendation?: string
     onBack: () => void
     showDownload?: boolean
 }
 
-export function SimulationResults({ title, factors, outcomes, status, onBack, showDownload = true }: SimulationResultsProps) {
+export function SimulationResults({ title, factors, outcomes, status, recommendation, onBack, showDownload = true }: SimulationResultsProps) {
     const t = useTranslations('dashboard')
 
     const statusConfig = {
@@ -113,8 +114,6 @@ export function SimulationResults({ title, factors, outcomes, status, onBack, sh
             doc.setFont("helvetica", "normal")
             doc.setTextColor(80, 80, 80)
             doc.text(`Answer: ${factor.answer || 'N/A'}`, margin + 4, y)
-            doc.setTextColor(100, 100, 255)
-            doc.text(`${factor.value}${factor.unit || ''}`, pageWidth - margin - 15, y)
             y += 8
 
             doc.setDrawColor(220, 220, 220)
@@ -133,37 +132,17 @@ export function SimulationResults({ title, factors, outcomes, status, onBack, sh
         y += 8
 
         outcomes.forEach((outcome) => {
-            checkPageBreak(35)
+            checkPageBreak(25)
             doc.setFontSize(11)
             doc.setFont("helvetica", "bold")
             doc.setTextColor(40, 40, 40)
             doc.text(outcome.label, margin + 4, y)
 
-            const trendSymbol = outcome.trend === "up" ? "▲" : outcome.trend === "down" ? "▼" : "—"
-            const trendColor = outcome.trend === "up" ? [34, 139, 34] : outcome.trend === "down" ? [200, 50, 50] : [120, 120, 120]
-            doc.setTextColor(trendColor[0], trendColor[1], trendColor[2])
-            doc.text(`${outcome.value}% ${trendSymbol}`, pageWidth - margin - 25, y)
-            y += 6
-
-            // Range bar
-            const barX = margin + 4
-            const barWidth = contentWidth - 10
-            const barHeight = 3
-            doc.setFillColor(230, 230, 230)
-            doc.roundedRect(barX, y, barWidth, barHeight, 1.5, 1.5, "F")
-            const rangeStart = barX + (outcome.rangeMin / 100) * barWidth
-            const rangeWidth = ((outcome.rangeMax - outcome.rangeMin) / 100) * barWidth
-            doc.setFillColor(100, 100, 255, 0.3)
-            doc.roundedRect(rangeStart, y, rangeWidth, barHeight, 1.5, 1.5, "F")
-            const valuePos = barX + (outcome.value / 100) * barWidth
-            doc.setFillColor(80, 80, 220)
-            doc.roundedRect(valuePos - 0.75, y, 1.5, barHeight, 0.5, 0.5, "F")
-            y += 5
-
-            doc.setFontSize(8)
-            doc.setTextColor(150, 150, 150)
-            doc.text(`${outcome.rangeMin}%`, barX, y + 3)
-            doc.text(`${outcome.rangeMax}%`, barX + barWidth - 8, y + 3)
+            if (outcome.confidenceInterval) {
+                doc.setFontSize(9)
+                doc.setTextColor(100, 100, 255)
+                doc.text(outcome.confidenceInterval, pageWidth - margin - 20, y)
+            }
             y += 6
 
             if (outcome.description) {
@@ -176,18 +155,103 @@ export function SimulationResults({ title, factors, outcomes, status, onBack, sh
                 y += descLines.length * 4 + 2
             }
 
-            if (outcome.confidenceInterval) {
-                doc.setFontSize(8)
-                doc.setTextColor(120, 120, 120)
-                doc.text(`Confidence Interval: ${outcome.confidenceInterval}`, margin + 4, y)
-                y += 5
-            }
-
             y += 4
             doc.setDrawColor(220, 220, 220)
             doc.setLineWidth(0.2)
             doc.line(margin + 4, y - 2, pageWidth - margin, y - 2)
         })
+
+        // Confidence Interval Chart
+        y += 6
+        checkPageBreak(20 + outcomes.length * 20)
+        doc.setTextColor(0, 0, 0)
+        doc.setFontSize(14)
+        doc.setFont("helvetica", "bold")
+        doc.text("Confidence Overview", margin, y)
+        y += 10
+
+        const barTrackWidth = contentWidth - 50
+        const barHeight = 6
+        const barX = margin + 4
+
+        outcomes.forEach((outcome) => {
+            checkPageBreak(24)
+
+            // Label
+            doc.setFontSize(9)
+            doc.setFont("helvetica", "bold")
+            doc.setTextColor(40, 40, 40)
+            doc.text(outcome.label, barX, y)
+
+            // Confidence interval text on right
+            if (outcome.confidenceInterval) {
+                doc.setFont("helvetica", "normal")
+                doc.setTextColor(100, 100, 255)
+                doc.text(outcome.confidenceInterval, pageWidth - margin - 20, y)
+            }
+            y += 4
+
+            // Parse interval
+            const intervalMatch = outcome.confidenceInterval?.match(/(\d+)\s*[-–]\s*(\d+)/)
+            const rangeMin = intervalMatch ? parseInt(intervalMatch[1], 10) : 0
+            const rangeMax = intervalMatch ? parseInt(intervalMatch[2], 10) : 0
+            const mid = (rangeMin + rangeMax) / 2
+
+            // Base color by confidence level
+            const baseColor = mid >= 70 ? [34, 197, 94] : mid >= 45 ? [245, 158, 11] : [239, 68, 68]
+            // Blend with white for opacity simulation: result = color * opacity + 255 * (1 - opacity)
+            const fadedColor = baseColor.map(c => Math.round(c * 0.15 + 255 * 0.85))
+            const solidColor = baseColor.map(c => Math.round(c * 0.7 + 255 * 0.3))
+
+            // Track background
+            doc.setFillColor(230, 230, 235)
+            doc.roundedRect(barX, y, barTrackWidth, barHeight, 2, 2, "F")
+
+            // Faded lead-in (0 to rangeMin)
+            if (rangeMin > 0) {
+                doc.setFillColor(fadedColor[0], fadedColor[1], fadedColor[2])
+                const leadWidth = (rangeMin / 100) * barTrackWidth
+                doc.roundedRect(barX, y, leadWidth, barHeight, 2, 2, "F")
+            }
+
+            // Range bar
+            if (rangeMax > rangeMin) {
+                doc.setFillColor(solidColor[0], solidColor[1], solidColor[2])
+                const startX = barX + (rangeMin / 100) * barTrackWidth
+                const rangeWidth = ((rangeMax - rangeMin) / 100) * barTrackWidth
+                doc.roundedRect(startX, y, rangeWidth, barHeight, 2, 2, "F")
+            }
+
+            y += barHeight + 2
+
+            // Scale markers
+            doc.setFontSize(7)
+            doc.setFont("helvetica", "normal")
+            doc.setTextColor(180, 180, 180)
+            doc.text("0%", barX, y + 3)
+            doc.text("50%", barX + barTrackWidth / 2 - 4, y + 3)
+            doc.text("100%", barX + barTrackWidth - 8, y + 3)
+            y += 8
+        })
+
+        // Recommendation
+        if (recommendation) {
+            checkPageBreak(30)
+            y += 4
+            doc.setTextColor(0, 0, 0)
+            doc.setFontSize(14)
+            doc.setFont("helvetica", "bold")
+            doc.text("Recommendation", margin, y)
+            y += 8
+
+            doc.setFontSize(10)
+            doc.setFont("helvetica", "normal")
+            doc.setTextColor(60, 60, 60)
+            const recLines = doc.splitTextToSize(recommendation, contentWidth - 10)
+            checkPageBreak(recLines.length * 5 + 4)
+            doc.text(recLines, margin + 4, y)
+            y += recLines.length * 5 + 4
+        }
 
         // Footer
         checkPageBreak(15)
@@ -236,14 +300,9 @@ export function SimulationResults({ title, factors, outcomes, status, onBack, sh
                                 <p className="text-sm font-medium text-foreground mb-1">
                                     {factor.question || factor.label}
                                 </p>
-                                <div className="flex justify-between items-center text-sm">
-                                    <span className="text-muted-foreground mr-2">
-                                        Answer: <span className="text-foreground">{factor.answer || 'N/A'}</span>
-                                    </span>
-                                    <span className="font-semibold text-primary">
-                                        {factor.value}{factor.unit || ''}
-                                    </span>
-                                </div>
+                                <p className="text-sm text-muted-foreground">
+                                    <span className="text-foreground">{factor.answer || 'N/A'}</span>
+                                </p>
                             </div>
                         ))}
                     </div>
@@ -257,32 +316,11 @@ export function SimulationResults({ title, factors, outcomes, status, onBack, sh
                             <div key={outcome.id} className="space-y-3 pb-4 border-b border-border last:border-0 last:pb-0">
                                 <div className="flex items-start justify-between gap-4">
                                     <h3 className="font-medium text-foreground">{outcome.label}</h3>
-                                    <div className={cn(
-                                        "shrink-0 flex items-center gap-1 px-2 py-0.5 rounded-full text-sm font-medium",
-                                        outcome.trend === "up" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
-                                            outcome.trend === "down" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
-                                                "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400"
-                                    )}>
-                                        {outcome.value}%
-                                        {outcome.trend === "up" && <ArrowUpRight className="h-3 w-3" />}
-                                        {outcome.trend === "down" && <ArrowDownRight className="h-3 w-3" />}
-                                        {outcome.trend === "stable" && <Minus className="h-3 w-3" />}
-                                    </div>
-                                </div>
-
-                                <div className="relative h-2 bg-muted rounded-full overflow-hidden">
-                                    <div
-                                        className="absolute h-full bg-primary/30 rounded-full"
-                                        style={{ left: `${outcome.rangeMin}%`, width: `${outcome.rangeMax - outcome.rangeMin}%` }}
-                                    />
-                                    <div
-                                        className="absolute h-full w-1 bg-primary rounded-full"
-                                        style={{ left: `${outcome.value}%` }}
-                                    />
-                                </div>
-                                <div className="flex justify-between text-xs text-muted-foreground">
-                                    <span>{outcome.rangeMin}%</span>
-                                    <span>{outcome.rangeMax}%</span>
+                                    {outcome.confidenceInterval && (
+                                        <span className="shrink-0 text-xs font-medium px-2 py-1 rounded-full bg-secondary text-secondary-foreground border border-border">
+                                            {outcome.confidenceInterval}
+                                        </span>
+                                    )}
                                 </div>
 
                                 {outcome.description && (
@@ -291,19 +329,27 @@ export function SimulationResults({ title, factors, outcomes, status, onBack, sh
                                     </p>
                                 )}
 
-                                {outcome.confidenceInterval && (
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-xs font-medium text-muted-foreground">Confidence Interval:</span>
-                                        <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground border border-border">
-                                            {outcome.confidenceInterval}
-                                        </span>
-                                    </div>
-                                )}
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
+
+            {/* Confidence Interval Chart */}
+            <div className="rounded-xl border border-border bg-card p-6">
+                <h2 className="text-lg font-semibold mb-4">{t('results.confidenceChart')}</h2>
+                <ConfidenceChart
+                    items={outcomes.map(o => ({ label: o.label, confidenceInterval: o.confidenceInterval }))}
+                />
+            </div>
+
+            {/* Recommendation */}
+            {recommendation && (
+                <div className="rounded-xl border border-border bg-card p-6">
+                    <h2 className="text-lg font-semibold mb-3">{t('results.recommendation')}</h2>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{recommendation}</p>
+                </div>
+            )}
         </div>
     )
 }

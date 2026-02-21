@@ -40,6 +40,7 @@ interface FirestoreContextType {
     outcomes: Outcome[];
     inputSummary: { label: string; value: string }[];
     outcomeSummary: { label: string; value: string; trend: "positive" | "negative" | "neutral" };
+    recommendation?: string;
   }, scenarioId?: string) => Promise<string>;
   updateSimulation: (simulationId: string, data: {
     title?: string;
@@ -48,6 +49,7 @@ interface FirestoreContextType {
     outcomes?: Outcome[];
     inputSummary?: { label: string; value: string }[];
     outcomeSummary?: { label: string; value: string; trend: "positive" | "negative" | "neutral" };
+    recommendation?: string;
   }) => Promise<void>;
   deleteSimulation: (simulationId: string) => Promise<void>;
 
@@ -230,6 +232,7 @@ export function FirestoreProvider({ children, user }: FirestoreProviderProps) {
       outcomes: Outcome[];
       inputSummary: { label: string; value: string }[];
       outcomeSummary: { label: string; value: string; trend: "positive" | "negative" | "neutral" };
+      recommendation?: string;
     }, scenarioId?: string): Promise<string> => {
       // Use provided scenarioId or fall back to selectedScenario
       const targetScenarioId = scenarioId || selectedScenario?.id;

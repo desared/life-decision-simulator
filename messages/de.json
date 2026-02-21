@@ -402,6 +402,7 @@
     "summary": "Gesamtbewertung",
     "possibleOutcomes": "Mögliche Ergebnisse",
     "recommendation": "Empfehlung",
+    "confidenceChart": "Konfidenzübersicht",
     "done": "Verstanden, danke!",
     "signUpDeeper": "Registrieren für tiefere Analyse",
     "saving": "Ihre Analyse wird gespeichert...",
@@ -463,7 +464,9 @@
       "back": "Zurück",
       "downloadPdf": "Bericht herunterladen",
       "inputFactors": "Eingabefaktoren",
-      "predictedOutcomes": "Vorhergesagte Ergebnisse"
+      "predictedOutcomes": "Vorhergesagte Ergebnisse",
+      "recommendation": "Empfehlung",
+      "confidenceChart": "Konfidenzübersicht"
     },
     "compare": {
       "title": "Entscheidungen vergleichen",

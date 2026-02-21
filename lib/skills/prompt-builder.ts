@@ -130,18 +130,19 @@ ${skill.benchmarks.map((b) => `- ${b}`).join("\n")}`
 1. 1 best-case outcome
 2. A confidence level
 3. A specific confidence probability interval (e.g., "75-85%")
-4. A brief recommendation
-5. An overall summary
+4. An overall summary
+5. One single actionable recommendation that considers all outcomes
 
 Give a full, detailed answer.`
     : `Analyze the responses and provide:
 1. 3 possible outcomes (best case, likely case, worst case)
 2. A confidence level for each outcome
-3. A specific confidence probability interval (e.g., "75-85%") for each outcome.
-4. A brief recommendation for each
-5. An overall summary
+3. A specific confidence probability interval (e.g., "75-85%") for each outcome
+4. An overall summary
+5. One single actionable recommendation that considers all outcomes and provides clear guidance
 
-Do not summarize the outcomes too much, give full, detailed answers.`;
+Do not summarize the outcomes too much, give full, detailed answers.
+Do NOT include a recommendation inside each outcome — provide only one overall recommendation.`;
 
   const prompt = `${personaBlock}${expertiseBlock}
 
@@ -157,11 +158,11 @@ Return ONLY valid JSON in this exact format (no markdown, no code blocks):
       "title": "Outcome title",
       "description": "Detailed description of this outcome scenario. Be specific and explain why.",
       "confidence": "high|medium|low",
-      "confidenceInterval": "XX-YY%",
-      "recommendation": "What to do if this outcome applies"
+      "confidenceInterval": "XX-YY%"
     }
   ],
-  "summary": "Overall recommendation based on all responses"
+  "summary": "Brief overall summary of the analysis",
+  "recommendation": "One single actionable recommendation considering all outcomes"
 }
 
 User's original question: "${userQuestion}"

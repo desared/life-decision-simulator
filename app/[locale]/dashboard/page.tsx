@@ -222,6 +222,7 @@ export default function DashboardPage() {
                                 factors={simulation.factors}
                                 outcomes={simulation.outcomes}
                                 status={simulation.status}
+                                recommendation={simulation.recommendation}
                                 onBack={handleBackFromResults}
                             />
 

@@ -12,7 +12,6 @@ export interface SurveyOutcome {
   description: string;
   confidence: "high" | "medium" | "low";
   confidenceInterval: string;
-  recommendation: string;
 }
 
 export interface GeminiSurveyResponse {
@@ -22,6 +21,7 @@ export interface GeminiSurveyResponse {
 export interface GeminiOutcomeResponse {
   outcomes: SurveyOutcome[];
   summary: string;
+  recommendation: string;
 }
 
 // Previously this file contained client-side logic to call Gemini API.

@@ -11,6 +11,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { ConfidenceChart } from "@/components/ui/confidence-chart"
 import { cn } from "@/lib/utils"
 import { generateSurveyQuestionsAction, generateOutcomesAction } from "@/app/actions/gemini"
 import { type SurveyQuestion, type SurveyOutcome, type GeminiOutcomeResponse } from "@/lib/gemini-service"
@@ -119,7 +120,7 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion, forcedSkil
           // The `onSave` prop was added, but the original code directly calls `saveScenarioAndSimulation`.
           // I will keep the original `saveScenarioAndSimulation` call for now, as `onSave` is not used in the provided snippet.
           // If the user intended to replace `saveScenarioAndSimulation` with `onSave`, that would be a separate instruction.
-          await saveScenarioAndSimulation({ summary: data.summary, outcomes: data.outcomes }) // Pass the full response structure
+          await saveScenarioAndSimulation(data)
         }
 
         setStep("results")
@@ -162,11 +163,10 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion, forcedSkil
         description: outcome.description,
         confidence: outcome.confidence,
         confidenceInterval: outcome.confidenceInterval,
-        recommendation: outcome.recommendation
       }))
 
       // Convert answers to factors format
-      const simulationFactors = Object.entries(answers).slice(0, 4).map(([id, { question, answer }], index) => {
+      const simulationFactors = Object.entries(answers).map(([id, { question, answer }], index) => {
         // Map answer sentiment to value
         let value = 50
         const lowerAnswer = answer.toLowerCase()
@@ -217,7 +217,8 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion, forcedSkil
         factors: simulationFactors,
         outcomes: simulationOutcomes,
         inputSummary,
-        outcomeSummary
+        outcomeSummary,
+        recommendation: outcomeData.recommendation
       }, scenarioId)
     } catch (error) {
       console.error("Failed to save scenario and simulation:", error)
@@ -401,32 +402,34 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion, forcedSkil
                 >
                   <div className="flex items-start justify-between mb-2">
                     <h5 className="font-medium text-foreground">{outcome.title}</h5>
-                    <div className="flex gap-2">
-                      <span className={cn(
-                        "text-xs font-medium px-2 py-1 rounded-full",
-                        outcome.confidence === "high" && "bg-green-500/10 text-green-600 dark:text-green-400",
-                        outcome.confidence === "medium" && "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
-                        outcome.confidence === "low" && "bg-red-500/10 text-red-600 dark:text-red-400"
-                      )}>
-                        {t(`confidence.${outcome.confidence}`)}
+                    {outcome.confidenceInterval && (
+                      <span className="text-xs font-medium px-2 py-1 rounded-full bg-secondary text-secondary-foreground border border-border">
+                        {outcome.confidenceInterval}
                       </span>
-                      {outcome.confidenceInterval && (
-                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-secondary text-secondary-foreground border border-border">
-                          {outcome.confidenceInterval}
-                        </span>
-                      )}
-                    </div>
+                    )}
                   </div>
-                  <p className="text-sm text-muted-foreground mb-3 whitespace-pre-wrap">
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                     {outcome.description}
                   </p>
-                  <div className="text-sm">
-                    <span className="font-medium text-foreground">{t('recommendation')}: </span>
-                    <span className="text-muted-foreground">{outcome.recommendation}</span>
-                  </div>
                 </div>
               ))}
             </div>
+
+            {/* Confidence Interval Chart */}
+            <div className="p-4 rounded-lg border border-border bg-card">
+              <h4 className="font-semibold text-foreground mb-3">{t('confidenceChart')}</h4>
+              <ConfidenceChart
+                items={outcomes.outcomes.map(o => ({ label: o.title, confidenceInterval: o.confidenceInterval }))}
+              />
+            </div>
+
+            {/* Recommendation */}
+            {outcomes.recommendation && (
+              <div className="p-4 bg-secondary/50 rounded-lg border border-border">
+                <h4 className="font-semibold text-foreground mb-2">{t('recommendation')}</h4>
+                <p className="text-sm text-muted-foreground">{outcomes.recommendation}</p>
+              </div>
+            )}
 
             {/* Close button */}
             <div className="flex justify-center pt-4">

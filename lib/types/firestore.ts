@@ -70,6 +70,7 @@ export interface Simulation {
     value: string;
     trend: "positive" | "negative" | "neutral";
   };
+  recommendation?: string;
 }
 
 // Create/Update DTOs
