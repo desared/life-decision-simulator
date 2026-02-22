@@ -20,18 +20,32 @@ const blockedRoots: Record<string, string[]> = {
     // EN
     "kill", "murder", "assassin", "massacr", "terroris",
     "genocid", "tortur", "kidnap", "strangl", "slaughter",
+    "fight", "punch", "attack", "beat", "hit",
     // DE
     "töten", "ermord", "erstech", "erschieß",
     "massaker", "folter", "entführ", "erwürg",
+    "kämpfen", "schlagen", "angreif", "prügel",
   ],
   hate: [
     // EN — slurs (all forms blocked)
     "nigger", "nigga", "spic", "wetback", "chink", "gook", "kike",
     "zipperhead", "raghead", "towelhead", "beaner", "coon", "darkie",
     "faggot", "tranny", "retard", "subhuman",
+    // EN — protected groups (block any question targeting a group)
+    "jewish", "muslim", "islam", "christian", "hindu", "buddhist",
+    "sikh", "catholic", "protestant", "evangelical",
+    "arab", "mexican", "hispanic", "latino", "latina",
+    "homosexual", "lesbian", "bisexual", "lgbtq", "queer",
+    "immigrant", "refugee", "foreigner",
     // DE — slurs
     "kanake", "kameltreiber", "kümmeltürke", "schlitzauge",
     "neger", "zigeuner", "polacke", "schwuchtel", "untermenschen",
+    // DE — protected groups
+    "jüdisch", "muslimisch", "islamisch", "christlich", "hinduistisch",
+    "buddhistisch", "katholisch", "evangelisch",
+    "arabisch", "mexikanisch", "hispanisch",
+    "homosexuell", "lesbisch", "bisexuell",
+    "einwanderer", "flüchtling", "ausländer",
   ],
   profanity: [
     // EN
@@ -74,6 +88,13 @@ const blockedExact: Record<string, string[]> = {
   ],
   profanity: [
     "dickhead", "shithead",
+  ],
+  hate: [
+    // Short group words — exact match to avoid false positives
+    // "jew" exact avoids matching "jewelry"; "gay" exact avoids "gayer" confusion
+    "jew", "jews", "gay", "gays", "trans",
+    // DE
+    "jude", "juden", "schwul", "schwule",
   ],
 }
 
