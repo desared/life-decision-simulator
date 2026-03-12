@@ -1,284 +1,69 @@
-"use client"
+import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
+import { generatePageMetadata } from '@/lib/seo'
+import { JsonLd } from '@/components/json-ld'
+import LandingClient from './landing-client'
 
-import { useState, useEffect, useRef } from "react"
-import { useTranslations } from 'next-intl'
-import { useParams, useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { Menu, X, LayoutDashboard } from "lucide-react"
-import { LogoIcon } from "@/components/logo-icon"
-import { Button } from "@/components/ui/button"
-import { LanguageSwitcher } from "@/components/language-switcher"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { AuthModal } from "@/components/auth-modal"
-import { HeroSection } from "@/components/sections/hero-section"
-import { ScenariosSection } from "@/components/sections/scenarios-section"
-import { HowItWorksSection } from "@/components/sections/how-it-works-section"
-import { FeaturesSection } from "@/components/sections/features-section"
-import { AdvisorsSection } from "@/components/sections/advisors-section"
-import { PricingSection } from "@/components/sections/pricing-section"
-import { FAQSection } from "@/components/sections/faq-section"
-import { CTASection } from "@/components/sections/cta-section"
-import { FooterSection } from "@/components/sections/footer-section"
-import { SurveyModal } from "@/components/survey-modal"
-import { onAuthStateChanged, User } from "firebase/auth"
-import { auth } from "@/lib/firebase"
-import type { SkillId } from "@/lib/skills/types"
+const BASE_URL = 'https://shouldi.io'
 
-export default function ShouldISimulator() {
-  const tCommon = useTranslations('common')
-  const tNav = useTranslations('nav')
-  const router = useRouter()
-  const params = useParams()
-  const locale = params.locale || 'en'
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  return generatePageMetadata(locale, {
+    titleEn: 'AI Decision Simulator - See Your Future Before You Decide',
+    titleDe: 'KI-Entscheidungssimulator - Sehen Sie Ihre Zukunft Bevor Sie Entscheiden',
+    descriptionEn: 'Simulate life decisions with AI. Explore career changes, investments, relocating, and more with data-driven scenario analysis. Free to start.',
+    descriptionDe: 'Simulieren Sie Lebensentscheidungen mit KI. Erkunden Sie Jobwechsel, Investitionen, Umzug und mehr mit datengetriebener Szenarioanalyse. Kostenlos starten.',
+    path: '',
+  })
+}
 
-  const [customQuestion, setCustomQuestion] = useState("")
-  const [isAuthOpen, setIsAuthOpen] = useState(false)
-  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin')
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [user, setUser] = useState<User | null>(null)
-  const [isSurveyOpen, setIsSurveyOpen] = useState(false)
-  const [surveyQuestion, setSurveyQuestion] = useState("")
-  const [forcedSkillId, setForcedSkillId] = useState<SkillId | undefined>(undefined)
-  const isLoggingIn = useRef(false)
+export default async function LandingPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'faq' })
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser)
-      if (currentUser && currentUser.emailVerified) {
-        setIsAuthOpen(false)
-        if (isLoggingIn.current) {
-          isLoggingIn.current = false
-          router.push(`/${locale}/dashboard`)
-        }
-      }
-    })
-    return () => unsubscribe()
-  }, [router, locale])
+  const faqKeys = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6'] as const
 
-  const handleLogIn = () => {
-    isLoggingIn.current = true
-    setAuthMode('signin')
-    setIsAuthOpen(true)
+  const webAppSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'shouldi',
+    url: BASE_URL,
+    applicationCategory: 'Decision Support',
+    operatingSystem: 'Web',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'EUR',
+    },
+    description: 'AI-powered decision simulator for life choices',
   }
 
-  const handleSignUp = () => {
-    isLoggingIn.current = true
-    setAuthMode('signup')
-    setIsAuthOpen(true)
-  }
-
-  const handleCustomQuestionSubmit = (question: string, skillId?: SkillId) => {
-    setSurveyQuestion(question)
-    setForcedSkillId(skillId)
-    setIsSurveyOpen(true)
-  }
-
-  // Map scenario IDs to "Should I...?" questions for the survey modal
-  const scenarioQuestions: Record<string, string> = {
-    "job-change": "Should I change jobs?",
-    "buy-rent": "Should I buy or rent a home?",
-    "relocate": "Should I move to a new city?",
-  }
-
-  const handleSelectScenario = (scenarioId: string) => {
-    const question = scenarioQuestions[scenarioId]
-    if (question) {
-      setSurveyQuestion(question)
-      setIsSurveyOpen(true)
-    }
-  }
-
-  const goToHome = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-    setIsMobileMenuOpen(false)
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqKeys.map((key) => ({
+      '@type': 'Question',
+      name: t(`${key}.question`),
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: t(`${key}.answer`),
+      },
+    })),
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-          <button
-            onClick={goToHome}
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-          >
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
-              <LogoIcon className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-foreground">should<span className="text-primary">i</span></span>
-          </button>
-
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-6 lg:flex">
-            <button
-              onClick={() => scrollToSection('how-it-works')}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {tNav('howItWorks')}
-            </button>
-            <button
-              onClick={() => scrollToSection('features')}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {tNav('features')}
-            </button>
-            <button
-              onClick={() => scrollToSection('advisors')}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {tNav('advisors')}
-            </button>
-            <button
-              onClick={() => scrollToSection('pricing')}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {tNav('pricing')}
-            </button>
-            <button
-              onClick={() => scrollToSection('faq')}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {tNav('faq')}
-            </button>
-          </nav>
-
-          <div className="flex items-center gap-2 md:gap-3">
-            <div className="hidden md:flex items-center gap-2">
-              <ThemeToggle />
-              <LanguageSwitcher />
-            </div>
-
-
-            {user ? (
-              <div className="flex items-center gap-3">
-                <Link href={`/${locale}/dashboard`}>
-                  <Button variant="outline" className="hidden sm:flex gap-2">
-                    <LayoutDashboard className="h-4 w-4" />
-                    Dashboard
-                  </Button>
-                </Link>
-              </div>
-            ) : (
-              <Button onClick={handleLogIn} className="hidden sm:flex gradient-primary text-white">
-                {tCommon('logIn')}
-              </Button>
-            )}
-
-            {/* Mobile menu button */}
-            <button
-              className="lg:hidden p-2"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-border bg-background px-4 py-4">
-            <nav className="flex flex-col gap-4">
-              <button
-                onClick={() => scrollToSection('how-it-works')}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground text-left py-2"
-              >
-                {tNav('howItWorks')}
-              </button>
-              <button
-                onClick={() => scrollToSection('features')}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground text-left py-2"
-              >
-                {tNav('features')}
-              </button>
-              <button
-                onClick={() => scrollToSection('advisors')}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground text-left py-2"
-              >
-                {tNav('advisors')}
-              </button>
-              <button
-                onClick={() => scrollToSection('pricing')}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground text-left py-2"
-              >
-                {tNav('pricing')}
-              </button>
-              <button
-                onClick={() => scrollToSection('faq')}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground text-left py-2"
-              >
-                {tNav('faq')}
-              </button>
-              <div className="pt-4 border-t border-border">
-                {user ? (
-                  <Link href={`/${locale}/dashboard`}>
-                    <Button variant="outline" className="w-full gap-2">
-                      <LayoutDashboard className="h-4 w-4" />
-                      Dashboard
-                    </Button>
-                  </Link>
-                ) : (
-                  <Button onClick={handleLogIn} className="w-full gradient-primary text-white">
-                    {tCommon('logIn')}
-                  </Button>
-                )}
-              </div>
-              <div className="pt-4 border-t border-border flex items-center gap-3">
-                <ThemeToggle />
-                <LanguageSwitcher />
-              </div>
-            </nav>
-          </div>
-        )}
-      </header>
-
-      <main>
-        <HeroSection
-          customQuestion={customQuestion}
-          setCustomQuestion={setCustomQuestion}
-          onCustomQuestionSubmit={handleCustomQuestionSubmit}
-        />
-        <ScenariosSection
-          onSelectScenario={handleSelectScenario}
-        />
-        <HowItWorksSection />
-        <FeaturesSection />
-        <AdvisorsSection />
-        <PricingSection onGetStarted={handleSignUp} />
-        <FAQSection />
-        <CTASection onGetStarted={handleSignUp} />
-      </main>
-
-      <FooterSection />
-
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        defaultMode={authMode}
-      />
-
-      {/* Survey Modal — landing page: 3 questions, best case only */}
-      <SurveyModal
-        isOpen={isSurveyOpen}
-        onClose={() => setIsSurveyOpen(false)}
-        userQuestion={surveyQuestion}
-        questionCount={3}
-        bestCaseOnly={true}
-        forcedSkillId={forcedSkillId}
-        onSignUp={() => {
-          setIsSurveyOpen(false)
-          setAuthMode('signup')
-          setIsAuthOpen(true)
-        }}
-      />
-    </div>
+    <>
+      <LandingClient />
+      <JsonLd data={webAppSchema} />
+      <JsonLd data={faqSchema} />
+    </>
   )
 }
