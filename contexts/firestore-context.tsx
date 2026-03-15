@@ -5,22 +5,30 @@ import { User } from "firebase/auth";
 import type { UserProfile, Scenario, Simulation, Factor, Outcome } from "@/lib/types/firestore";
 import * as firestoreService from "@/lib/firestore-service";
 
-// Free tier limits
+// Tier limits
 const FREE_TIER_LIMITS = {
   maxScenarios: 2,
   maxSimulationsPerScenario: 1,
 };
 
+const PRO_TIER_LIMITS = {
+  maxScenarios: Infinity,
+  maxSimulationsPerScenario: Infinity,
+};
+
 interface FirestoreContextType {
   // User
   userProfile: UserProfile | null;
+  userPlan: "free" | "pro";
+  paidScenarioCredits: number;
 
-  // Free tier limits
+  // Tier limits
   freeTierLimits: typeof FREE_TIER_LIMITS;
   canCreateScenario: () => boolean;
   canCreateSimulation: () => boolean;
   getRemainingScenarios: () => number;
   getRemainingSimulations: () => number;
+  consumeScenarioCredit: () => Promise<void>;
 
   // Scenarios
   scenarios: Scenario[];
@@ -63,6 +71,7 @@ interface FirestoreContextType {
   clearError: () => void;
 
   // Refresh functions
+  refreshUserProfile: () => Promise<void>;
   refreshScenarios: () => Promise<void>;
   refreshSimulations: () => Promise<void>;
 }
@@ -336,31 +345,61 @@ export function FirestoreProvider({ children, user }: FirestoreProviderProps) {
 
   const clearError = useCallback(() => setError(null), []);
 
-  // Free tier limit helpers
+  // Subscription helpers
+  const userPlan = userProfile?.subscriptionTier === "pro" && userProfile?.subscriptionStatus === "active"
+    ? "pro" as const
+    : "free" as const;
+
+  const paidScenarioCredits = userProfile?.paidScenarioCredits ?? 0;
+
+  const effectiveLimits = userPlan === "pro" ? PRO_TIER_LIMITS : FREE_TIER_LIMITS;
+
   const canCreateScenario = useCallback(() => {
-    return scenarios.length < FREE_TIER_LIMITS.maxScenarios;
-  }, [scenarios.length]);
+    if (userPlan === "pro") return true;
+    // Free users: base limit + paid credits
+    return scenarios.length < FREE_TIER_LIMITS.maxScenarios + paidScenarioCredits;
+  }, [scenarios.length, userPlan, paidScenarioCredits]);
 
   const canCreateSimulation = useCallback(() => {
     if (!selectedScenario) return false;
+    if (userPlan === "pro") return true;
     return simulations.length < FREE_TIER_LIMITS.maxSimulationsPerScenario;
-  }, [selectedScenario, simulations.length]);
+  }, [selectedScenario, simulations.length, userPlan]);
 
   const getRemainingScenarios = useCallback(() => {
-    return Math.max(0, FREE_TIER_LIMITS.maxScenarios - scenarios.length);
-  }, [scenarios.length]);
+    if (userPlan === "pro") return Infinity;
+    return Math.max(0, (FREE_TIER_LIMITS.maxScenarios + paidScenarioCredits) - scenarios.length);
+  }, [scenarios.length, userPlan, paidScenarioCredits]);
 
   const getRemainingSimulations = useCallback(() => {
+    if (userPlan === "pro") return Infinity;
     return Math.max(0, FREE_TIER_LIMITS.maxSimulationsPerScenario - simulations.length);
-  }, [simulations.length]);
+  }, [simulations.length, userPlan]);
+
+  const refreshUserProfile = useCallback(async () => {
+    if (!user) return;
+    const profile = await firestoreService.getUserProfile(user.uid);
+    if (profile) setUserProfile(profile);
+  }, [user]);
+
+  const consumeScenarioCredit = useCallback(async () => {
+    if (!user) throw new Error("Not authenticated");
+    await firestoreService.consumeScenarioCredit(user.uid);
+    // Refresh user profile to get updated credits
+    const profile = await firestoreService.getUserProfile(user.uid);
+    if (profile) setUserProfile(profile);
+  }, [user]);
 
   const value: FirestoreContextType = {
     userProfile,
+    userPlan,
+    paidScenarioCredits,
     freeTierLimits: FREE_TIER_LIMITS,
     canCreateScenario,
     canCreateSimulation,
     getRemainingScenarios,
     getRemainingSimulations,
+    consumeScenarioCredit,
     scenarios,
     selectedScenario,
     selectScenario,
@@ -377,6 +416,7 @@ export function FirestoreProvider({ children, user }: FirestoreProviderProps) {
     simulationsLoading,
     error,
     clearError,
+    refreshUserProfile,
     refreshScenarios,
     refreshSimulations,
   };

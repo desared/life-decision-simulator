@@ -10,14 +10,25 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
+import { auth } from "@/lib/firebase"
 
 interface UpgradeDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
 }
 
+const PAY_PER_SCENARIO_LINK = process.env.NEXT_PUBLIC_STRIPE_PAY_PER_SCENARIO_LINK
+const PRO_LINK = process.env.NEXT_PUBLIC_STRIPE_PRO_LINK
+
 export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
     const t = useTranslations('pricing')
+
+    const handleCheckout = (baseUrl: string | undefined) => {
+        if (!baseUrl) return
+        const uid = auth.currentUser?.uid
+        const url = uid ? `${baseUrl}?client_reference_id=${uid}` : baseUrl
+        window.open(url, "_blank")
+    }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -61,8 +72,8 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
                             ))}
                         </ul>
                         <Button
-                            disabled
-                            className="w-full opacity-50 cursor-not-allowed"
+                            onClick={() => handleCheckout(PAY_PER_SCENARIO_LINK)}
+                            className="w-full"
                             variant="outline"
                         >
                             {t('perScenario.cta')}
@@ -105,9 +116,8 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
                             ))}
                         </ul>
                         <Button
-                            disabled
-                            className="w-full opacity-50 cursor-not-allowed"
-                            variant="outline"
+                            onClick={() => handleCheckout(PRO_LINK)}
+                            className="w-full gradient-primary text-white"
                         >
                             {t('monthly.cta')}
                         </Button>

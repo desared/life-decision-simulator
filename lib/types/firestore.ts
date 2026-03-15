@@ -1,5 +1,9 @@
 import { Timestamp } from "firebase/firestore";
 
+// Subscription types
+export type SubscriptionTier = "free" | "per_scenario" | "pro";
+export type SubscriptionStatus = "active" | "canceled" | "past_due";
+
 // User Profile Interface
 export interface UserProfile {
   id: string;
@@ -8,6 +12,12 @@ export interface UserProfile {
   photoURL: string | null;
   createdAt: Timestamp;
   updatedAt: Timestamp;
+  // Subscription fields (optional — absent for free users)
+  subscriptionTier?: SubscriptionTier;
+  paidScenarioCredits?: number;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
+  subscriptionStatus?: SubscriptionStatus;
 }
 
 // Factor Interface (input variables for simulation)
@@ -71,6 +81,19 @@ export interface Simulation {
     trend: "positive" | "negative" | "neutral";
   };
   recommendation?: string;
+}
+
+// Payment record (stored in /users/{userId}/payments/{paymentId})
+export interface Payment {
+  id: string;
+  userId: string;
+  stripeSessionId: string;
+  stripeCustomerId?: string;
+  type: "per_scenario" | "pro_subscription";
+  amount: number;           // in cents
+  currency: string;
+  status: "completed" | "failed" | "refunded";
+  createdAt: Timestamp;
 }
 
 // Create/Update DTOs

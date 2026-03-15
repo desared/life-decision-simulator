@@ -514,6 +514,8 @@
       "pauseSubscription": "Pause Subscription",
       "pausing": "Pausing...",
       "pauseSuccess": "Your subscription has been paused.",
+      "manageSubscription": "Manage Subscription",
+      "scenarioCredits": "Scenario credits",
       "dangerZone": "Danger Zone",
       "deleteWarning": "Permanently delete your account and all data. This action cannot be undone.",
       "deleteAccount": "Delete Account",

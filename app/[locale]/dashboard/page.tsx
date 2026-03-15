@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { useSearchParams } from "next/navigation"
 import { ArrowRight, Sparkles, Eye, Trash2, Plus, Lock, Wand2, ChevronDown, Check, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -58,9 +59,18 @@ export default function DashboardPage() {
         simulationsLoading,
         freeTierLimits,
         canCreateScenario,
+        refreshUserProfile,
     } = useFirestore()
 
+    const searchParams = useSearchParams()
     const canCreate = canCreateScenario()
+
+    // Refresh user profile when returning from Stripe payment
+    useEffect(() => {
+        if (searchParams.get("payment") === "success") {
+            refreshUserProfile()
+        }
+    }, [searchParams, refreshUserProfile])
 
     // When viewingScenarioId changes, select that scenario to load its simulations
     useEffect(() => {

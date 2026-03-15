@@ -32,22 +32,20 @@ interface SettingsDialogProps {
     onOpenChange: (open: boolean) => void
     user: User | null
     userPlan?: "free" | "pro"
+    paidScenarioCredits?: number
 }
 
-export function SettingsDialog({ open, onOpenChange, user, userPlan = "free" }: SettingsDialogProps) {
+export function SettingsDialog({ open, onOpenChange, user, userPlan = "free", paidScenarioCredits = 0 }: SettingsDialogProps) {
     const t = useTranslations('dashboard')
     const router = useRouter()
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false)
     const [isDeleting, setIsDeleting] = useState(false)
-    const [isPausing, setIsPausing] = useState(false)
 
-    const handlePauseSubscription = async () => {
-        setIsPausing(true)
-        // Simulate API call - in production, this would call your payment provider
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        setIsPausing(false)
-        alert(t('settings.pauseSuccess'))
+    const handleManageSubscription = () => {
+        // Opens Stripe's customer portal or billing page
+        // In test mode, direct users to the Stripe test dashboard
+        window.open("https://billing.stripe.com/p/login/test", "_blank")
     }
 
     const handleDeleteAccount = async () => {
@@ -116,6 +114,11 @@ export function SettingsDialog({ open, onOpenChange, user, userPlan = "free" }: 
                                     <p className="text-sm text-muted-foreground mt-1">
                                         {t('settings.currentPlan')}: <span className="font-medium text-foreground">{userPlan === "pro" ? "Pro" : t('settings.freePlan')}</span>
                                     </p>
+                                    {paidScenarioCredits > 0 && (
+                                        <p className="text-sm text-muted-foreground mt-1">
+                                            {t('settings.scenarioCredits')}: <span className="font-medium text-foreground">{paidScenarioCredits}</span>
+                                        </p>
+                                    )}
                                     {userPlan === "free" && (
                                         <Button
                                             size="sm"
@@ -134,10 +137,9 @@ export function SettingsDialog({ open, onOpenChange, user, userPlan = "free" }: 
                                             variant="outline"
                                             size="sm"
                                             className="mt-3"
-                                            onClick={handlePauseSubscription}
-                                            disabled={isPausing}
+                                            onClick={handleManageSubscription}
                                         >
-                                            {isPausing ? t('settings.pausing') : t('settings.pauseSubscription')}
+                                            {t('settings.manageSubscription')}
                                         </Button>
                                     )}
                                 </div>
