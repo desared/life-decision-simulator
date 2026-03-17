@@ -22,12 +22,14 @@ import { signOut } from "firebase/auth"
 import { useRouter, useParams } from "next/navigation"
 import Link from "next/link"
 import { SettingsDialog } from "./settings-dialog"
+import { useFirestore } from "@/contexts/firestore-context"
 
 interface DashboardHeaderProps {
     user: User | null
 }
 
 export function DashboardHeader({ user }: DashboardHeaderProps) {
+    const { userPlan, paidScenarioCredits, userProfile, refreshUserProfile } = useFirestore()
     const t = useTranslations('dashboard')
     const [settingsOpen, setSettingsOpen] = useState(false)
     const router = useRouter()
@@ -101,7 +103,16 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                     </div>
                 </div>
             </header>
-            <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} user={user} />
+            <SettingsDialog
+                open={settingsOpen}
+                onOpenChange={setSettingsOpen}
+                user={user}
+                userPlan={userPlan}
+                paidScenarioCredits={paidScenarioCredits}
+                cancelAtPeriodEnd={userProfile?.cancelAtPeriodEnd}
+                currentPeriodEnd={userProfile?.currentPeriodEnd}
+                onSubscriptionChange={refreshUserProfile}
+            />
         </>
     )
 }

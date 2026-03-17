@@ -1,5 +1,6 @@
 import {
     collection,
+    collectionGroup,
     doc,
     addDoc,
     getDoc,
@@ -8,6 +9,7 @@ import {
     updateDoc,
     deleteDoc,
     query,
+    where,
     orderBy,
     serverTimestamp,
     increment,
@@ -18,11 +20,14 @@ import type {
     UserProfile,
     Scenario,
     Simulation,
+    Payment,
     CreateUserProfile,
     CreateScenario,
     UpdateScenario,
     CreateSimulation,
     UpdateSimulation,
+    SubscriptionTier,
+    SubscriptionStatus,
 } from "./types/firestore";
 
 // ============ Collection References ============
@@ -214,6 +219,77 @@ export const deleteSimulation = async (
 
     await updateDoc(scenarioRef, {
         simulationCount: increment(-1),
+        updatedAt: serverTimestamp(),
+    });
+};
+
+// ============ Payment Operations ============
+
+const getPaymentsRef = (userId: string) => collection(db, "users", userId, "payments");
+
+export const createPayment = async (
+    userId: string,
+    data: {
+        stripeSessionId: string;
+        stripeCustomerId?: string;
+        type: "per_scenario" | "pro_subscription";
+        amount: number;
+        currency: string;
+        status: "completed" | "failed" | "refunded";
+    }
+): Promise<string> => {
+    const paymentsRef = getPaymentsRef(userId);
+    const docRef = await addDoc(paymentsRef, {
+        ...data,
+        userId,
+        createdAt: serverTimestamp(),
+    });
+    return docRef.id;
+};
+
+export const getUserPayments = async (userId: string): Promise<Payment[]> => {
+    const paymentsRef = getPaymentsRef(userId);
+    const q = query(paymentsRef, orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Payment));
+};
+
+// ============ Subscription Operations ============
+
+export const updateSubscription = async (
+    userId: string,
+    data: {
+        subscriptionTier?: SubscriptionTier;
+        paidScenarioCredits?: number;
+        stripeCustomerId?: string;
+        stripeSubscriptionId?: string;
+        subscriptionStatus?: SubscriptionStatus;
+    }
+): Promise<void> => {
+    const userRef = getUserRef(userId);
+    await updateDoc(userRef, {
+        ...data,
+        updatedAt: serverTimestamp(),
+    });
+};
+
+export const addScenarioCredits = async (
+    userId: string,
+    credits: number
+): Promise<void> => {
+    const userRef = getUserRef(userId);
+    await updateDoc(userRef, {
+        paidScenarioCredits: increment(credits),
+        updatedAt: serverTimestamp(),
+    });
+};
+
+export const consumeScenarioCredit = async (
+    userId: string
+): Promise<void> => {
+    const userRef = getUserRef(userId);
+    await updateDoc(userRef, {
+        paidScenarioCredits: increment(-1),
         updatedAt: serverTimestamp(),
     });
 };

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { useSearchParams } from "next/navigation"
 import { ArrowRight, Sparkles, Eye, Trash2, Plus, Lock, Wand2, ChevronDown, Check, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -58,9 +59,20 @@ export default function DashboardPage() {
         simulationsLoading,
         freeTierLimits,
         canCreateScenario,
+        refreshUserProfile,
+        userPlan,
+        paidScenarioCredits,
     } = useFirestore()
 
+    const searchParams = useSearchParams()
     const canCreate = canCreateScenario()
+
+    // Refresh user profile when returning from Stripe payment
+    useEffect(() => {
+        if (searchParams.get("payment") === "success") {
+            refreshUserProfile()
+        }
+    }, [searchParams, refreshUserProfile])
 
     // When viewingScenarioId changes, select that scenario to load its simulations
     useEffect(() => {
@@ -392,13 +404,24 @@ export default function DashboardPage() {
 
                         {/* Usage indicator */}
                         <div className="mt-4 flex items-center justify-center gap-4 text-sm text-muted-foreground">
-                            <span>{scenarios.length}/{freeTierLimits.maxScenarios} {t('hero.scenariosUsed')}</span>
+                            <span>{scenarios.length}/{userPlan === "pro" ? "∞" : freeTierLimits.maxScenarios + paidScenarioCredits} {t('hero.scenariosUsed')}</span>
                             {!canCreate && (
                                 <button onClick={() => setUpgradeDialogOpen(true)} className="text-yellow-600 dark:text-yellow-400 underline hover:opacity-80 transition-opacity">
                                     {t('hero.upgradeForMore')}
                                 </button>
                             )}
                         </div>
+
+                        {/* Upgrade banner for free users */}
+                        {userPlan !== "pro" && (
+                            <button
+                                onClick={() => setUpgradeDialogOpen(true)}
+                                className="mt-4 w-full flex items-center justify-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm font-medium text-primary hover:bg-primary/10 transition-colors"
+                            >
+                                <Sparkles className="h-4 w-4" />
+                                {t('hero.upgradeBanner')}
+                            </button>
+                        )}
                     </div>
                 </div>
             </section>

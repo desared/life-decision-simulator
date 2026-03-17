@@ -3,29 +3,44 @@
 import { useTranslations } from 'next-intl'
 import { Check, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { auth } from '@/lib/firebase'
 
 interface PricingSectionProps {
   onGetStarted: () => void
 }
 
+const PAY_PER_SCENARIO_LINK = process.env.NEXT_PUBLIC_STRIPE_PAY_PER_SCENARIO_LINK
+const PRO_LINK = process.env.NEXT_PUBLIC_STRIPE_PRO_LINK
+
 export function PricingSection({ onGetStarted }: PricingSectionProps) {
   const t = useTranslations('pricing')
+
+  const handlePaidPlanClick = (baseUrl: string | undefined) => {
+    const uid = auth.currentUser?.uid
+    if (!uid) {
+      // Not logged in — prompt sign up first
+      onGetStarted()
+      return
+    }
+    if (!baseUrl) return
+    window.open(`${baseUrl}?client_reference_id=${uid}`, "_blank")
+  }
 
   const plans = [
     {
       key: 'free',
       popular: false,
-      comingSoon: false
+      stripeLink: null,
     },
     {
       key: 'perScenario',
       popular: false,
-      comingSoon: true
+      stripeLink: PAY_PER_SCENARIO_LINK,
     },
     {
       key: 'monthly',
       popular: true,
-      comingSoon: true
+      stripeLink: PRO_LINK,
     }
   ]
 
@@ -46,11 +61,9 @@ export function PricingSection({ onGetStarted }: PricingSectionProps) {
             <div
               key={plan.key}
               className={`relative rounded-2xl border ${
-                plan.comingSoon
-                  ? 'border-border opacity-60'
-                  : plan.popular
-                    ? 'border-primary shadow-xl scale-105'
-                    : 'border-border'
+                plan.popular
+                  ? 'border-primary shadow-xl scale-105'
+                  : 'border-border'
               } bg-card p-8`}
             >
               {plan.popular && (
@@ -91,12 +104,9 @@ export function PricingSection({ onGetStarted }: PricingSectionProps) {
               </ul>
 
               <Button
-                onClick={plan.comingSoon ? undefined : onGetStarted}
-                disabled={plan.comingSoon}
-                className={`w-full ${
-                  plan.comingSoon ? 'opacity-50 cursor-not-allowed' : plan.popular ? 'gradient-primary text-white' : ''
-                }`}
-                variant={plan.popular && !plan.comingSoon ? 'default' : 'outline'}
+                onClick={plan.stripeLink ? () => handlePaidPlanClick(plan.stripeLink!) : onGetStarted}
+                className={`w-full ${plan.popular ? 'gradient-primary text-white' : ''}`}
+                variant={plan.popular ? 'default' : 'outline'}
               >
                 {t(`${plan.key}.cta`)}
               </Button>
