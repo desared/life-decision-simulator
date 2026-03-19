@@ -410,6 +410,8 @@
     "freetextQuestion": "Additional details provided by user",
     "done": "Got it, thanks!",
     "signUpDeeper": "Sign up to get deeper analysis",
+    "lockedOutcome": "Sign up to unlock this outcome",
+    "lockedOutcomeDescription": "Create a free account to see the full best-case and worst-case analysis for your decision.",
     "saving": "Saving your analysis...",
     "savingResults": "Saving your results...",
     "savedSuccessfully": "Your decision analysis has been saved!",
@@ -429,7 +431,10 @@
       "distributionTitle": "Probability Distribution",
       "basedOn": "Based on {iterations} simulated scenarios",
       "compositeScore": "Decision Score",
-      "range": "90% range"
+      "range": "90% range",
+      "lockedTitle": "Monte Carlo Probability Distribution",
+      "lockedDescription": "Get a full probability distribution with risk and opportunity scores based on 1,000 simulated scenarios.",
+      "lockedCta": "Sign up to unlock"
     }
   },
   "dashboard": {

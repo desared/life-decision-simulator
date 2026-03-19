@@ -265,13 +265,13 @@ export default function ShouldISimulator() {
         defaultMode={authMode}
       />
 
-      {/* Survey Modal — landing page: 3 questions, best case only */}
+      {/* Survey Modal — landing page: 3 questions, likely case visible, best/worst locked */}
       <SurveyModal
         isOpen={isSurveyOpen}
         onClose={() => setIsSurveyOpen(false)}
         userQuestion={surveyQuestion}
         questionCount={3}
-        bestCaseOnly={true}
+        bestCaseOnly={false}
         forcedSkillId={forcedSkillId}
         onSignUp={() => {
           setIsSurveyOpen(false)

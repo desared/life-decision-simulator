@@ -410,6 +410,8 @@
     "freetextQuestion": "Vom Benutzer bereitgestellte zusätzliche Details",
     "done": "Verstanden, danke!",
     "signUpDeeper": "Registrieren für tiefere Analyse",
+    "lockedOutcome": "Registrieren, um dieses Ergebnis freizuschalten",
+    "lockedOutcomeDescription": "Erstellen Sie ein kostenloses Konto, um die vollständige Best-Case- und Worst-Case-Analyse zu sehen.",
     "saving": "Ihre Analyse wird gespeichert...",
     "savingResults": "Ergebnisse werden gespeichert...",
     "savedSuccessfully": "Ihre Entscheidungsanalyse wurde gespeichert!",
@@ -429,7 +431,10 @@
       "distributionTitle": "Wahrscheinlichkeitsverteilung",
       "basedOn": "Basierend auf {iterations} simulierten Szenarien",
       "compositeScore": "Entscheidungs-Score",
-      "range": "90%-Bereich"
+      "range": "90%-Bereich",
+      "lockedTitle": "Monte-Carlo-Wahrscheinlichkeitsverteilung",
+      "lockedDescription": "Erhalten Sie eine vollständige Wahrscheinlichkeitsverteilung mit Risiko- und Chancen-Scores basierend auf 1.000 simulierten Szenarien.",
+      "lockedCta": "Registrieren zum Freischalten"
     }
   },
   "dashboard": {

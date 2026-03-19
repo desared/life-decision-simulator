@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useTranslations, useLocale } from 'next-intl'
-import { Loader2, ChevronRight, ChevronLeft, Sparkles, AlertTriangle } from 'lucide-react'
+import { Loader2, ChevronRight, ChevronLeft, Sparkles, AlertTriangle, Lock } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -327,24 +327,50 @@ export function SurveyModal({ isOpen, onClose, userQuestion, questionCount = 4, 
             {/* Outcomes */}
             <div className="space-y-4">
               <h4 className="font-semibold text-foreground">{t('possibleOutcomes')}</h4>
-              {outcomes.outcomes.map((outcome, index) => (
-                <div
-                  key={index}
-                  className="p-4 rounded-lg border border-border bg-card"
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <h5 className="font-medium text-foreground">{outcome.title}</h5>
-                    {outcome.confidenceInterval && (
-                      <span className="text-xs font-medium px-2 py-1 rounded-full bg-secondary text-secondary-foreground border border-border">
-                        {outcome.confidenceInterval}
-                      </span>
-                    )}
+              {outcomes.outcomes.map((outcome, index) => {
+                // When onSignUp is present (non-logged-in), gate best/worst case (indices 0 and 2)
+                const isLocked = !!onSignUp && outcomes.outcomes.length === 3 && index !== 1
+
+                if (isLocked) {
+                  return (
+                    <button
+                      key={index}
+                      onClick={onSignUp}
+                      className="w-full p-4 rounded-lg border border-dashed border-border bg-muted/30 relative overflow-hidden text-left group hover:border-primary/50 transition-colors"
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <h5 className="font-medium text-muted-foreground">{outcome.title}</h5>
+                        <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-secondary text-muted-foreground border border-border">
+                          <Lock className="h-3 w-3" />
+                        </span>
+                      </div>
+                      <div className="h-8 bg-gradient-to-r from-muted/60 to-transparent rounded blur-[2px]" />
+                      <p className="text-xs text-primary mt-2 group-hover:underline">
+                        {t('lockedOutcome')}
+                      </p>
+                    </button>
+                  )
+                }
+
+                return (
+                  <div
+                    key={index}
+                    className="p-4 rounded-lg border border-border bg-card"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <h5 className="font-medium text-foreground">{outcome.title}</h5>
+                      {outcome.confidenceInterval && (
+                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-secondary text-secondary-foreground border border-border">
+                          {outcome.confidenceInterval}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {outcome.description}
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {outcome.description}
-                  </p>
-                </div>
-              ))}
+                )
+              })}
             </div>
 
             {/* Confidence Interval Chart */}
@@ -355,8 +381,8 @@ export function SurveyModal({ isOpen, onClose, userQuestion, questionCount = 4, 
               />
             </div>
 
-            {/* Monte Carlo Distribution */}
-            {monteCarloResult && (
+            {/* Monte Carlo Distribution — full chart for logged-in, teaser for non-logged-in */}
+            {!onSignUp && monteCarloResult ? (
               <div className="p-4 rounded-lg border border-border bg-card">
                 <h4 className="font-semibold text-foreground mb-3">{t('monteCarlo.title')}</h4>
                 <DistributionChart
@@ -372,7 +398,23 @@ export function SurveyModal({ isOpen, onClose, userQuestion, questionCount = 4, 
                   {t('monteCarlo.basedOn', { iterations: monteCarloResult.iterations })}
                 </p>
               </div>
-            )}
+            ) : onSignUp ? (
+              <button
+                onClick={onSignUp}
+                className="w-full p-4 rounded-lg border border-dashed border-border bg-muted/30 text-left group hover:border-primary/50 transition-colors"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <Lock className="h-4 w-4 text-muted-foreground" />
+                  <h4 className="font-semibold text-muted-foreground">{t('monteCarlo.lockedTitle')}</h4>
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  {t('monteCarlo.lockedDescription')}
+                </p>
+                <span className="text-xs text-primary font-medium group-hover:underline">
+                  {t('monteCarlo.lockedCta')}
+                </span>
+              </button>
+            ) : null}
 
             {/* Recommendation */}
             {outcomes.recommendation && (

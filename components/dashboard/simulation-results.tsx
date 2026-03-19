@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { useState, useEffect } from "react"
 import { Download, ArrowLeft } from "lucide-react"
 import { jsPDF } from "jspdf"
 import { Button } from "@/components/ui/button"
@@ -49,14 +49,15 @@ interface SimulationResultsProps {
 export function SimulationResults({ title, factors, outcomes, status, recommendation, onBack, showDownload = true }: SimulationResultsProps) {
     const t = useTranslations('dashboard')
 
-    // Recompute Monte Carlo from stored outcome params (or derive from confidence)
-    const monteCarloResult = useMemo(() => {
+    // Recompute Monte Carlo client-side only (Math.random causes hydration mismatch in useMemo)
+    const [monteCarloResult, setMonteCarloResult] = useState<ReturnType<typeof runMonteCarloSimulation> | null>(null)
+    useEffect(() => {
         const mcParams = outcomes.map(o => ({
             probability: o.probability ?? deriveParamsFromConfidence(o.confidence ?? "medium").probability,
             impactScore: o.impactScore ?? deriveParamsFromConfidence(o.confidence ?? "medium").impactScore,
             volatility: o.volatility ?? deriveParamsFromConfidence(o.confidence ?? "medium").volatility,
         }))
-        return runMonteCarloSimulation(mcParams)
+        setMonteCarloResult(runMonteCarloSimulation(mcParams))
     }, [outcomes])
 
     const statusConfig = {
