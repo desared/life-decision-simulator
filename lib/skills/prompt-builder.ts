@@ -143,7 +143,11 @@ Give a full, detailed answer.`
 5. An overall summary
 6. One single actionable recommendation that considers all outcomes and provides clear guidance
 
-Do not summarize the outcomes too much, give full, detailed answers.
+CRITICAL rules for outcome quality:
+- The "likely case" is the MOST IMPORTANT outcome. It must describe a specific, realistic scenario — what will probably happen based on the user's answers. It must NEVER be vague or generic like "Things stay the same" or "The situation may not change significantly."
+- Every outcome title must be specific and descriptive (e.g., "Successful transition with initial adjustment period" NOT "Things go well").
+- Every outcome must reference the user's actual situation and answers, not generic platitudes.
+- Each outcome description should be 3-5 sentences with concrete details, trade-offs, and reasoning.
 Do NOT include a recommendation inside each outcome — provide only one overall recommendation.`;
 
   const prompt = `${personaBlock}${expertiseBlock}
@@ -162,8 +166,8 @@ Return ONLY valid JSON in this exact format (no markdown, no code blocks):
 {
   "outcomes": [
     {
-      "title": "Outcome title",
-      "description": "Detailed description of this outcome scenario. Be specific and explain why.",
+      "title": "Specific, descriptive outcome title (e.g. 'Steady growth with manageable challenges')",
+      "description": "Detailed 3-5 sentence description referencing the user's specific situation and survey answers. Explain WHY this outcome is likely and what concrete factors drive it.",
       "confidence": "high|medium|low",
       "confidenceInterval": "XX-YY%",
       "probability": 0.55,
