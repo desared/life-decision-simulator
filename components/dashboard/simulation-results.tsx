@@ -1,11 +1,14 @@
 "use client"
 
+import { useMemo } from "react"
 import { Download, ArrowLeft } from "lucide-react"
 import { jsPDF } from "jspdf"
 import { Button } from "@/components/ui/button"
 import { ConfidenceChart } from "@/components/ui/confidence-chart"
+import { DistributionChart } from "@/components/ui/distribution-chart"
 import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
+import { runMonteCarloSimulation, deriveParamsFromConfidence } from "@/lib/monte-carlo"
 
 interface Factor {
     id: string
@@ -28,6 +31,9 @@ interface Outcome {
     description?: string
     confidence?: "high" | "medium" | "low"
     confidenceInterval?: string
+    probability?: number
+    impactScore?: number
+    volatility?: number
 }
 
 interface SimulationResultsProps {
@@ -42,6 +48,16 @@ interface SimulationResultsProps {
 
 export function SimulationResults({ title, factors, outcomes, status, recommendation, onBack, showDownload = true }: SimulationResultsProps) {
     const t = useTranslations('dashboard')
+
+    // Recompute Monte Carlo from stored outcome params (or derive from confidence)
+    const monteCarloResult = useMemo(() => {
+        const mcParams = outcomes.map(o => ({
+            probability: o.probability ?? deriveParamsFromConfidence(o.confidence ?? "medium").probability,
+            impactScore: o.impactScore ?? deriveParamsFromConfidence(o.confidence ?? "medium").impactScore,
+            volatility: o.volatility ?? deriveParamsFromConfidence(o.confidence ?? "medium").volatility,
+        }))
+        return runMonteCarloSimulation(mcParams)
+    }, [outcomes])
 
     const statusConfig = {
         optimal: { label: t('results.optimal'), color: "text-green-600 dark:text-green-400", bg: "bg-green-500/10" },
@@ -234,6 +250,33 @@ export function SimulationResults({ title, factors, outcomes, status, recommenda
             y += 8
         })
 
+        // Monte Carlo Summary
+        if (monteCarloResult) {
+            checkPageBreak(30)
+            y += 6
+            doc.setTextColor(0, 0, 0)
+            doc.setFontSize(14)
+            doc.setFont("helvetica", "bold")
+            doc.text("Monte Carlo Analysis", margin, y)
+            y += 8
+
+            doc.setFontSize(10)
+            doc.setFont("helvetica", "normal")
+            doc.setTextColor(60, 60, 60)
+            doc.text(`Decision Score: ${Math.round(monteCarloResult.compositeScore)} / 100`, margin + 4, y)
+            y += 5
+            doc.text(`90% Confidence Range: ${Math.round(monteCarloResult.p5)} - ${Math.round(monteCarloResult.p95)}`, margin + 4, y)
+            y += 5
+            doc.text(`Risk of Poor Outcome (<40): ${Math.round(monteCarloResult.riskOfPoorOutcome * 100)}%`, margin + 4, y)
+            y += 5
+            doc.text(`Chance of Good Outcome (>=70): ${Math.round(monteCarloResult.chanceOfGoodOutcome * 100)}%`, margin + 4, y)
+            y += 5
+            doc.setTextColor(120, 120, 120)
+            doc.setFontSize(8)
+            doc.text(`Based on ${monteCarloResult.iterations.toLocaleString()} simulated scenarios`, margin + 4, y)
+            y += 4
+        }
+
         // Recommendation
         if (recommendation) {
             checkPageBreak(30)
@@ -342,6 +385,25 @@ export function SimulationResults({ title, factors, outcomes, status, recommenda
                     items={outcomes.map(o => ({ label: o.label, confidenceInterval: o.confidenceInterval }))}
                 />
             </div>
+
+            {/* Monte Carlo Distribution */}
+            {monteCarloResult && (
+                <div className="rounded-xl border border-border bg-card p-6">
+                    <h2 className="text-lg font-semibold mb-4">{t('results.monteCarloTitle')}</h2>
+                    <DistributionChart
+                        histogram={monteCarloResult.compositeHistogram}
+                        compositeScore={monteCarloResult.compositeScore}
+                        p5={monteCarloResult.p5}
+                        p95={monteCarloResult.p95}
+                        iterations={monteCarloResult.iterations}
+                        riskOfPoorOutcome={monteCarloResult.riskOfPoorOutcome}
+                        chanceOfGoodOutcome={monteCarloResult.chanceOfGoodOutcome}
+                    />
+                    <p className="text-xs text-muted-foreground mt-3">
+                        {t('results.monteCarloDescription', { iterations: monteCarloResult.iterations })}
+                    </p>
+                </div>
+            )}
 
             {/* Recommendation */}
             {recommendation && (

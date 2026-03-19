@@ -423,6 +423,13 @@
       "high": "High confidence",
       "medium": "Medium confidence",
       "low": "Low confidence"
+    },
+    "monteCarlo": {
+      "title": "Monte Carlo Analysis",
+      "distributionTitle": "Probability Distribution",
+      "basedOn": "Based on {iterations} simulated scenarios",
+      "compositeScore": "Decision Score",
+      "range": "90% range"
     }
   },
   "dashboard": {
@@ -471,7 +478,9 @@
       "inputFactors": "Input Factors",
       "predictedOutcomes": "Predicted Outcomes",
       "recommendation": "Recommendation",
-      "confidenceChart": "Confidence Overview"
+      "confidenceChart": "Confidence Overview",
+      "monteCarloTitle": "Monte Carlo Analysis",
+      "monteCarloDescription": "Probability distribution from {iterations} simulated scenarios"
     },
     "compare": {
       "title": "Compare Your Decisions",

@@ -19,6 +19,8 @@ import {
     type GeminiOutcomeResponse
 } from "@/lib/gemini-service"
 import { useFirestore } from "@/contexts/firestore-context"
+import { runMonteCarloSimulation, deriveParamsFromConfidence, type MonteCarloResult } from "@/lib/monte-carlo"
+import { DistributionChart } from "@/components/ui/distribution-chart"
 
 interface AddSimulationModalProps {
     isOpen: boolean
@@ -35,6 +37,7 @@ export function AddSimulationModal({ isOpen, onClose, scenarioTitle }: AddSimula
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [answers, setAnswers] = useState<Record<string, { question: string; answer: string }>>({})
     const [outcomes, setOutcomes] = useState<GeminiOutcomeResponse | null>(null)
+    const [monteCarloResult, setMonteCarloResult] = useState<MonteCarloResult | null>(null)
 
     const { createSimulation, canCreateSimulation } = useFirestore()
     const canSave = canCreateSimulation()
@@ -55,6 +58,7 @@ export function AddSimulationModal({ isOpen, onClose, scenarioTitle }: AddSimula
             setCurrentQuestion(0)
             setAnswers({})
             setOutcomes(null)
+            setMonteCarloResult(null)
         }
     }, [isOpen])
 
@@ -86,9 +90,18 @@ export function AddSimulationModal({ isOpen, onClose, scenarioTitle }: AddSimula
                 const response = await generateOutcomes(userQuestion, answers)
                 setOutcomes(response)
 
+                // Run Monte Carlo simulation
+                const mcParams = response.outcomes.map(o => ({
+                    probability: o.probability ?? deriveParamsFromConfidence(o.confidence).probability,
+                    impactScore: o.impactScore ?? deriveParamsFromConfidence(o.confidence).impactScore,
+                    volatility: o.volatility ?? deriveParamsFromConfidence(o.confidence).volatility,
+                }))
+                const mcResult = runMonteCarloSimulation(mcParams)
+                setMonteCarloResult(mcResult)
+
                 if (canSave) {
                     setStep("saving")
-                    await saveSimulation(response)
+                    await saveSimulation(response, mcResult)
                 }
 
                 setStep("results")
@@ -99,16 +112,23 @@ export function AddSimulationModal({ isOpen, onClose, scenarioTitle }: AddSimula
         }
     }
 
-    const saveSimulation = async (outcomeData: GeminiOutcomeResponse) => {
+    const saveSimulation = async (outcomeData: GeminiOutcomeResponse, mcResultParam?: MonteCarloResult) => {
         try {
-            const simulationOutcomes = outcomeData.outcomes.map((outcome, index) => ({
-                id: `outcome-${index}`,
-                label: outcome.title,
-                value: outcome.confidence === 'high' ? 80 : outcome.confidence === 'medium' ? 60 : 40,
-                rangeMin: outcome.confidence === 'high' ? 70 : outcome.confidence === 'medium' ? 45 : 25,
-                rangeMax: outcome.confidence === 'high' ? 90 : outcome.confidence === 'medium' ? 75 : 55,
-                trend: outcome.confidence === 'high' ? 'up' as const : outcome.confidence === 'medium' ? 'stable' as const : 'down' as const
-            }))
+            const mcData = mcResultParam ?? monteCarloResult
+            const simulationOutcomes = outcomeData.outcomes.map((outcome, index) => {
+                const mcOutcome = mcData?.outcomeResults[index]
+                return {
+                    id: `outcome-${index}`,
+                    label: outcome.title,
+                    value: mcOutcome ? Math.round(mcOutcome.mean) : (outcome.confidence === 'high' ? 80 : outcome.confidence === 'medium' ? 60 : 40),
+                    rangeMin: mcOutcome ? Math.round(mcOutcome.p5) : (outcome.confidence === 'high' ? 70 : outcome.confidence === 'medium' ? 45 : 25),
+                    rangeMax: mcOutcome ? Math.round(mcOutcome.p95) : (outcome.confidence === 'high' ? 90 : outcome.confidence === 'medium' ? 75 : 55),
+                    trend: outcome.confidence === 'high' ? 'up' as const : outcome.confidence === 'medium' ? 'stable' as const : 'down' as const,
+                    probability: outcome.probability,
+                    impactScore: outcome.impactScore,
+                    volatility: outcome.volatility,
+                }
+            })
 
             const simulationFactors = Object.entries(answers).slice(0, 4).map(([, { question, answer }], index) => {
                 let value = 50
@@ -316,6 +336,25 @@ export function AddSimulationModal({ isOpen, onClose, scenarioTitle }: AddSimula
                                 </div>
                             ))}
                         </div>
+
+                        {/* Monte Carlo Distribution */}
+                        {monteCarloResult && (
+                            <div className="p-4 rounded-lg border border-border bg-card">
+                                <h4 className="font-semibold text-foreground mb-3">{t('monteCarlo.title')}</h4>
+                                <DistributionChart
+                                    histogram={monteCarloResult.compositeHistogram}
+                                    compositeScore={monteCarloResult.compositeScore}
+                                    p5={monteCarloResult.p5}
+                                    p95={monteCarloResult.p95}
+                                    iterations={monteCarloResult.iterations}
+                                    riskOfPoorOutcome={monteCarloResult.riskOfPoorOutcome}
+                                    chanceOfGoodOutcome={monteCarloResult.chanceOfGoodOutcome}
+                                />
+                                <p className="text-xs text-muted-foreground mt-2">
+                                    {t('monteCarlo.basedOn', { iterations: monteCarloResult.iterations })}
+                                </p>
+                            </div>
+                        )}
 
                         <div className="flex justify-center pt-4">
                             <Button onClick={onClose} className="gap-2 gradient-primary text-white">

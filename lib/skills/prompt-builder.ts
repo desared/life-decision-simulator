@@ -130,16 +130,18 @@ ${skill.benchmarks.map((b) => `- ${b}`).join("\n")}`
 1. 1 best-case outcome
 2. A confidence level
 3. A specific confidence probability interval (e.g., "75-85%")
-4. An overall summary
-5. One single actionable recommendation that considers all outcomes
+4. Numerical simulation parameters for the outcome (see JSON format below)
+5. An overall summary
+6. One single actionable recommendation that considers all outcomes
 
 Give a full, detailed answer.`
     : `Analyze the responses and provide:
 1. 3 possible outcomes (best case, likely case, worst case)
 2. A confidence level for each outcome
 3. A specific confidence probability interval (e.g., "75-85%") for each outcome
-4. An overall summary
-5. One single actionable recommendation that considers all outcomes and provides clear guidance
+4. Numerical simulation parameters for each outcome (see JSON format below)
+5. An overall summary
+6. One single actionable recommendation that considers all outcomes and provides clear guidance
 
 Do not summarize the outcomes too much, give full, detailed answers.
 Do NOT include a recommendation inside each outcome — provide only one overall recommendation.`;
@@ -151,6 +153,11 @@ ${evaluationBlock}${riskBlock}${benchmarkBlock}${additionalBlock}
 
 ${outcomeInstructions}${languageInstruction}
 
+For each outcome, also provide numerical simulation parameters:
+- "probability": a number from 0 to 1 indicating how likely this outcome is (all outcome probabilities should sum to approximately 1.0)
+- "impactScore": a number from 0 to 100 indicating how favorable this outcome would be (100 = best possible)
+- "volatility": a number from 0 to 1 indicating uncertainty (0 = very certain, 1 = very uncertain)
+
 Return ONLY valid JSON in this exact format (no markdown, no code blocks):
 {
   "outcomes": [
@@ -158,7 +165,10 @@ Return ONLY valid JSON in this exact format (no markdown, no code blocks):
       "title": "Outcome title",
       "description": "Detailed description of this outcome scenario. Be specific and explain why.",
       "confidence": "high|medium|low",
-      "confidenceInterval": "XX-YY%"
+      "confidenceInterval": "XX-YY%",
+      "probability": 0.55,
+      "impactScore": 72,
+      "volatility": 0.25
     }
   ],
   "summary": "Brief overall summary of the analysis",

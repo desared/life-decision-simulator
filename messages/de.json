@@ -423,6 +423,13 @@
       "high": "Hohe Konfidenz",
       "medium": "Mittlere Konfidenz",
       "low": "Niedrige Konfidenz"
+    },
+    "monteCarlo": {
+      "title": "Monte-Carlo-Analyse",
+      "distributionTitle": "Wahrscheinlichkeitsverteilung",
+      "basedOn": "Basierend auf {iterations} simulierten Szenarien",
+      "compositeScore": "Entscheidungs-Score",
+      "range": "90%-Bereich"
     }
   },
   "dashboard": {
@@ -471,7 +478,9 @@
       "inputFactors": "Eingabefaktoren",
       "predictedOutcomes": "Vorhergesagte Ergebnisse",
       "recommendation": "Empfehlung",
-      "confidenceChart": "Konfidenzübersicht"
+      "confidenceChart": "Konfidenzübersicht",
+      "monteCarloTitle": "Monte-Carlo-Analyse",
+      "monteCarloDescription": "Wahrscheinlichkeitsverteilung aus {iterations} simulierten Szenarien"
     },
     "compare": {
       "title": "Entscheidungen vergleichen",

@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { ConfidenceChart } from "@/components/ui/confidence-chart"
+import { DistributionChart } from "@/components/ui/distribution-chart"
 import { cn } from "@/lib/utils"
 import { moderateContent } from "@/lib/moderation"
 import { generateSurveyQuestionsAction, generateOutcomesAction } from "@/app/actions/gemini"
@@ -30,6 +31,7 @@ import { detectSkill } from "@/lib/skills/detector"
 import { getSkill } from "@/lib/skills/registry"
 import { SkillIcon } from "@/lib/skills/skill-icon"
 import type { SupportedLocale, SkillId } from "@/lib/skills/types"
+import { runMonteCarloSimulation, deriveParamsFromConfidence, type MonteCarloResult } from "@/lib/monte-carlo"
 
 interface DashboardSurveyModalProps {
   isOpen: boolean
@@ -54,6 +56,7 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion, forcedSkil
   const [detectedSkillId, setDetectedSkillId] = useState<SkillId>("generic")
   const [freetextValue, setFreetextValue] = useState("")
   const [moderationOpen, setModerationOpen] = useState(false)
+  const [monteCarloResult, setMonteCarloResult] = useState<MonteCarloResult | null>(null)
 
   const { createScenario, createSimulation, selectScenario, canCreateScenario } = useFirestore()
   const canSave = canCreateScenario()
@@ -74,6 +77,7 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion, forcedSkil
       setDetectedSkillId("generic")
       setFreetextValue("")
       setModerationOpen(false)
+      setMonteCarloResult(null)
     }
   }, [isOpen])
 
@@ -148,9 +152,18 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion, forcedSkil
       const data = await generateOutcomesAction(userQuestion, finalAnswers, false, locale, detectedSkillId !== "generic" ? detectedSkillId : undefined)
       setOutcomes(data)
 
+      // Run Monte Carlo simulation
+      const mcParams = data.outcomes.map(o => ({
+        probability: o.probability ?? deriveParamsFromConfidence(o.confidence).probability,
+        impactScore: o.impactScore ?? deriveParamsFromConfidence(o.confidence).impactScore,
+        volatility: o.volatility ?? deriveParamsFromConfidence(o.confidence).volatility,
+      }))
+      const mcResult = runMonteCarloSimulation(mcParams)
+      setMonteCarloResult(mcResult)
+
       if (canSave) {
         setStep("saving")
-        await saveScenarioAndSimulation(data, finalAnswers)
+        await saveScenarioAndSimulation(data, finalAnswers, mcResult)
       }
 
       setStep("results")
@@ -160,7 +173,7 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion, forcedSkil
     }
   }
 
-  const saveScenarioAndSimulation = async (outcomeData: GeminiOutcomeResponse, answersToSave?: Record<string, { question: string; answer: string }>) => {
+  const saveScenarioAndSimulation = async (outcomeData: GeminiOutcomeResponse, answersToSave?: Record<string, { question: string; answer: string }>, mcResultParam?: MonteCarloResult) => {
     const effectiveAnswers = answersToSave || answers
     try {
       // Create scenario title from question
@@ -182,18 +195,25 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion, forcedSkil
       // Select the new scenario to create simulation under it
       selectScenario(scenarioId)
 
-      // Convert outcomes to simulation format
-      const simulationOutcomes = outcomeData.outcomes.map((outcome, index) => ({
-        id: `outcome-${index}`,
-        label: outcome.title,
-        value: outcome.confidence === 'high' ? 80 : outcome.confidence === 'medium' ? 60 : 40,
-        rangeMin: outcome.confidence === 'high' ? 70 : outcome.confidence === 'medium' ? 45 : 25,
-        rangeMax: outcome.confidence === 'high' ? 90 : outcome.confidence === 'medium' ? 75 : 55,
-        trend: outcome.confidence === 'high' ? 'up' as const : outcome.confidence === 'medium' ? 'stable' as const : 'down' as const,
-        description: outcome.description,
-        confidence: outcome.confidence,
-        confidenceInterval: outcome.confidenceInterval,
-      }))
+      // Convert outcomes to simulation format, using MC-derived values when available
+      const mcData = mcResultParam ?? monteCarloResult
+      const simulationOutcomes = outcomeData.outcomes.map((outcome, index) => {
+        const mcOutcome = mcData?.outcomeResults[index]
+        return {
+          id: `outcome-${index}`,
+          label: outcome.title,
+          value: mcOutcome ? Math.round(mcOutcome.mean) : (outcome.confidence === 'high' ? 80 : outcome.confidence === 'medium' ? 60 : 40),
+          rangeMin: mcOutcome ? Math.round(mcOutcome.p5) : (outcome.confidence === 'high' ? 70 : outcome.confidence === 'medium' ? 45 : 25),
+          rangeMax: mcOutcome ? Math.round(mcOutcome.p95) : (outcome.confidence === 'high' ? 90 : outcome.confidence === 'medium' ? 75 : 55),
+          trend: outcome.confidence === 'high' ? 'up' as const : outcome.confidence === 'medium' ? 'stable' as const : 'down' as const,
+          description: outcome.description,
+          confidence: outcome.confidence,
+          confidenceInterval: outcome.confidenceInterval,
+          probability: outcome.probability,
+          impactScore: outcome.impactScore,
+          volatility: outcome.volatility,
+        }
+      })
 
       // Convert answers to factors format
       const simulationFactors = Object.entries(effectiveAnswers).map(([id, { question, answer }], index) => {
@@ -248,7 +268,15 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion, forcedSkil
         outcomes: simulationOutcomes,
         inputSummary,
         outcomeSummary,
-        recommendation: outcomeData.recommendation
+        recommendation: outcomeData.recommendation,
+        ...(mcData ? {
+          monteCarloResult: {
+            compositeScore: mcData.compositeScore,
+            p5: mcData.p5,
+            p95: mcData.p95,
+            iterations: mcData.iterations,
+          }
+        } : {}),
       }, scenarioId)
     } catch (error) {
       console.error("Failed to save scenario and simulation:", error)
@@ -499,6 +527,25 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion, forcedSkil
                 items={outcomes.outcomes.map(o => ({ label: o.title, confidenceInterval: o.confidenceInterval }))}
               />
             </div>
+
+            {/* Monte Carlo Distribution */}
+            {monteCarloResult && (
+              <div className="p-4 rounded-lg border border-border bg-card">
+                <h4 className="font-semibold text-foreground mb-3">{t('monteCarlo.title')}</h4>
+                <DistributionChart
+                  histogram={monteCarloResult.compositeHistogram}
+                  compositeScore={monteCarloResult.compositeScore}
+                  p5={monteCarloResult.p5}
+                  p95={monteCarloResult.p95}
+                  iterations={monteCarloResult.iterations}
+                  riskOfPoorOutcome={monteCarloResult.riskOfPoorOutcome}
+                  chanceOfGoodOutcome={monteCarloResult.chanceOfGoodOutcome}
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  {t('monteCarlo.basedOn', { iterations: monteCarloResult.iterations })}
+                </p>
+              </div>
+            )}
 
             {/* Recommendation */}
             {outcomes.recommendation && (

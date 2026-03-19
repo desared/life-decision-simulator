@@ -34,6 +34,9 @@ export interface Outcome {
   confidence?: "high" | "medium" | "low";
   confidenceInterval?: string;
   recommendation?: string;
+  probability?: number;
+  impactScore?: number;
+  volatility?: number;
 }
 
 // Scenario Interface (parent container for simulations)
@@ -71,6 +74,12 @@ export interface Simulation {
     trend: "positive" | "negative" | "neutral";
   };
   recommendation?: string;
+  monteCarloResult?: {
+    compositeScore: number;
+    p5: number;
+    p95: number;
+    iterations: number;
+  };
 }
 
 // Create/Update DTOs

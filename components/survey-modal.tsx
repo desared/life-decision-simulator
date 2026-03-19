@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { ConfidenceChart } from "@/components/ui/confidence-chart"
+import { DistributionChart } from "@/components/ui/distribution-chart"
 import { cn } from "@/lib/utils"
 import { moderateContent } from "@/lib/moderation"
 import { generateSurveyQuestionsAction, generateOutcomesAction } from "@/app/actions/gemini"
@@ -31,6 +32,7 @@ import { detectSkill } from "@/lib/skills/detector"
 import { getSkill } from "@/lib/skills/registry"
 import { SkillIcon } from "@/lib/skills/skill-icon"
 import type { SupportedLocale, SkillId } from "@/lib/skills/types"
+import { runMonteCarloSimulation, deriveParamsFromConfidence, type MonteCarloResult } from "@/lib/monte-carlo"
 
 interface SurveyModalProps {
   isOpen: boolean
@@ -55,6 +57,7 @@ export function SurveyModal({ isOpen, onClose, userQuestion, questionCount = 4, 
   const [detectedSkillId, setDetectedSkillId] = useState<SkillId>("generic")
   const [freetextValue, setFreetextValue] = useState("")
   const [moderationOpen, setModerationOpen] = useState(false)
+  const [monteCarloResult, setMonteCarloResult] = useState<MonteCarloResult | null>(null)
 
   useEffect(() => {
     if (isOpen && userQuestion) {
@@ -73,6 +76,7 @@ export function SurveyModal({ isOpen, onClose, userQuestion, questionCount = 4, 
       setDetectedSkillId("generic")
       setFreetextValue("")
       setModerationOpen(false)
+      setMonteCarloResult(null)
     }
   }, [isOpen])
 
@@ -128,6 +132,15 @@ export function SurveyModal({ isOpen, onClose, userQuestion, questionCount = 4, 
     try {
       const response = await generateOutcomesAction(userQuestion, finalAnswers, bestCaseOnly, locale, detectedSkillId !== "generic" ? detectedSkillId : undefined)
       setOutcomes(response)
+
+      // Run Monte Carlo simulation
+      const mcParams = response.outcomes.map(o => ({
+        probability: o.probability ?? deriveParamsFromConfidence(o.confidence).probability,
+        impactScore: o.impactScore ?? deriveParamsFromConfidence(o.confidence).impactScore,
+        volatility: o.volatility ?? deriveParamsFromConfidence(o.confidence).volatility,
+      }))
+      setMonteCarloResult(runMonteCarloSimulation(mcParams))
+
       setStep("results")
     } catch (error) {
       console.error("Failed to generate outcomes:", error)
@@ -341,6 +354,25 @@ export function SurveyModal({ isOpen, onClose, userQuestion, questionCount = 4, 
                 items={outcomes.outcomes.map(o => ({ label: o.title, confidenceInterval: o.confidenceInterval }))}
               />
             </div>
+
+            {/* Monte Carlo Distribution */}
+            {monteCarloResult && (
+              <div className="p-4 rounded-lg border border-border bg-card">
+                <h4 className="font-semibold text-foreground mb-3">{t('monteCarlo.title')}</h4>
+                <DistributionChart
+                  histogram={monteCarloResult.compositeHistogram}
+                  compositeScore={monteCarloResult.compositeScore}
+                  p5={monteCarloResult.p5}
+                  p95={monteCarloResult.p95}
+                  iterations={monteCarloResult.iterations}
+                  riskOfPoorOutcome={monteCarloResult.riskOfPoorOutcome}
+                  chanceOfGoodOutcome={monteCarloResult.chanceOfGoodOutcome}
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  {t('monteCarlo.basedOn', { iterations: monteCarloResult.iterations })}
+                </p>
+              </div>
+            )}
 
             {/* Recommendation */}
             {outcomes.recommendation && (

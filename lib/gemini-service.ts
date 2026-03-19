@@ -12,6 +12,9 @@ export interface SurveyOutcome {
   description: string;
   confidence: "high" | "medium" | "low";
   confidenceInterval: string;
+  probability?: number;    // 0-1, likelihood this outcome occurs
+  impactScore?: number;    // 0-100, how favorable the outcome is
+  volatility?: number;     // 0-1, uncertainty level
 }
 
 export interface GeminiSurveyResponse {
