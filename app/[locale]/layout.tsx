@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, setRequestLocale } from 'next-intl/server'
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { ThemeProvider } from '@/components/theme-provider'
 import { CookieConsentProvider } from '@/components/cookie-consent'
 import { JsonLd } from '@/components/json-ld'
@@ -145,6 +146,7 @@ export default async function LocaleLayout({
         </ThemeProvider>
         <JsonLd data={organizationSchema} />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
