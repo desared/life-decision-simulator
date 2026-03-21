@@ -913,6 +913,19 @@
     "title": "Content Policy Violation",
     "description": "Your input contains content that violates our usage policy. shouldi is designed to help with constructive life decisions. Please rephrase your question appropriately.",
     "surveyDescription": "Your input contains content that violates our usage policy. This analysis session has been closed.",
-    "close": "I understand"
+    "close": "I understand",
+    "crisis": {
+      "title": "You're Not Alone",
+      "description": "It sounds like you may be going through a really difficult time. shouldi is not equipped to help with this, but trained professionals are available right now.",
+      "resources": "If you or someone you know is in crisis, please reach out:",
+      "hotline988": "988 Suicide & Crisis Lifeline",
+      "hotline988Detail": "Call or text 988 (US) — available 24/7",
+      "hotlineCrisisText": "Crisis Text Line",
+      "hotlineCrisisTextDetail": "Text HOME to 741741 (US)",
+      "hotlineInternational": "International Association for Suicide Prevention",
+      "hotlineInternationalDetail": "Visit iasp.info/resources/Crisis_Centres for your country",
+      "encouragement": "Reaching out takes courage. These services are free, confidential, and available around the clock.",
+      "close": "I understand"
+    }
   }
 }

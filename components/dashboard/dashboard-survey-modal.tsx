@@ -23,6 +23,7 @@ import { ConfidenceChart } from "@/components/ui/confidence-chart"
 import { DistributionChart } from "@/components/ui/distribution-chart"
 import { cn } from "@/lib/utils"
 import { moderateContent } from "@/lib/moderation"
+import { CrisisDialog } from "@/components/crisis-dialog"
 import { generateSurveyQuestionsAction, generateOutcomesAction } from "@/app/actions/gemini"
 import { type SurveyQuestion, type SurveyOutcome, type GeminiOutcomeResponse } from "@/lib/gemini-service"
 import { useFirestore } from "@/contexts/firestore-context"
@@ -56,6 +57,7 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion, forcedSkil
   const [detectedSkillId, setDetectedSkillId] = useState<SkillId>("generic")
   const [freetextValue, setFreetextValue] = useState("")
   const [moderationOpen, setModerationOpen] = useState(false)
+  const [moderationCategory, setModerationCategory] = useState<string | undefined>(undefined)
   const [monteCarloResult, setMonteCarloResult] = useState<MonteCarloResult | null>(null)
 
   const { createScenario, createSimulation, selectScenario, canCreateScenario } = useFirestore()
@@ -127,6 +129,7 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion, forcedSkil
     if (!skip && freetextValue.trim()) {
       const modResult = moderateContent(freetextValue)
       if (modResult.blocked) {
+        setModerationCategory(modResult.category)
         setModerationOpen(true)
         return
       }
@@ -568,24 +571,28 @@ export function DashboardSurveyModal({ isOpen, onClose, userQuestion, forcedSkil
 
     <UpgradeDialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen} />
 
-    <AlertDialog open={moderationOpen} onOpenChange={setModerationOpen}>
-      <AlertDialogContent className="sm:max-w-md">
-        <AlertDialogHeader>
-          <AlertDialogTitle className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-destructive" />
-            {tModeration('title')}
-          </AlertDialogTitle>
-          <AlertDialogDescription>
-            {tModeration('surveyDescription')}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <Button onClick={handleModerationClose} variant="outline">
-            {tModeration('close')}
-          </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    {moderationCategory === "crisis" ? (
+      <CrisisDialog open={moderationOpen} onClose={handleModerationClose} />
+    ) : (
+      <AlertDialog open={moderationOpen} onOpenChange={setModerationOpen}>
+        <AlertDialogContent className="sm:max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              {tModeration('title')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {tModeration('surveyDescription')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button onClick={handleModerationClose} variant="outline">
+              {tModeration('close')}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )}
     </>
   )
 }

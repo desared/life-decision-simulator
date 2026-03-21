@@ -1,6 +1,74 @@
 export interface ModerationResult {
   blocked: boolean
-  category?: "sexual" | "violence" | "hate" | "profanity" | "harmful"
+  category?: "crisis" | "sexual" | "violence" | "hate" | "profanity" | "harmful"
+}
+
+// ── Priority 0: Crisis / self-harm detection ────────────────────────
+// Runs BEFORE all other tiers so "kill myself" → crisis, not violence.
+
+function normalizeLeetspeak(text: string): string {
+  return text
+    .replace(/1/g, 'i')
+    .replace(/0/g, 'o')
+    .replace(/3/g, 'e')
+    .replace(/4/g, 'a')
+    .replace(/5/g, 's')
+    .replace(/@/g, 'a')
+    .replace(/\$/g, 's')
+}
+
+const crisisPhrases: string[] = [
+  // EN — self-directed harm
+  "kill myself", "kill me", "kill yourself",
+  "end my life", "end it all", "end this",
+  "take my life", "take my own life",
+  "want to die", "wanna die", "want to be dead",
+  "better off dead", "rather be dead",
+  "wish i was dead", "wish i were dead",
+  "hurt myself", "harm myself", "cut myself",
+  "hang myself", "shoot myself", "drown myself", "poison myself",
+  "slit my wrist", "slit my wrists",
+  "jump off a bridge", "jump off a building",
+  "not worth living", "no reason to live", "no point in living",
+  "don't want to be alive", "dont want to be alive",
+  "don't want to live", "dont want to live",
+  "self harm", "self-harm",
+  // DE — self-directed harm
+  "mich umbringen", "mich selbst umbringen", "mich töten",
+  "mein leben beenden", "meinem leben ein ende",
+  "mich selbst verletzen", "mich ritzen",
+  "mich erhängen", "mich erschießen",
+  "will sterben", "will nicht mehr leben",
+  "nicht mehr leben", "keinen sinn mehr",
+  "lieber tot", "bring dich um",
+]
+
+const crisisRoots: string[] = [
+  "suicid",        // suicide, suicidal
+  "selbstmord",    // DE: suicide
+  "selbstverletz", // DE: self-harm
+]
+
+function detectCrisis(normalized: string): boolean {
+  const leetNormalized = normalizeLeetspeak(normalized)
+
+  // Check phrases against both raw and leetspeak-normalized input
+  for (const phrase of crisisPhrases) {
+    if (normalized.includes(phrase) || leetNormalized.includes(phrase)) {
+      return true
+    }
+  }
+
+  // Check crisis roots with word boundary
+  for (const root of crisisRoots) {
+    const escaped = root.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const regex = new RegExp(`\\b${escaped}`, 'i')
+    if (regex.test(normalized) || regex.test(leetNormalized)) {
+      return true
+    }
+  }
+
+  return false
 }
 
 // ── Tier 1: Root matching via \broot regex ──────────────────────────
@@ -61,15 +129,14 @@ const blockedRoots: Record<string, string[]> = {
     "intimidat", "humiliat",
     // Theft & crime
     "steal", "shoplift", "smuggl", "counterfeit",
-    // Self-harm & drugs
-    "suicid", "overdos", "cocain", "heroin",
+    // Drugs
+    "overdos", "cocain", "heroin",
     // Abuse & manipulation
     "abuse", "scam", "gaslight", "sabotag", "revenge", "manipulat",
     // DE
     "mobben", "mobbing", "stalken", "erpress",
     "einschüchter", "demütig",
     "stehlen", "klauen", "berauben",
-    "selbstmord", "selbstverletz",
     "kokain", "misshandel", "missbrauch",
     "tierquälerei", "sabotier", "manipulier",
   ],
@@ -139,10 +206,6 @@ const blockedPhrases: Record<string, string[]> = {
     "jüdische verschwörung",
   ],
   harmful: [
-    // EN — self-harm
-    "self harm", "self-harm", "cut myself", "hurt myself",
-    "end my life", "hang myself", "slit my wrist",
-    "jump off a bridge",
     // Drugs
     "sell drugs", "deal drugs", "cook meth", "make drugs",
     "drug someone", "spike someone", "roofie",
@@ -152,21 +215,18 @@ const blockedPhrases: Record<string, string[]> = {
     "doxxing", "swatting", "dox someone",
     // Animal cruelty
     "animal cruelty",
-    // DE — self-harm
-    "mich selbst verletzen", "mich ritzen", "mein leben beenden",
-    "mich umbringen", "mich erhängen",
-    // Drugs
+    // DE — Drugs
     "drogen verkaufen", "drogen dealen", "drogen herstellen",
     // Animal cruelty
     "tiere quälen",
   ],
   profanity: [
     // EN
-    "piece of shit", "eat shit", "kill yourself",
+    "piece of shit", "eat shit",
     "go die", "hope you die", "rot in hell", "burn in hell",
     "son of a bitch", "suck my", "dick head",
     // DE
-    "fick dich", "verpiss dich", "bring dich um",
+    "fick dich", "verpiss dich",
     "halt die fresse", "halt dein maul",
     "fahr zur hölle", "brenn in der hölle",
   ],
@@ -174,13 +234,20 @@ const blockedPhrases: Record<string, string[]> = {
 
 export function moderateContent(text: string): ModerationResult {
   const normalized = text.toLowerCase().trim()
+  const leetNormalized = normalizeLeetspeak(normalized)
+
+  // Priority 0: Crisis/self-harm detection — runs before everything else
+  if (detectCrisis(normalized)) {
+    return { blocked: true, category: "crisis" }
+  }
 
   // Tier 1: Root matching — \broot (catches root + ALL word forms)
+  // Checks both raw and leetspeak-normalized input (e.g. "k1ll" → "kill")
   for (const [category, roots] of Object.entries(blockedRoots)) {
     for (const root of roots) {
       const escaped = root.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
       const regex = new RegExp(`\\b${escaped}`, 'i')
-      if (regex.test(normalized)) {
+      if (regex.test(normalized) || regex.test(leetNormalized)) {
         return { blocked: true, category: category as ModerationResult["category"] }
       }
     }
@@ -191,16 +258,18 @@ export function moderateContent(text: string): ModerationResult {
     for (const word of words) {
       const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
       const regex = new RegExp(`\\b${escaped}\\b`, 'i')
-      if (regex.test(normalized)) {
+      if (regex.test(normalized) || regex.test(leetNormalized)) {
         return { blocked: true, category: category as ModerationResult["category"] }
       }
     }
   }
 
   // Tier 3: Substring matching — .includes() (multi-word phrases)
+  // Checks both raw and leetspeak-normalized input
   for (const [category, phrases] of Object.entries(blockedPhrases)) {
     for (const phrase of phrases) {
-      if (normalized.includes(phrase.toLowerCase())) {
+      const lowerPhrase = phrase.toLowerCase()
+      if (normalized.includes(lowerPhrase) || leetNormalized.includes(lowerPhrase)) {
         return { blocked: true, category: category as ModerationResult["category"] }
       }
     }
