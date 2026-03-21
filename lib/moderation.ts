@@ -234,6 +234,7 @@ const blockedPhrases: Record<string, string[]> = {
 
 export function moderateContent(text: string): ModerationResult {
   const normalized = text.toLowerCase().trim()
+  const leetNormalized = normalizeLeetspeak(normalized)
 
   // Priority 0: Crisis/self-harm detection — runs before everything else
   if (detectCrisis(normalized)) {
@@ -241,11 +242,12 @@ export function moderateContent(text: string): ModerationResult {
   }
 
   // Tier 1: Root matching — \broot (catches root + ALL word forms)
+  // Checks both raw and leetspeak-normalized input (e.g. "k1ll" → "kill")
   for (const [category, roots] of Object.entries(blockedRoots)) {
     for (const root of roots) {
       const escaped = root.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
       const regex = new RegExp(`\\b${escaped}`, 'i')
-      if (regex.test(normalized)) {
+      if (regex.test(normalized) || regex.test(leetNormalized)) {
         return { blocked: true, category: category as ModerationResult["category"] }
       }
     }
@@ -256,16 +258,18 @@ export function moderateContent(text: string): ModerationResult {
     for (const word of words) {
       const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
       const regex = new RegExp(`\\b${escaped}\\b`, 'i')
-      if (regex.test(normalized)) {
+      if (regex.test(normalized) || regex.test(leetNormalized)) {
         return { blocked: true, category: category as ModerationResult["category"] }
       }
     }
   }
 
   // Tier 3: Substring matching — .includes() (multi-word phrases)
+  // Checks both raw and leetspeak-normalized input
   for (const [category, phrases] of Object.entries(blockedPhrases)) {
     for (const phrase of phrases) {
-      if (normalized.includes(phrase.toLowerCase())) {
+      const lowerPhrase = phrase.toLowerCase()
+      if (normalized.includes(lowerPhrase) || leetNormalized.includes(lowerPhrase)) {
         return { blocked: true, category: category as ModerationResult["category"] }
       }
     }
