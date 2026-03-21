@@ -913,6 +913,19 @@
     "title": "Verstoß gegen die Inhaltsrichtlinie",
     "description": "Ihre Eingabe enthält Inhalte, die gegen unsere Nutzungsrichtlinien verstoßen. shouldi ist dafür konzipiert, bei konstruktiven Lebensentscheidungen zu helfen. Bitte formulieren Sie Ihre Frage angemessen um.",
     "surveyDescription": "Ihre Eingabe enthält Inhalte, die gegen unsere Nutzungsrichtlinien verstoßen. Diese Analysesitzung wurde geschlossen.",
-    "close": "Verstanden"
+    "close": "Verstanden",
+    "crisis": {
+      "title": "Du bist nicht allein",
+      "description": "Es klingt, als ob du gerade eine sehr schwierige Zeit durchmachst. shouldi kann hier nicht helfen, aber ausgebildete Fachleute sind jetzt erreichbar.",
+      "resources": "Wenn du oder jemand den du kennst in einer Krise ist, wende dich bitte an:",
+      "hotline988": "Telefonseelsorge",
+      "hotline988Detail": "0800 111 0 111 oder 0800 111 0 222 — kostenlos, 24/7",
+      "hotlineCrisisText": "Online-Beratung",
+      "hotlineCrisisTextDetail": "online.telefonseelsorge.de — Chat & E-Mail",
+      "hotlineInternational": "Nummer gegen Kummer",
+      "hotlineInternationalDetail": "116 111 (Kinder & Jugendliche) — kostenlos",
+      "encouragement": "Es braucht Mut, sich Hilfe zu suchen. Diese Angebote sind kostenlos, vertraulich und rund um die Uhr verfügbar.",
+      "close": "Verstanden"
+    }
   }
 }
