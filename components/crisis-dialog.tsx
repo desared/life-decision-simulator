@@ -41,8 +41,16 @@ export function CrisisDialog({ open, onClose }: CrisisDialogProps) {
               <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900">
                 <Phone className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
                 <div>
-                  <p className="font-semibold text-red-700 dark:text-red-300">{t('hotline988')}</p>
-                  <p className="text-sm text-red-600 dark:text-red-400">{t('hotline988Detail')}</p>
+                  <p className="font-semibold text-red-700 dark:text-red-300">{t('hotlineDE')}</p>
+                  <p className="text-sm text-red-600 dark:text-red-400">{t('hotlineDEDetail')}</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900">
+                <Phone className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-semibold text-red-700 dark:text-red-300">{t('hotlineUS')}</p>
+                  <p className="text-sm text-red-600 dark:text-red-400">{t('hotlineUSDetail')}</p>
                 </div>
               </div>
 
